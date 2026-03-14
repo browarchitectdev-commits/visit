@@ -131,6 +131,45 @@ const galleryCollection = defineCollection({
 });
 
 /**
+ * Коллекция "Социальные сети"
+ * Хранит ссылки на посты для страницы /social
+ */
+const socialCollection = defineCollection({
+  type: 'data',
+  schema: z.object({
+    // Пока поддерживаем только Instagram, но оставляем расширяемую структуру
+    platform: z.enum(['instagram']).default('instagram'),
+
+    // Полная ссылка на пост (например: https://www.instagram.com/p/ABC123/)
+    postUrl: z.string().url('Введите корректную ссылку на пост'),
+
+    // Краткий заголовок для админки и a11y (опционально)
+    title: z.string().max(120, 'Слишком длинный заголовок').optional(),
+
+    // Подпись карточки (опционально)
+    caption: z.string().max(280, 'Слишком длинная подпись').optional(),
+
+    // Порядок отображения
+    order: z.number().int().optional(),
+
+    // Показывать ли запись на сайте
+    isActive: z.boolean().default(true),
+  }),
+});
+
+/**
+ * Коллекция "Настройки"
+ * Хранит глобальные настройки сайта (пока: соцсети)
+ */
+const settingsCollection = defineCollection({
+  type: 'data',
+  schema: z.object({
+    instagramProfileUrl: z.string().url('Введите корректную ссылку на Instagram профиль'),
+    instagramUsername: z.string().min(1, 'Укажите username без @'),
+  }),
+});
+
+/**
  * Экспорт коллекций
  * Astro автоматически сгенерирует типы TypeScript на их основе
  */
@@ -138,4 +177,6 @@ export const collections = {
   services: servicesCollection,
   masters: mastersCollection,
   gallery: galleryCollection,
+  social: socialCollection,
+  settings: settingsCollection,
 };

@@ -9,6 +9,7 @@ const navLinks = [
   { label: 'Галерея', href: '#gallery' },
   { label: 'Отзывы', href: '#testimonials' },
   { label: 'Контакты', href: '#contacts' },
+  { label: 'Соцсети', href: '/social' },
 ];
 
 export function SiteHeader() {

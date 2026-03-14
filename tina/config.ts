@@ -3,11 +3,17 @@ import { defineConfig } from 'tinacms';
 // Конфигурация TinaCMS
 // Все коллекции синхронизированы с src/content/config.ts
 
+const argv = typeof process !== 'undefined' && Array.isArray(process.argv) ? process.argv : [];
+const isTinaDevCommand = argv.includes('dev');
+const isLocalOnly = process.env.TINA_LOCAL_ONLY === 'true' && isTinaDevCommand;
+const tinaClientId = isLocalOnly ? undefined : process.env.TINA_CLIENT_ID;
+const tinaToken = isLocalOnly ? undefined : process.env.TINA_TOKEN;
+
 export default defineConfig({
   // Git-based хранилище
   branch: 'main', // основная ветка
-  clientId: process.env.TINA_CLIENT_ID, // GitHub OAuth Client ID (опционально)
-  token: process.env.TINA_TOKEN, // GitHub Token (опционально)
+  clientId: tinaClientId, // GitHub OAuth Client ID (опционально)
+  token: tinaToken, // GitHub Token (опционально)
   
   // Конфигурация сборки
   build: {
@@ -302,6 +308,153 @@ export default defineConfig({
             label: 'Активна',
             name: 'isActive',
             description: 'Показывать ли эту работу на сайте',
+          },
+        ],
+      },
+      /**
+       * Коллекция "Social" (Соцсети)
+       * Синхронизирована с src/content/social/
+       */
+      {
+        label: 'Соцсети',
+        name: 'social',
+        path: 'src/content/social',
+        format: 'json',
+        ui: {
+          allowedActions: {
+            create: true,
+            delete: true,
+          },
+          // Формируем имя файла автоматически из ссылки на пост.
+          filename: {
+            slugify: (values: any) => {
+              const postUrl = String(values?.postUrl ?? '');
+              const match = postUrl.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
+
+              if (match?.[1]) {
+                return `instagram-${match[1].toLowerCase()}`;
+              }
+
+              const fallback = Date.now().toString().slice(-6);
+              return `instagram-post-${fallback}`;
+            },
+          },
+        },
+        fields: [
+          {
+            type: 'string',
+            label: 'Платформа',
+            name: 'platform',
+            description: 'Пока поддерживается только Instagram',
+            required: true,
+            options: [{ label: 'Instagram', value: 'instagram' }],
+          },
+          {
+            type: 'string',
+            label: 'Ссылка на пост',
+            name: 'postUrl',
+            description:
+              'Вставьте полную ссылку на пост (https://www.instagram.com/p/... или /reel/...). ID извлекается автоматически на сайте.',
+            required: true,
+            ui: {
+              validate: (value: any) => {
+                if (!value) {
+                  return 'Ссылка обязательна';
+                }
+                if (!/^https?:\/\//i.test(value)) {
+                  return 'Введите полную ссылку (https://...)';
+                }
+                if (!/instagram\.com\/(p|reel|tv)\//i.test(value)) {
+                  return 'Ссылка должна вести на Instagram пост/reel/tv';
+                }
+              },
+            },
+          },
+          {
+            type: 'string',
+            label: 'Заголовок',
+            name: 'title',
+            description: 'Краткое имя карточки (опционально)',
+          },
+          {
+            type: 'string',
+            label: 'Подпись',
+            name: 'caption',
+            description: 'Короткая подпись карточки (опционально)',
+            ui: {
+              component: 'textarea',
+            },
+          },
+          {
+            type: 'number',
+            label: 'Порядок отображения',
+            name: 'order',
+            description: 'Сортировка по возрастанию',
+          },
+          {
+            type: 'boolean',
+            label: 'Активно',
+            name: 'isActive',
+            description: 'Показывать ли пост на странице',
+          },
+        ],
+      },
+      /**
+       * Коллекция "Настройки соцсетей"
+       * Синхронизирована с src/content/settings/
+       */
+      {
+        label: 'Настройки соцсетей',
+        name: 'settings',
+        path: 'src/content/settings',
+        format: 'json',
+        ui: {
+          allowedActions: {
+            create: true,
+            delete: false,
+          },
+          filename: {
+            readonly: true,
+            slugify: () => 'social',
+          },
+        },
+        fields: [
+          {
+            type: 'string',
+            label: 'Instagram профиль URL',
+            name: 'instagramProfileUrl',
+            description: 'Например: https://www.instagram.com/browarchitect.studio/',
+            required: true,
+            ui: {
+              validate: (value: any) => {
+                if (!value) {
+                  return 'Ссылка обязательна';
+                }
+                if (!/^https?:\/\//i.test(value)) {
+                  return 'Введите полную ссылку (https://...)';
+                }
+                if (!/instagram\.com\//i.test(value)) {
+                  return 'Ссылка должна вести на Instagram';
+                }
+              },
+            },
+          },
+          {
+            type: 'string',
+            label: 'Instagram username',
+            name: 'instagramUsername',
+            description: 'Без символа @ (например: browarchitect.studio)',
+            required: true,
+            ui: {
+              validate: (value: any) => {
+                if (!value) {
+                  return 'Username обязателен';
+                }
+                if (String(value).startsWith('@')) {
+                  return 'Введите username без @';
+                }
+              },
+            },
           },
         ],
       },

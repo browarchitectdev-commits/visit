@@ -1,0 +1,323 @@
+---
+/**
+ * Страница "Социальные сети"
+ *
+ * Содержит:
+ * - Instagram embed (iframe)
+ * - Заготовки для Facebook и TikTok (в будущем)
+ */
+
+import Layout from '@/layouts/Layout.astro';
+import { SiteHeader } from '@/react/SiteHeader';
+import { SiteFooter } from '@/react/SiteFooter';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const pageTitle = 'Мы в социальных сетях';
+const pageDescription =
+  'Следите за нашими работами и новостями в Instagram. Brow & Lip Studio — перманентный макияж.';
+
+function extractInstagramPostId(postUrl: string): string | null {
+  try {
+    const url = new URL(postUrl);
+    const parts = url.pathname.split('/').filter(Boolean);
+    const markerIndex = parts.findIndex((part) =>
+      ['p', 'reel', 'tv'].includes(part.toLowerCase()),
+    );
+
+    if (markerIndex !== -1 && parts[markerIndex + 1]) {
+      return parts[markerIndex + 1];
+    }
+  } catch {
+    // Игнорируем ошибку URL и пробуем regex fallback ниже.
+  }
+
+  const match = postUrl.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
+  return match?.[1] ?? null;
+}
+
+type SocialEntry = CollectionEntry<'social'>;
+
+interface SocialPost {
+  id: string;
+  postId: string | null;
+  postUrl: string;
+  title: string;
+  caption?: string;
+}
+
+type SettingsEntry = CollectionEntry<'settings'>;
+
+const socialCollection: SocialEntry[] = await getCollection('social');
+const settingsCollection: SettingsEntry[] = await getCollection('settings');
+
+const settings = settingsCollection[0]?.data;
+
+const instagram = {
+  username: settings?.instagramUsername || 'browarchitect.studio',
+  profileUrl: settings?.instagramProfileUrl || 'https://www.instagram.com/browarchitect.studio/',
+};
+
+const posts: SocialPost[] = socialCollection
+  .filter((entry: SocialEntry) => entry.data.platform === 'instagram' && entry.data.isActive)
+  .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
+  .map((entry: SocialEntry) => {
+    const postId = extractInstagramPostId(entry.data.postUrl);
+
+    return {
+      id: entry.id,
+      postId,
+      postUrl: entry.data.postUrl,
+      title: entry.data.title || 'Пост в Instagram',
+      caption: entry.data.caption,
+    };
+  });
+
+const validPosts = posts.filter((post: SocialPost) => !!post.postId);
+const invalidPostsCount = posts.length - validPosts.length;
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <SiteHeader client:load />
+
+  <main id="main-content">
+    <!-- ─── Hero ─── -->
+    <section
+      class="relative overflow-hidden bg-gradient-to-br from-[#fdf6f6] via-[#f8eded] to-[#f2e4e3] py-20"
+      aria-labelledby="social-hero-heading"
+    >
+      <!-- Декоративные круги фона -->
+      <div
+        class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"
+        aria-hidden="true"
+      ></div>
+
+      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <!-- Иконки соцсетей -->
+          <div
+            class="mb-6 flex items-center justify-center gap-4"
+            aria-hidden="true"
+          >
+            <!-- Instagram -->
+            <span
+              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888] shadow-md"
+            >
+              <svg
+                class="h-6 w-6 text-white"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                ></path>
+              </svg>
+            </span>
+          </div>
+
+          <h1
+            id="social-hero-heading"
+            class="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
+          >
+            Мы в Instagram
+          </h1>
+          <p class="mx-auto max-w-2xl text-lg text-muted-foreground">
+            Следите за нашими свежими работами, акциями и лайфхаками по уходу за
+            бровями и губами.
+          </p>
+
+          <!-- Кнопка перехода в Instagram -->
+          <div class="mt-8">
+            <a
+              href={instagram.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#e6683c] to-[#bc1888] px-7 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <svg
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                ></path>
+              </svg>
+              @{instagram.username}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Instagram Posts ─── -->
+    <section class="bg-background py-16" aria-labelledby="instagram-section-heading">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <!-- Заголовок секции -->
+        <div class="mb-10 flex flex-col items-center gap-2 text-center">
+          <div
+            class="mb-2 inline-flex h-1.5 w-16 rounded-full bg-gradient-to-r from-[#e6683c] to-[#bc1888]"
+            aria-hidden="true"
+          ></div>
+          <h2
+            id="instagram-section-heading"
+            class="text-2xl font-bold text-foreground sm:text-3xl"
+          >
+            Последние публикации
+          </h2>
+          <p class="max-w-xl text-muted-foreground">
+            Актуальные работы и новости студии прямо из Instagram.
+          </p>
+        </div>
+
+        {invalidPostsCount > 0 && (
+          <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
+            Пропущено записей из-за некорректной ссылки: {invalidPostsCount}.
+          </div>
+        )}
+
+        {validPosts.length > 0 ? (
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {validPosts.map((post) => (
+              <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
+                <div class="flex items-center gap-2 border-b border-border px-4 py-3">
+                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888]">
+                    <svg
+                      class="h-4 w-4 text-white"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    </svg>
+                  </span>
+                  <span class="line-clamp-1 text-xs font-medium text-muted-foreground">
+                    {post.title}
+                  </span>
+                </div>
+
+                <div class="relative bg-muted">
+                  <iframe
+                    src={`https://www.instagram.com/p/${post.postId}/embed`}
+                    class="w-full"
+                    style="min-height: 480px; border: 0;"
+                    loading="lazy"
+                    scrolling="no"
+                    allowtransparency={true}
+                    title={post.title}
+                    referrerpolicy="no-referrer"
+                  />
+                </div>
+
+                {post.caption && (
+                  <div class="border-t border-border px-4 py-3">
+                    <p class="line-clamp-2 text-xs text-muted-foreground">{post.caption}</p>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="py-20 text-center text-muted-foreground">
+            <svg class="mx-auto mb-4 h-12 w-12 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 20.25h16.5M3.75 3.75h16.5"/>
+            </svg>
+            <p>Пока нет публикаций. Добавьте ссылки на посты в TinaCMS.</p>
+          </div>
+        )}
+
+        <!-- CTA под постами -->
+        <div class="mt-12 text-center">
+          <a
+            href={instagram.profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full border-2 border-primary px-8 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            Смотреть все публикации
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Скоро: другие соцсети ─── -->
+    <section
+      class="border-t border-border bg-secondary/40 py-16"
+      aria-labelledby="coming-soon-heading"
+    >
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 text-center">
+          <h2
+            id="coming-soon-heading"
+            class="mb-3 text-2xl font-bold text-foreground sm:text-3xl"
+          >
+            Скоро здесь появятся
+          </h2>
+          <p class="text-muted-foreground">
+            Мы активно развиваем наше присутствие в других платформах.
+          </p>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 mx-auto max-w-2xl">
+          <!-- TikTok -->
+          <div
+            class="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-card p-8 text-center opacity-60"
+            aria-label="TikTok — скоро"
+          >
+            <span
+              class="flex h-14 w-14 items-center justify-center rounded-2xl bg-black shadow"
+            >
+              <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="font-semibold text-foreground">TikTok</p>
+              <p class="mt-1 text-sm text-muted-foreground">Скоро</p>
+            </div>
+          </div>
+
+          <!-- Facebook -->
+          <div
+            class="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-card p-8 text-center opacity-60"
+            aria-label="Facebook — скоро"
+          >
+            <span
+              class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1877f2] shadow"
+            >
+              <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="font-semibold text-foreground">Facebook</p>
+              <p class="mt-1 text-sm text-muted-foreground">Скоро</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter client:load />
+</Layout>
