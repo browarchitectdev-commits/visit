@@ -335,9 +335,14 @@ export default defineConfig({
               const postUrl = String(values?.postUrl ?? '');
               const instagramMatch = postUrl.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
               const tiktokMatch = postUrl.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/i);
-
-              if (platform === 'tiktok' && tiktokMatch?.[1]) {
+                if (platform === 'tiktok' && tiktokMatch?.[1]) {
                 return `tiktok-${tiktokMatch[1]}`;
+              }
+
+              if (platform === 'facebook') {
+                const fbId = postUrl.match(/\/(?:posts|videos|reel|photo).*?(\d{10,})/)?.[1]
+                  ?? postUrl.match(/fbid=(\d+)/)?.[1];
+                return fbId ? `facebook-${fbId}` : `facebook-post-${Date.now().toString().slice(-6)}`;
               }
 
               if (instagramMatch?.[1]) {
@@ -359,6 +364,7 @@ export default defineConfig({
             options: [
               { label: 'Instagram', value: 'instagram' },
               { label: 'TikTok', value: 'tiktok' },
+              { label: 'Facebook', value: 'facebook' },
             ],
           },
           {
@@ -385,6 +391,10 @@ export default defineConfig({
 
                 if (platform === 'tiktok' && !/tiktok\.com\/@[^/]+\/video\/\d+/i.test(value)) {
                   return 'Для TikTok укажите ссылку вида https://www.tiktok.com/@username/video/123456789';
+                }
+
+                if (platform === 'facebook' && !/facebook\.com\//i.test(value)) {
+                  return 'Для Facebook укажите ссылку вида https://www.facebook.com/...';
                 }
               },
             },
@@ -512,6 +522,35 @@ export default defineConfig({
                 }
               },
             },
+          },
+          {
+            type: 'string',
+            label: 'Facebook страница URL',
+            name: 'facebookPageUrl',
+            description: 'Например: https://www.facebook.com/yourpage',
+            ui: {
+              validate: (value: any) => {
+                if (value && !/^https?:\/\//i.test(value)) {
+                  return 'Введите полную ссылку (https://...)';
+                }
+                if (value && !/facebook\.com\//i.test(value)) {
+                  return 'Ссылка должна вести на Facebook';
+                }
+              },
+            },
+          },
+          {
+            type: 'string',
+            label: 'Facebook название страницы',
+            name: 'facebookPageName',
+            description: 'Например: Brow & Lip Studio',
+          },
+          {
+            type: 'boolean',
+            label: 'Показывать блок Facebook страницы',
+            name: 'facebookShowPageEmbed',
+            description: 'Если выключено, на странице останутся только отдельные посты Facebook',
+            ui: { defaultValue: false },
           },
         ],
       },

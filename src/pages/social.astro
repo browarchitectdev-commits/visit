@@ -5,6 +5,7 @@
  * Содержит:
  * - Instagram embed (iframe)
  * - TikTok embed (iframe)
+ * - Facebook embed (iframe)
  */
 
 import Layout from '@/layouts/Layout.astro';
@@ -15,7 +16,7 @@ import type { CollectionEntry } from 'astro:content';
 
 const pageTitle = 'Мы в социальных сетях';
 const pageDescription =
-  'Следите за нашими работами и новостями в Instagram и TikTok. Brow & Lip Studio — перманентный макияж.';
+  'Следите за нашими работами и новостями в Instagram, TikTok и Facebook. Brow & Lip Studio — перманентный макияж.';
 
 function extractInstagramPostId(postUrl: string): string | null {
   try {
@@ -53,6 +54,31 @@ function extractTikTokVideoId(postUrl: string): string | null {
   return match?.[1] ?? null;
 }
 
+function extractFacebookPostUrl(postUrl: string): string | null {
+  try {
+    const url = new URL(postUrl);
+
+    if (!/facebook\.com$/i.test(url.hostname)) {
+      return null;
+    }
+
+    // Share-ссылки Facebook обычно не подходят для plugins/post.php.
+    if (/^\/share\//i.test(url.pathname)) {
+      return null;
+    }
+
+    // Для permalink.php важны query-параметры story_fbid/id.
+    if (/\/permalink\.php$/i.test(url.pathname)) {
+      return `${url.origin}${url.pathname}${url.search}`;
+    }
+
+    // Для /posts/... и /reel/... убираем трекинговые query/hash.
+    return `${url.origin}${url.pathname}`.replace(/\/$/, '');
+  } catch {
+    return null;
+  }
+}
+
 type SocialEntry = CollectionEntry<'social'>;
 
 interface SocialPost {
@@ -78,6 +104,12 @@ const instagram = {
 const tiktok = {
   username: settings?.tiktokUsername || 'browarchitect.studio',
   profileUrl: settings?.tiktokProfileUrl || 'https://www.tiktok.com/@browarchitect.stu',
+};
+
+const facebook = {
+  pageName: settings?.facebookPageName || 'Brow & Lip Studio',
+  pageUrl: settings?.facebookPageUrl || 'https://www.facebook.com/browarchitect.studio',
+  showPageEmbed: settings?.facebookShowPageEmbed ?? false,
 };
 
 const instagramPosts: SocialPost[] = socialCollection
@@ -115,6 +147,20 @@ const tiktokPosts: SocialPost[] = socialCollection
 
 const validTikTokPosts = tiktokPosts.filter((post: SocialPost) => !!post.embedId);
 const invalidTikTokPostsCount = tiktokPosts.length - validTikTokPosts.length;
+
+const facebookPosts: SocialPost[] = socialCollection
+  .filter((entry: SocialEntry) => entry.data.platform === 'facebook' && entry.data.isActive)
+  .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
+  .map((entry: SocialEntry) => ({
+    id: entry.id,
+    embedId: extractFacebookPostUrl(entry.data.postUrl),
+    postUrl: entry.data.postUrl,
+    title: entry.data.title || 'Пост в Facebook',
+    caption: entry.data.caption,
+  }));
+
+const validFacebookPosts = facebookPosts.filter((post: SocialPost) => !!post.embedId);
+const invalidFacebookPostsCount = facebookPosts.length - validFacebookPosts.length;
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -167,17 +213,26 @@ const invalidTikTokPostsCount = tiktokPosts.length - validTikTokPosts.length;
                 <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z"></path>
               </svg>
             </span>
+
+            <!-- Facebook -->
+            <span
+              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1877f2] shadow-md"
+            >
+              <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </span>
           </div>
 
           <h1
             id="social-hero-heading"
             class="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
           >
-            Мы в Instagram и TikTok
+            Мы в социальных сетях
           </h1>
           <p class="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Следите за свежими работами, акциями и лайфхаками по уходу за бровями и губами в
-            двух каналах сразу.
+            Следите за свежими работами, акциями и лайфхаками по уходу за бровями и губами —
+            в Instagram, TikTok и Facebook.
           </p>
 
           <!-- Кнопки перехода в соцсети -->
@@ -210,6 +265,17 @@ const invalidTikTokPostsCount = tiktokPosts.length - validTikTokPosts.length;
                 <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z" />
               </svg>
               @{tiktok.username}
+            </a>
+            <a
+              href={facebook.pageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full bg-[#1877f2] px-7 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+              {facebook.pageName}
             </a>
           </div>
         </div>
@@ -408,42 +474,112 @@ const invalidTikTokPostsCount = tiktokPosts.length - validTikTokPosts.length;
       </div>
     </section>
 
-    <!-- ─── Скоро: другие соцсети ─── -->
-    <section
-      class="border-t border-border bg-secondary/40 py-16"
-      aria-labelledby="coming-soon-heading"
-    >
+    <!-- ─── Facebook Posts ─── -->
+    <section class="border-t border-border bg-background py-16" aria-labelledby="facebook-section-heading">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-10 text-center">
-          <h2
-            id="coming-soon-heading"
-            class="mb-3 text-2xl font-bold text-foreground sm:text-3xl"
-          >
-            Скоро здесь появятся
+        <div class="mb-10 flex flex-col items-center gap-2 text-center">
+          <div class="mb-2 inline-flex h-1.5 w-16 rounded-full bg-[#1877f2]" aria-hidden="true"></div>
+          <h2 id="facebook-section-heading" class="text-2xl font-bold text-foreground sm:text-3xl">
+            Facebook
           </h2>
-          <p class="text-muted-foreground">
-            Мы активно развиваем наше присутствие в других платформах.
+          <p class="max-w-xl text-muted-foreground">
+            Таймлайн страницы студии и отдельные публикации в Facebook.
           </p>
         </div>
 
-        <div class="mx-auto grid max-w-xl gap-6">
-          <!-- Facebook -->
-          <div
-            class="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-card p-8 text-center opacity-60"
-            aria-label="Facebook — скоро"
-          >
-            <span
-              class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1877f2] shadow"
-            >
-              <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </span>
-            <div>
-              <p class="font-semibold text-foreground">Facebook</p>
-              <p class="mt-1 text-sm text-muted-foreground">Скоро</p>
+        {facebook.showPageEmbed && (
+          <div class="mb-12 flex justify-center">
+            <div class="w-full overflow-hidden rounded-2xl border border-border shadow-sm" style="max-width: 500px;">
+              <iframe
+                src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(facebook.pageUrl)}&tabs=timeline&width=500&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&locale=ru_RU`}
+                class="w-full"
+                style="height: 600px; border: 0;"
+                loading="lazy"
+                title={`${facebook.pageName} — Facebook`}
+                referrerpolicy="no-referrer"
+                allowfullscreen
+              />
             </div>
           </div>
+        )}
+
+        {invalidFacebookPostsCount > 0 && (
+          <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
+            Некоторые Facebook-ссылки не подходят для embed (например, /share/...).
+          </div>
+        )}
+
+        <!-- Отдельные записи из Tina -->
+        {validFacebookPosts.length > 0 && (
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {validFacebookPosts.map((post) => (
+              <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
+                <div class="flex items-center gap-2 border-b border-border px-4 py-3">
+                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-[#1877f2]">
+                    <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                  </span>
+                  <span class="line-clamp-1 text-xs font-medium text-muted-foreground">{post.title}</span>
+                </div>
+
+                <div class="relative bg-muted">
+                  <iframe
+                    src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId!)}&show_text=true&width=500`}
+                    class="w-full"
+                    style="min-height: 500px; border: 0;"
+                    loading="lazy"
+                    title={post.title}
+                    referrerpolicy="no-referrer"
+                    allowfullscreen
+                  />
+                </div>
+
+                <div class="flex flex-col items-center gap-3 border-t border-border bg-[#f0f2f5] px-4 py-4 text-center">
+                  {post.caption && (
+                    <p class="line-clamp-4 text-sm text-gray-700">{post.caption}</p>
+                  )}
+                  <a
+                    href={post.postUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 rounded-full bg-[#1877f2] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    Открыть в Facebook
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        <div class="mt-12 text-center">
+          <a
+            href={facebook.pageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full bg-[#1877f2] px-8 py-3 text-sm font-semibold text-white shadow-md transition-all hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            Открыть Facebook страницу
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>
