@@ -137,8 +137,8 @@ const galleryCollection = defineCollection({
 const socialCollection = defineCollection({
   type: 'data',
   schema: z.object({
-    // Пока поддерживаем только Instagram, но оставляем расширяемую структуру
-    platform: z.enum(['instagram']).default('instagram'),
+    // Поддерживаем Instagram и TikTok
+    platform: z.enum(['instagram', 'tiktok']).default('instagram'),
 
     // Полная ссылка на пост (например: https://www.instagram.com/p/ABC123/)
     postUrl: z.string().url('Введите корректную ссылку на пост'),
@@ -166,6 +166,8 @@ const settingsCollection = defineCollection({
   schema: z.object({
     instagramProfileUrl: z.string().url('Введите корректную ссылку на Instagram профиль'),
     instagramUsername: z.string().min(1, 'Укажите username без @'),
+    tiktokProfileUrl: z.string().url('Введите корректную ссылку на TikTok профиль'),
+    tiktokUsername: z.string().min(1, 'Укажите username TikTok без @'),
   }),
 });
 

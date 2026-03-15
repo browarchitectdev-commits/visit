@@ -4,7 +4,7 @@
  *
  * Содержит:
  * - Instagram embed (iframe)
- * - Заготовки для Facebook и TikTok (в будущем)
+ * - TikTok embed (iframe)
  */
 
 import Layout from '@/layouts/Layout.astro';
@@ -15,7 +15,7 @@ import type { CollectionEntry } from 'astro:content';
 
 const pageTitle = 'Мы в социальных сетях';
 const pageDescription =
-  'Следите за нашими работами и новостями в Instagram. Brow & Lip Studio — перманентный макияж.';
+  'Следите за нашими работами и новостями в Instagram и TikTok. Brow & Lip Studio — перманентный макияж.';
 
 function extractInstagramPostId(postUrl: string): string | null {
   try {
@@ -36,11 +36,28 @@ function extractInstagramPostId(postUrl: string): string | null {
   return match?.[1] ?? null;
 }
 
+function extractTikTokVideoId(postUrl: string): string | null {
+  try {
+    const url = new URL(postUrl);
+    const parts = url.pathname.split('/').filter(Boolean);
+    const videoIndex = parts.findIndex((part) => part.toLowerCase() === 'video');
+
+    if (videoIndex !== -1 && parts[videoIndex + 1]) {
+      return parts[videoIndex + 1];
+    }
+  } catch {
+    // Игнорируем ошибку URL и пробуем regex fallback ниже.
+  }
+
+  const match = postUrl.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/i);
+  return match?.[1] ?? null;
+}
+
 type SocialEntry = CollectionEntry<'social'>;
 
 interface SocialPost {
   id: string;
-  postId: string | null;
+  embedId: string | null;
   postUrl: string;
   title: string;
   caption?: string;
@@ -58,23 +75,46 @@ const instagram = {
   profileUrl: settings?.instagramProfileUrl || 'https://www.instagram.com/browarchitect.studio/',
 };
 
-const posts: SocialPost[] = socialCollection
+const tiktok = {
+  username: settings?.tiktokUsername || 'browarchitect.studio',
+  profileUrl: settings?.tiktokProfileUrl || 'https://www.tiktok.com/@browarchitect.stu',
+};
+
+const instagramPosts: SocialPost[] = socialCollection
   .filter((entry: SocialEntry) => entry.data.platform === 'instagram' && entry.data.isActive)
   .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
   .map((entry: SocialEntry) => {
-    const postId = extractInstagramPostId(entry.data.postUrl);
+    const embedId = extractInstagramPostId(entry.data.postUrl);
 
     return {
       id: entry.id,
-      postId,
+      embedId,
       postUrl: entry.data.postUrl,
       title: entry.data.title || 'Пост в Instagram',
       caption: entry.data.caption,
     };
   });
 
-const validPosts = posts.filter((post: SocialPost) => !!post.postId);
-const invalidPostsCount = posts.length - validPosts.length;
+const validInstagramPosts = instagramPosts.filter((post: SocialPost) => !!post.embedId);
+const invalidInstagramPostsCount = instagramPosts.length - validInstagramPosts.length;
+
+const tiktokPosts: SocialPost[] = socialCollection
+  .filter((entry: SocialEntry) => entry.data.platform === 'tiktok' && entry.data.isActive)
+  .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
+  .map((entry: SocialEntry) => {
+    const embedId = extractTikTokVideoId(entry.data.postUrl);
+
+    return {
+      id: entry.id,
+      embedId,
+      postUrl: entry.data.postUrl,
+      title: entry.data.title || 'Видео в TikTok',
+      caption: entry.data.caption,
+    };
+  });
+
+const validTikTokPosts = tiktokPosts.filter((post: SocialPost) => !!post.embedId);
+const invalidTikTokPostsCount = tiktokPosts.length - validTikTokPosts.length;
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -118,21 +158,30 @@ const invalidPostsCount = posts.length - validPosts.length;
                 ></path>
               </svg>
             </span>
+
+            <!-- TikTok -->
+            <span
+              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-black shadow-md"
+            >
+              <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z"></path>
+              </svg>
+            </span>
           </div>
 
           <h1
             id="social-hero-heading"
             class="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
           >
-            Мы в Instagram
+            Мы в Instagram и TikTok
           </h1>
           <p class="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Следите за нашими свежими работами, акциями и лайфхаками по уходу за
-            бровями и губами.
+            Следите за свежими работами, акциями и лайфхаками по уходу за бровями и губами в
+            двух каналах сразу.
           </p>
 
-          <!-- Кнопка перехода в Instagram -->
-          <div class="mt-8">
+          <!-- Кнопки перехода в соцсети -->
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a
               href={instagram.profileUrl}
               target="_blank"
@@ -150,6 +199,17 @@ const invalidPostsCount = posts.length - validPosts.length;
                 ></path>
               </svg>
               @{instagram.username}
+            </a>
+            <a
+              href={tiktok.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full bg-black px-7 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z" />
+              </svg>
+              @{tiktok.username}
             </a>
           </div>
         </div>
@@ -176,15 +236,15 @@ const invalidPostsCount = posts.length - validPosts.length;
           </p>
         </div>
 
-        {invalidPostsCount > 0 && (
+        {invalidInstagramPostsCount > 0 && (
           <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
-            Пропущено записей из-за некорректной ссылки: {invalidPostsCount}.
+            Пропущено записей из-за некорректной ссылки: {invalidInstagramPostsCount}.
           </div>
         )}
 
-        {validPosts.length > 0 ? (
+        {validInstagramPosts.length > 0 ? (
           <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {validPosts.map((post) => (
+            {validInstagramPosts.map((post) => (
               <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
                 <div class="flex items-center gap-2 border-b border-border px-4 py-3">
                   <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888]">
@@ -204,7 +264,7 @@ const invalidPostsCount = posts.length - validPosts.length;
 
                 <div class="relative bg-muted">
                   <iframe
-                    src={`https://www.instagram.com/p/${post.postId}/embed`}
+                    src={`https://www.instagram.com/p/${post.embedId}/embed`}
                     class="w-full"
                     style="min-height: 480px; border: 0;"
                     loading="lazy"
@@ -260,6 +320,94 @@ const invalidPostsCount = posts.length - validPosts.length;
       </div>
     </section>
 
+    <!-- ─── TikTok Posts ─── -->
+    <section class="border-t border-border bg-secondary/20 py-16" aria-labelledby="tiktok-section-heading">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 flex flex-col items-center gap-2 text-center">
+          <div class="mb-2 inline-flex h-1.5 w-16 rounded-full bg-black" aria-hidden="true"></div>
+          <h2 id="tiktok-section-heading" class="text-2xl font-bold text-foreground sm:text-3xl">
+            TikTok видео
+          </h2>
+          <p class="max-w-xl text-muted-foreground">
+            Короткие видео с результатами процедур и закулисьем студии.
+          </p>
+        </div>
+
+        {invalidTikTokPostsCount > 0 && (
+          <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
+            Пропущено TikTok-записей из-за некорректной ссылки: {invalidTikTokPostsCount}.
+          </div>
+        )}
+
+        {validTikTokPosts.length > 0 ? (
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {validTikTokPosts.map((post) => (
+              <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
+                <div class="flex items-center gap-2 border-b border-border px-4 py-3">
+                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-black">
+                    <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z" />
+                    </svg>
+                  </span>
+                  <span class="line-clamp-1 text-xs font-medium text-muted-foreground">{post.title}</span>
+                </div>
+
+                <div class="relative bg-muted">
+                  <iframe
+                    src={`https://www.tiktok.com/embed/${post.embedId}`}
+                    class="w-full"
+                    style="min-height: 575px; border: 0;"
+                    loading="lazy"
+                    title={post.title}
+                    referrerpolicy="no-referrer"
+                    allowfullscreen
+                  />
+                </div>
+
+                {post.caption && (
+                  <div class="border-t border-border px-4 py-3">
+                    <p class="line-clamp-2 text-xs text-muted-foreground">{post.caption}</p>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="py-20 text-center text-muted-foreground">
+            <svg class="mx-auto mb-4 h-12 w-12 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v8.25a3.75 3.75 0 1 1-3-3.674" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c1.5 2 3.5 3 6 3" />
+            </svg>
+            <p>Пока нет TikTok видео. Добавьте ссылки на видео в TinaCMS.</p>
+          </div>
+        )}
+
+        <div class="mt-12 text-center">
+          <a
+            href={tiktok.profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full border-2 border-foreground bg-black px-8 py-3 text-sm font-semibold text-white transition-all hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            Смотреть TikTok профиль
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- ─── Скоро: другие соцсети ─── -->
     <section
       class="border-t border-border bg-secondary/40 py-16"
@@ -278,25 +426,7 @@ const invalidPostsCount = posts.length - validPosts.length;
           </p>
         </div>
 
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 mx-auto max-w-2xl">
-          <!-- TikTok -->
-          <div
-            class="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-card p-8 text-center opacity-60"
-            aria-label="TikTok — скоро"
-          >
-            <span
-              class="flex h-14 w-14 items-center justify-center rounded-2xl bg-black shadow"
-            >
-              <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z"/>
-              </svg>
-            </span>
-            <div>
-              <p class="font-semibold text-foreground">TikTok</p>
-              <p class="mt-1 text-sm text-muted-foreground">Скоро</p>
-            </div>
-          </div>
-
+        <div class="mx-auto grid max-w-xl gap-6">
           <!-- Facebook -->
           <div
             class="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-card p-8 text-center opacity-60"

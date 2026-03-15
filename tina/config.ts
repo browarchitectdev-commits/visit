@@ -109,6 +109,7 @@ export default defineConfig({
             label: 'Активна',
             name: 'isActive',
             description: 'Показывать ли эту услугу на сайте',
+            ui: { defaultValue: true },
           },
         ],
       },
@@ -225,6 +226,7 @@ export default defineConfig({
             label: 'Активен',
             name: 'isActive',
             description: 'Показывать ли этого мастера на сайте',
+            ui: { defaultValue: true },
           },
         ],
       },
@@ -308,6 +310,7 @@ export default defineConfig({
             label: 'Активна',
             name: 'isActive',
             description: 'Показывать ли эту работу на сайте',
+            ui: { defaultValue: true },
           },
         ],
       },
@@ -328,15 +331,21 @@ export default defineConfig({
           // Формируем имя файла автоматически из ссылки на пост.
           filename: {
             slugify: (values: any) => {
+              const platform = String(values?.platform ?? 'instagram').toLowerCase();
               const postUrl = String(values?.postUrl ?? '');
-              const match = postUrl.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
+              const instagramMatch = postUrl.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
+              const tiktokMatch = postUrl.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/i);
 
-              if (match?.[1]) {
-                return `instagram-${match[1].toLowerCase()}`;
+              if (platform === 'tiktok' && tiktokMatch?.[1]) {
+                return `tiktok-${tiktokMatch[1]}`;
+              }
+
+              if (instagramMatch?.[1]) {
+                return `instagram-${instagramMatch[1].toLowerCase()}`;
               }
 
               const fallback = Date.now().toString().slice(-6);
-              return `instagram-post-${fallback}`;
+              return `${platform}-post-${fallback}`;
             },
           },
         },
@@ -345,27 +354,37 @@ export default defineConfig({
             type: 'string',
             label: 'Платформа',
             name: 'platform',
-            description: 'Пока поддерживается только Instagram',
+            description: 'Выберите платформу для отображения карточки',
             required: true,
-            options: [{ label: 'Instagram', value: 'instagram' }],
+            options: [
+              { label: 'Instagram', value: 'instagram' },
+              { label: 'TikTok', value: 'tiktok' },
+            ],
           },
           {
             type: 'string',
             label: 'Ссылка на пост',
             name: 'postUrl',
             description:
-              'Вставьте полную ссылку на пост (https://www.instagram.com/p/... или /reel/...). ID извлекается автоматически на сайте.',
+              'Сначала выберите платформу, затем вставьте ссылку на пост/видео. На сайте ID извлекается автоматически.',
             required: true,
             ui: {
-              validate: (value: any) => {
+              validate: (value: any, values: any) => {
                 if (!value) {
                   return 'Ссылка обязательна';
                 }
                 if (!/^https?:\/\//i.test(value)) {
                   return 'Введите полную ссылку (https://...)';
                 }
-                if (!/instagram\.com\/(p|reel|tv)\//i.test(value)) {
-                  return 'Ссылка должна вести на Instagram пост/reel/tv';
+
+                const platform = String(values?.platform ?? 'instagram').toLowerCase();
+
+                if (platform === 'instagram' && !/instagram\.com\/(p|reel|tv)\//i.test(value)) {
+                  return 'Для Instagram укажите ссылку вида https://www.instagram.com/p/... или /reel/...';
+                }
+
+                if (platform === 'tiktok' && !/tiktok\.com\/@[^/]+\/video\/\d+/i.test(value)) {
+                  return 'Для TikTok укажите ссылку вида https://www.tiktok.com/@username/video/123456789';
                 }
               },
             },
@@ -396,6 +415,7 @@ export default defineConfig({
             label: 'Активно',
             name: 'isActive',
             description: 'Показывать ли пост на странице',
+            ui: { defaultValue: true },
           },
         ],
       },
@@ -444,6 +464,43 @@ export default defineConfig({
             label: 'Instagram username',
             name: 'instagramUsername',
             description: 'Без символа @ (например: browarchitect.studio)',
+            required: true,
+            ui: {
+              validate: (value: any) => {
+                if (!value) {
+                  return 'Username обязателен';
+                }
+                if (String(value).startsWith('@')) {
+                  return 'Введите username без @';
+                }
+              },
+            },
+          },
+          {
+            type: 'string',
+            label: 'TikTok профиль URL',
+            name: 'tiktokProfileUrl',
+            description: 'Например: https://www.tiktok.com/@your_username',
+            required: true,
+            ui: {
+              validate: (value: any) => {
+                if (!value) {
+                  return 'Ссылка обязательна';
+                }
+                if (!/^https?:\/\//i.test(value)) {
+                  return 'Введите полную ссылку (https://...)';
+                }
+                if (!/tiktok\.com\//i.test(value)) {
+                  return 'Ссылка должна вести на TikTok';
+                }
+              },
+            },
+          },
+          {
+            type: 'string',
+            label: 'TikTok username',
+            name: 'tiktokUsername',
+            description: 'Без символа @ (например: browarchitect)',
             required: true,
             ui: {
               validate: (value: any) => {
