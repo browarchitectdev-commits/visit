@@ -1,29 +1,26 @@
 'use client';
 
-import React from 'react';
-
 const footerLinks = [
-  { label: 'Услуги', href: '#services' },
-  { label: 'О нас', href: '#about' },
-  { label: 'Галерея', href: '#gallery' },
-  { label: 'Мастера', href: '#masters' },
-  { label: 'Соцсети', href: '/social' },
+  { label: 'Trattamenti', href: '#services' },
+  { label: 'Studio', href: '#about' },
+  { label: 'Portfolio', href: '#gallery' },
+  { label: 'Team', href: '#masters' },
+  { label: 'Social', href: '/social' },
 ];
 
 export function SiteFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-secondary/40">
-      {/* Top gradient accent line */}
-      <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+    <footer className="relative overflow-hidden border-t border-border/80 bg-[#201713] text-white">
+      <div className="pointer-events-none absolute left-0 top-0 h-48 w-48 bg-[radial-gradient(circle,rgba(224,188,145,0.18),transparent_66%)] blur-[40px]" aria-hidden="true" />
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-[#e0bc91]/70 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-4">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <a href="#" className="inline-flex items-center gap-2.5 mb-4 group">
-              <div className="flex size-9 items-center justify-center rounded-full bg-primary transition-transform duration-300 group-hover:scale-110">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-[1.2fr_0.7fr_0.7fr]">
+          <div>
+            <a href="#" className="inline-flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_18px_32px_-18px_rgba(182,106,89,0.8)]">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -31,7 +28,7 @@ export function SiteFooter() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="size-4 text-primary-foreground"
+                  className="size-4"
                   aria-hidden="true"
                 >
                   <path d="M12 19c-4 0-7-2-7-5s3-5 7-5 7 2 7 5-3 5-7 5z" />
@@ -39,21 +36,24 @@ export function SiteFooter() {
                   <path d="M19 14c1.5-1 2-3 1-5-1.5-3-5.5-5-9-4" />
                 </svg>
               </div>
-              <span className="font-serif text-lg font-bold text-foreground">
-                Brow & Lip Studio
-              </span>
+              <div>
+                <span className="block font-serif text-2xl font-semibold text-white">Brow & Lip Studio</span>
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-white/42">
+                  Permanent beauty in Italy
+                </span>
+              </div>
             </a>
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Студия перманентного макияжа с сертифицированными специалистами.
-              Естественная красота в вашем стиле — надолго.
+
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/62">
+              Studio di trucco permanente per sopracciglia e labbra: atmosfera riservata, tecniche soft e risultati eleganti costruiti su misura.
             </p>
-            {/* Social icons */}
+
             <div className="mt-5 flex gap-2.5">
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-white/72 transition-all hover:border-[#e0bc91]/40 hover:bg-white/12 hover:text-white"
                 aria-label="Instagram"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -64,7 +64,7 @@ export function SiteFooter() {
                 href="https://telegram.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-white/72 transition-all hover:border-[#e0bc91]/40 hover:bg-white/12 hover:text-white"
                 aria-label="Telegram"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -74,53 +74,43 @@ export function SiteFooter() {
             </div>
           </div>
 
-          {/* Navigation */}
           <div>
-            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.12em] text-foreground">
-              Навигация
-            </h4>
-            <nav className="flex flex-col gap-2.5">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigazione</h4>
+            <nav className="mt-5 flex flex-col gap-3">
               {footerLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                >
+                <a key={link.href} href={link.href} className="text-sm text-white/68 transition-colors hover:text-white">
                   {link.label}
                 </a>
               ))}
             </nav>
           </div>
 
-          {/* Contacts */}
           <div>
-            <h4 className="mb-5 text-sm font-semibold uppercase tracking-[0.12em] text-foreground">
-              Контакты
-            </h4>
-            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-              <a href="tel:+79999999999" className="transition-colors hover:text-primary">
-                +7 (999) 999-99-99
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Contatti</h4>
+            <div className="mt-5 flex flex-col gap-3 text-sm text-white/68">
+              <a href="tel:+390000000000" className="transition-colors hover:text-white">
+                +39 000 000 0000
               </a>
-              <a href="mailto:info@browlip.ru" className="transition-colors hover:text-primary">
-                info@browlip.ru
+              <a href="mailto:ciao@browlip.it" className="transition-colors hover:text-white">
+                ciao@browlip.it
               </a>
-              <p>Москва, ул. Красивая, д. 1</p>
+              <p>Italia, su appuntamento</p>
             </div>
           </div>
         </div>
 
-        <div className="my-5 border-t border-border" />
+        <div className="my-6 border-t border-white/10" />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-muted-foreground">
-            &copy; {currentYear} Brow & Lip Studio. Все права защищены.
+          <p className="text-xs text-white/42">
+            &copy; {currentYear} Brow & Lip Studio. Tutti i diritti riservati.
           </p>
           <div className="flex gap-6">
-            <a href="/privacy" className="text-xs text-muted-foreground transition-colors hover:text-primary">
-              Политика конфиденциальности
+            <a href="/privacy" className="text-xs text-white/42 transition-colors hover:text-white">
+              Privacy Policy
             </a>
-            <a href="/terms" className="text-xs text-muted-foreground transition-colors hover:text-primary">
-              Условия использования
+            <a href="/terms" className="text-xs text-white/42 transition-colors hover:text-white">
+              Termini di utilizzo
             </a>
           </div>
         </div>
@@ -128,4 +118,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

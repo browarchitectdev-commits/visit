@@ -18,7 +18,12 @@ export function GallerySection({ images }: GallerySectionProps) {
     const el = headerRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
       { threshold: 0.1 }
     );
     obs.observe(el);
@@ -26,68 +31,83 @@ export function GallerySection({ images }: GallerySectionProps) {
   }, []);
 
   return (
-    <section id="gallery" className="px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+    <section id="gallery" className="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+      <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-[32rem] -translate-x-1/2 bg-[radial-gradient(circle,rgba(224,188,145,0.18),transparent_68%)] blur-[38px]" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">
         <div
           ref={headerRef}
-          className="mb-10 text-center"
+          className="mb-7 grid gap-4 lg:mb-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? 'translateY(0)' : 'translateY(24px)',
             transition: 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)',
           }}
         >
-          <span className="section-label">Наши работы</span>
-          <h2 className="mt-5 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Портфолио мастеров
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Каждая работа — это результат точного подбора формы, цвета и техники
-            под индивидуальные черты лица
+          <div>
+            <span className="section-label">Portfolio</span>
+            <h2 className="mt-4 font-serif text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Un editoriale di dettagli, tono e trasformazioni delicate.
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
+            La galleria ora lavora come una rivista visiva: contrasti di formato, primi piani e risultati che restano eleganti.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-          {images.map((image, index) => (
-            <div
-              key={image.src}
-              className={`group relative overflow-hidden rounded-2xl bg-muted ${
-                index === 0 || index === 5 ? 'aspect-[4/5]' : 'aspect-square'
-              }`}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.97)',
-                transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${index * 0.07}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${index * 0.07}s`,
-              }}
-            >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="h-full w-full object-cover transition-transform duration-700"
-                style={{ transform: hoveredIndex === index ? 'scale(1.04)' : 'scale(1)' }}
-              />
-              {/* Always-on subtle vignette */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
-              {/* Hover overlay */}
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-12 lg:grid-rows-3">
+          {images.map((image, index) => {
+            const layoutClass =
+              index === 0
+                ? 'col-span-2 lg:col-span-5 lg:row-span-3 aspect-[4/5]'
+                : index === 1
+                  ? 'col-span-1 lg:col-span-4 lg:row-span-1 aspect-[4/3]'
+                  : index === 2
+                    ? 'col-span-1 lg:col-span-3 lg:row-span-2 aspect-[4/5]'
+                    : index === 3
+                      ? 'col-span-2 lg:col-span-4 lg:row-span-1 aspect-[16/10]'
+                      : index === 4
+                        ? 'col-span-1 lg:col-span-3 lg:row-span-1 aspect-square'
+                        : 'col-span-1 lg:col-span-4 lg:row-span-1 aspect-[4/3]';
+
+            return (
               <div
-                className="absolute inset-0 flex flex-col justify-end bg-black/0 transition-all duration-500"
-                style={{ backgroundColor: hoveredIndex === index ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0)' }}
+                key={image.src}
+                className={`group shine-border relative overflow-hidden rounded-[1.45rem] bg-muted sm:rounded-[1.9rem] ${layoutClass}`}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.97)',
+                  transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${index * 0.07}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${index * 0.07}s`,
+                }}
               >
-                <p
-                  className="px-4 pb-4 pt-2 text-sm font-medium text-white"
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="h-full w-full object-cover transition-transform duration-700"
+                  style={{ transform: hoveredIndex === index ? 'scale(1.06)' : 'scale(1)' }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,9,8,0.06)_0%,rgba(13,9,8,0.62)_100%)]" />
+                <div className="absolute left-3 top-3 rounded-full border border-white/16 bg-white/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[10px] sm:tracking-[0.22em]">
+                  {index === 0 ? 'Signature result' : 'Editorial detail'}
+                </div>
+                <div
+                  className="absolute inset-x-0 bottom-0 p-3 transition-all duration-500 sm:p-4"
                   style={{
-                    opacity: hoveredIndex === index ? 1 : 0,
                     transform: hoveredIndex === index ? 'translateY(0)' : 'translateY(8px)',
-                    transition: 'opacity 0.35s ease, transform 0.35s ease',
+                    opacity: hoveredIndex === index ? 1 : 0.9,
                   }}
                 >
-                  {image.alt}
-                </p>
+                  <div className="rounded-[1.1rem] border border-white/12 bg-black/18 px-3 py-2.5 backdrop-blur-md sm:rounded-[1.35rem] sm:px-4 sm:py-3">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/48 sm:text-[10px] sm:tracking-[0.22em]">
+                      {index === 0 ? 'Featured composition' : 'Studio portfolio'}
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-white sm:text-sm">{image.alt}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -1,18 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const navLinks = [
-  { label: 'Услуги', href: '#services' },
-  { label: 'О нас', href: '#about' },
-  { label: 'Галерея', href: '#gallery' },
-  { label: 'Мастера', href: '#masters' },
-  { label: 'Соцсети', href: '/social' },
+  { label: 'Trattamenti', href: '#services' },
+  { label: 'Studio', href: '#about' },
+  { label: 'Portfolio', href: '#gallery' },
+  { label: 'Team', href: '#masters' },
+  { label: 'Social', href: '/social' },
 ];
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const headerTextClass = scrolled ? 'text-foreground' : 'text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]';
+  const mutedTextClass = scrolled ? 'text-muted-foreground' : 'text-white/88 drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]';
+  const borderClass = scrolled ? 'border-border/70 bg-white/40' : 'border-white/18 bg-white/10';
+  const mobilePanelClass = scrolled ? 'bg-background/90' : 'bg-[#1f1612]/84';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -23,68 +28,80 @@ export function SiteHeader() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      className="fixed left-0 right-0 top-0 z-50 transition-all duration-500"
       style={{
-        background: 'color-mix(in oklab, var(--background) 90%, transparent)',
-        backdropFilter: 'blur(14px)',
-        boxShadow: scrolled ? '0 1px 0 rgba(0,0,0,0.06)' : '0 1px 0 rgba(0,0,0,0.04)',
+        background: scrolled
+          ? 'color-mix(in oklab, var(--background) 86%, transparent)'
+          : 'linear-gradient(180deg, rgba(18,12,10,0.82) 0%, rgba(18,12,10,0.5) 62%, rgba(18,12,10,0.16) 100%)',
+        backdropFilter: 'blur(18px)',
+        boxShadow: scrolled ? '0 12px 34px -28px rgba(33,24,19,0.4)' : 'none',
+        animation: 'fadeInUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.1s both',
       }}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <a href="#" className="group flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary transition-transform duration-300 group-hover:scale-105">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="size-4 text-primary-foreground"
-              aria-hidden="true"
-            >
-              <path d="M12 19c-4 0-7-2-7-5s3-5 7-5 7 2 7 5-3 5-7 5z" />
-              <path d="M5 14c-1.5-1-2-3-1-5 1.5-3 5.5-5 9-4" />
-              <path d="M19 14c1.5-1 2-3 1-5-1.5-3-5.5-5-9-4" />
-            </svg>
-          </div>
-          <span
-            className="font-serif text-lg font-bold tracking-tight text-foreground transition-colors duration-500"
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <a href="#" className="group flex items-center gap-3">
+          <div
+            className="relative flex size-11 items-center justify-center overflow-hidden rounded-full border border-white/20 shadow-[0_16px_28px_-18px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-[1.06] group-hover:rotate-[4deg]"
+            style={{ animation: 'floatMedium 7s ease-in-out infinite' }}
           >
-            Brow & Lip
-          </span>
+            <img
+              src="/images/about.jpg"
+              alt="Brow & Lip Studio"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,12,10,0.05)_0%,rgba(18,12,10,0.34)_100%)]" />
+            <div className="absolute inset-0 rounded-full ring-1 ring-white/25" />
+          </div>
+          <div>
+            <span className={`block font-serif text-xl font-semibold tracking-tight transition-colors duration-300 ${headerTextClass}`}>
+              Brow & Lip
+            </span>
+            <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 ${mutedTextClass}`}>
+              Permanent Beauty Studio
+            </span>
+          </div>
         </a>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              className="group relative text-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
             >
-              {link.label}
+              <span
+                className={`transition-colors duration-300 ${
+                  scrolled ? 'text-muted-foreground group-hover:text-foreground' : 'text-white/88 group-hover:text-white'
+                }`}
+              >
+                {link.label}
+              </span>
+              <span
+                className={`absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100 ${
+                  scrolled ? 'bg-primary/70' : 'bg-white/75'
+                }`}
+              />
             </a>
           ))}
         </nav>
 
-        {/* CTA */}
         <div className="hidden lg:block">
           <a
             href="#booking"
-            className="btn-shimmer inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-all duration-300 hover:opacity-90"
+            className={`btn-shimmer inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 ${
+              scrolled
+                ? 'bg-foreground text-background hover:opacity-92'
+                : 'border border-white/18 bg-white/12 text-white backdrop-blur-md hover:bg-white/18'
+            }`}
           >
-            Записаться
+            Prenota ora
           </a>
         </div>
 
-        {/* Mobile menu button */}
         <button
-          className="flex size-10 items-center justify-center rounded-lg lg:hidden transition-colors"
-          style={{ color: 'var(--foreground)' }}
+          className={`flex size-10 items-center justify-center rounded-full transition-colors lg:hidden ${borderClass} ${headerTextClass}`}
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? 'Закрыть меню' : 'Открыть меню'}
+          aria-label={mobileOpen ? 'Chiudi menu' : 'Apri menu'}
           aria-expanded={mobileOpen}
         >
           {mobileOpen ? (
@@ -102,11 +119,10 @@ export function SiteHeader() {
         </button>
       </div>
 
-      {/* Mobile nav */}
       <div
-        className="overflow-hidden border-t border-border/40 bg-background/95 backdrop-blur-lg lg:hidden"
+        className={`overflow-hidden border-t backdrop-blur-lg lg:hidden ${scrolled ? 'border-border/40' : 'border-white/10'} ${mobilePanelClass}`}
         style={{
-          maxHeight: mobileOpen ? '400px' : '0px',
+          maxHeight: mobileOpen ? '420px' : '0px',
           transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)',
         }}
       >
@@ -116,7 +132,9 @@ export function SiteHeader() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-base font-medium text-foreground transition-colors hover:bg-secondary hover:text-primary"
+              className={`rounded-2xl px-4 py-3 text-base font-medium transition-colors ${
+                scrolled ? 'text-foreground hover:bg-secondary' : 'text-white hover:bg-white/8'
+              }`}
             >
               {link.label}
             </a>
@@ -124,13 +142,16 @@ export function SiteHeader() {
           <a
             href="#booking"
             onClick={() => setMobileOpen(false)}
-            className="btn-shimmer mt-3 inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
+            className={`btn-shimmer mt-3 inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold ${
+              scrolled
+                ? 'bg-foreground text-background'
+                : 'border border-white/15 bg-white/12 text-white'
+            }`}
           >
-            Записаться на консультацию
+            Prenota una consulenza
           </a>
         </nav>
       </div>
     </header>
   );
 }
-

@@ -1,137 +1,139 @@
 ---
 /**
- * Базовый Layout компонент
- * 
- * Обеспечивает:
- * - SEO оптимизацию (мета-теги, Open Graph, Twitter Cards)
- * - Подключение Tailwind CSS
- * - Семантичную HTML5 структуру
- * - Оптимизацию производительности (viewport, charset)
+ * Base layout for the editorial landing page.
  */
 
 interface Props {
-  // Мета-данные для SEO
   title: string;
   description: string;
-  image?: string; // Open Graph изображение (опционально)
-  
-  // Дополнительная кастомизация
-  canonicalURL?: string; // Канонический URL (важно для SEO)
-  noIndex?: boolean; // Запретить индексацию (для служебных страниц)
-  lang?: string; // Язык страницы (по умолчанию 'ru')
+  image?: string;
+  canonicalURL?: string;
+  noIndex?: boolean;
+  lang?: string;
 }
 
 const {
   title,
   description,
-  image = '/og-default.jpg', // Дефолтное изображение для соцсетей
+  image = '/og-default.jpg',
   canonicalURL = Astro.url.href,
   noIndex = false,
-  lang = 'ru',
+  lang = 'it',
 } = Astro.props;
 
-// Полное название сайта для meta-тегов
-const siteName = 'Beauty Salon'; // TODO: Вынести в конфиг
+const siteName = 'Brow & Lip Studio';
 const fullTitle = `${title} | ${siteName}`;
-
-// Абсолютный URL для Open Graph (требуется протокол + домен)
 const ogImageURL = new URL(image, Astro.site);
 ---
 
 <!DOCTYPE html>
 <html lang={lang} class="scroll-smooth">
   <head>
-    <!-- Базовые мета-теги -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    
-    <!-- Канонический URL (предотвращает дублирование контента) -->
     <link rel="canonical" href={canonicalURL} />
-    
-    <!-- SEO: Основные мета-теги -->
+
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
-    
-    <!-- Open Graph (Facebook, LinkedIn, Telegram) -->
+
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:site_name" content={siteName} />
-    <meta property="og:locale" content="ru_RU" />
-    
-    <!-- Twitter Cards -->
+    <meta property="og:locale" content="it_IT" />
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
-    
-    <!-- Google Fonts: Inter + Cormorant Garamond -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS будет автоматически встроен Astro -->
     <style is:global>
       :root {
-        --background: #f8f4f4;
-        --foreground: #1e1212;
-        --card: #fffdfd;
-        --card-foreground: #1e1212;
-        --popover: #fffdfd;
-        --popover-foreground: #1e1212;
-        --primary: #a35764;
-        --primary-foreground: #fdfbfb;
-        --secondary: #f2e9e8;
-        --secondary-foreground: #372a2a;
-        --muted: #ede6e6;
-        --muted-foreground: #6e5f5e;
-        --accent: #efe1e0;
-        --accent-foreground: #2b1e1e;
-        --border: #e8dada;
-        --input: #e8dada;
-        --ring: #a35764;
+        --background: #f4ede6;
+        --foreground: #211813;
+        --card: rgba(255, 251, 247, 0.9);
+        --card-foreground: #241915;
+        --popover: #fffaf6;
+        --popover-foreground: #241915;
+        --primary: #b66a59;
+        --primary-foreground: #fff7f2;
+        --secondary: #eadfd3;
+        --secondary-foreground: #3a2d28;
+        --muted: #e7dbcf;
+        --muted-foreground: #76645c;
+        --accent: #d9bd93;
+        --accent-foreground: #2b1d16;
+        --border: rgba(88, 60, 45, 0.14);
+        --input: rgba(88, 60, 45, 0.14);
+        --ring: #b66a59;
       }
 
-      /* Сброс базовых стилей для консистентности */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-      
-      /* Улучшение рендеринга текста */
+
+      html {
+        background: var(--background);
+      }
+
       body {
+        min-height: 100vh;
+        position: relative;
+        color: var(--foreground);
+        background:
+          radial-gradient(circle at top left, rgba(182, 106, 89, 0.18), transparent 32%),
+          radial-gradient(circle at 78% 12%, rgba(217, 189, 147, 0.2), transparent 28%),
+          radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.52), transparent 24%),
+          linear-gradient(180deg, #f8f2eb 0%, #f4ede6 42%, #f0e7de 100%);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
-        position: relative;
-        background-color: var(--background);
-        background-image:
-          radial-gradient(circle at 12% 8%, rgba(163, 87, 100, 0.1), transparent 40%),
-          radial-gradient(circle at 88% 18%, rgba(24, 119, 242, 0.08), transparent 36%),
-          radial-gradient(circle at 45% 72%, rgba(255, 255, 255, 0.55), transparent 34%),
-          linear-gradient(180deg, #fbf8f8 0%, #f8f4f3 48%, #f6f2f1 100%);
-        background-size: 120% 120%, 120% 120%, 130% 130%, 100% 100%;
-        background-attachment: fixed;
         animation: pageEnter 0.35s ease both, backgroundDrift 26s ease-in-out infinite;
-        color: var(--foreground);
       }
 
       body::before,
       body::after {
         content: '';
         position: fixed;
-        pointer-events: none;
+        inset: auto;
         z-index: -1;
-        filter: blur(70px);
-        opacity: 0.42;
-        animation: auraFloat 18s ease-in-out infinite;
+        pointer-events: none;
+        filter: blur(74px);
+        opacity: 0.5;
+      }
+
+      body::before {
+        left: -10rem;
+        top: -8rem;
+        width: 30rem;
+        height: 30rem;
+        background: radial-gradient(circle, rgba(182, 106, 89, 0.18), transparent 70%);
+        animation: auraFloat 17s ease-in-out infinite;
+      }
+
+      body::after {
+        right: -8rem;
+        bottom: -8rem;
+        width: 28rem;
+        height: 28rem;
+        background: radial-gradient(circle, rgba(217, 189, 147, 0.18), transparent 70%);
+        animation: auraFloat 21s ease-in-out infinite reverse;
+      }
+
+      body.modal-open {
+        overflow: hidden;
       }
 
       #main-content {
@@ -142,55 +144,17 @@ const ogImageURL = new URL(image, Astro.site);
         content: '';
         position: fixed;
         inset: 0;
-        pointer-events: none;
         z-index: -1;
-        opacity: 0.22;
-        background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.55) 0%, transparent 65%);
-        animation: centerBreath 14s ease-in-out infinite;
-      }
-
-      #main-content::after {
-        content: '';
-        position: fixed;
-        inset: 0;
         pointer-events: none;
-        z-index: -1;
-        opacity: 0.18;
+        opacity: 0.14;
         background-image:
-          linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
-        background-size: 42px 42px;
-        mask-image: radial-gradient(circle at center, black 15%, transparent 75%);
-        animation: gridDrift 30s linear infinite;
+          linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+        background-size: 52px 52px;
+        mask-image: radial-gradient(circle at center, black 12%, transparent 74%);
+        animation: gridDrift 32s linear infinite;
       }
 
-      body::before {
-        width: 34rem;
-        height: 34rem;
-        top: -10rem;
-        left: -10rem;
-        background: radial-gradient(circle, rgba(163, 87, 100, 0.2), transparent 70%);
-      }
-
-      body::after {
-        width: 30rem;
-        height: 30rem;
-        right: -9rem;
-        bottom: -10rem;
-        background: radial-gradient(circle, rgba(24, 119, 242, 0.16), transparent 70%);
-        animation-delay: 5s;
-      }
-      
-      /* Отключение прокрутки при открытых модальных окнах */
-      body.modal-open {
-        overflow: hidden;
-      }
-
-      .bg-background\/80 {
-        background-color: color-mix(in oklab, var(--background) 80%, transparent);
-      }
-
-      /* ─── Scroll-reveal ──────────────────────────────── */
       [data-reveal] {
         opacity: 0;
         transform: translateY(28px);
@@ -198,159 +162,209 @@ const ogImageURL = new URL(image, Astro.site);
           opacity 0.72s cubic-bezier(0.16, 1, 0.3, 1),
           transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      [data-reveal="left"]  { transform: translateX(-28px); }
-      [data-reveal="right"] { transform: translateX(28px); }
-      [data-reveal="scale"] { transform: scale(0.94); }
+
+      [data-reveal="left"] {
+        transform: translateX(-28px);
+      }
+
+      [data-reveal="right"] {
+        transform: translateX(28px);
+      }
+
+      [data-reveal="scale"] {
+        transform: scale(0.94);
+      }
+
       [data-reveal].is-visible {
         opacity: 1;
         transform: none;
       }
-      [data-delay="100"] { transition-delay: 0.10s; }
+
+      [data-delay="100"] { transition-delay: 0.1s; }
       [data-delay="150"] { transition-delay: 0.15s; }
-      [data-delay="200"] { transition-delay: 0.20s; }
+      [data-delay="200"] { transition-delay: 0.2s; }
       [data-delay="250"] { transition-delay: 0.25s; }
-      [data-delay="300"] { transition-delay: 0.30s; }
-      [data-delay="400"] { transition-delay: 0.40s; }
-      [data-delay="500"] { transition-delay: 0.50s; }
-      [data-delay="600"] { transition-delay: 0.60s; }
+      [data-delay="300"] { transition-delay: 0.3s; }
+      [data-delay="400"] { transition-delay: 0.4s; }
+      [data-delay="500"] { transition-delay: 0.5s; }
+      [data-delay="600"] { transition-delay: 0.6s; }
 
-      /* ─── Hero entrance keyframes ────────────────────── */
-      @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(28px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-      }
-      @keyframes scrollLine {
-        0%   { transform: translateY(-100%); }
-        100% { transform: translateY(200%); }
-      }
-      @keyframes floatSlow {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50%       { transform: translateY(-24px) rotate(4deg); }
-      }
-      @keyframes floatMedium {
-        0%, 100% { transform: translateY(0px); }
-        33%       { transform: translateY(-14px); }
-        66%       { transform: translateY(7px); }
+      .section-shell {
+        position: relative;
       }
 
-      /* ─── Shimmer effect for CTA buttons ─────────────── */
+      .section-shell::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: min(18rem, 42vw);
+        height: 1px;
+        background: linear-gradient(90deg, rgba(182, 106, 89, 0.4), transparent);
+        opacity: 0.6;
+      }
+
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--primary);
+      }
+
+      .section-label::before,
+      .section-label::after {
+        content: '';
+        display: block;
+        width: 2.75rem;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(182, 106, 89, 0.9), rgba(182, 106, 89, 0.15));
+      }
+
+      .editorial-panel {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(255, 251, 247, 0.9), rgba(249, 241, 235, 0.75));
+        box-shadow:
+          0 18px 55px -34px rgba(44, 27, 18, 0.36),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(12px);
+      }
+
+      .editorial-panel::before {
+        content: '';
+        position: absolute;
+        inset: 1px 1px auto 1px;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.55), transparent 72%);
+        pointer-events: none;
+      }
+
+      .parallax-soft {
+        animation: parallaxSoft 16s ease-in-out infinite;
+      }
+
+      .shine-border {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .shine-border::after {
+        content: '';
+        position: absolute;
+        inset: -20%;
+        background: linear-gradient(110deg, transparent 44%, rgba(255,255,255,0.16) 50%, transparent 56%);
+        transform: translateX(-120%);
+        animation: shimmerPass 9s ease-in-out infinite;
+        pointer-events: none;
+      }
+
       .btn-shimmer {
         position: relative;
         overflow: hidden;
       }
+
       .btn-shimmer::after {
         content: '';
         position: absolute;
         inset: 0;
         background: linear-gradient(
-          105deg,
-          transparent 40%,
-          rgba(255, 255, 255, 0.28) 50%,
-          transparent 60%
+          110deg,
+          transparent 36%,
+          rgba(255, 255, 255, 0.32) 50%,
+          transparent 64%
         );
         transform: translateX(-100%);
-        transition: transform 0s;
       }
+
       .btn-shimmer:hover::after {
         transform: translateX(100%);
-        transition: transform 0.55s ease;
+        transition: transform 0.7s ease;
       }
 
-      /* ─── Gradient text ──────────────────────────────── */
       .text-gradient {
-        background: linear-gradient(135deg, var(--primary) 0%, #d4859a 50%, var(--primary) 100%);
-        background-size: 200% auto;
+        background: linear-gradient(135deg, #e0bc91 0%, #c8816d 48%, #7d493f 100%);
         -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
         background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
-      /* ─── Smooth page entrance ───────────────────────── */
       @keyframes pageEnter {
         from { opacity: 0; }
-        to   { opacity: 1; }
+        to { opacity: 1; }
       }
 
       @keyframes auraFloat {
         0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-        50% { transform: translate3d(0, -18px, 0) scale(1.04); }
+        50% { transform: translate3d(0, -18px, 0) scale(1.05); }
       }
 
       @keyframes backgroundDrift {
         0%, 100% {
-          background-position: 12% 8%, 88% 18%, 45% 72%, 0% 0%;
+          background-position: 0% 0%, 78% 12%, 50% 80%, 0% 0%;
         }
         50% {
-          background-position: 16% 12%, 84% 22%, 50% 68%, 0% 0%;
+          background-position: 4% 2%, 74% 16%, 54% 76%, 0% 0%;
         }
       }
 
       @keyframes gridDrift {
         0% { transform: translate3d(0, 0, 0); }
-        50% { transform: translate3d(10px, -8px, 0); }
+        50% { transform: translate3d(12px, -8px, 0); }
         100% { transform: translate3d(0, 0, 0); }
       }
 
-      @keyframes centerBreath {
-        0%, 100% { transform: scale(1); opacity: 0.18; }
-        50% { transform: scale(1.05); opacity: 0.28; }
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(28px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
-      /* ─── Section divider line ───────────────────────── */
-      .section-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--primary);
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
-      .section-label::before,
-      .section-label::after {
-        content: '';
-        display: block;
-        height: 1px;
-        width: 2.5rem;
-        background-color: var(--primary);
-        opacity: 0.5;
+
+      @keyframes scrollLine {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(200%); }
+      }
+
+      @keyframes floatSlow {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-24px) rotate(4deg); }
+      }
+
+      @keyframes floatMedium {
+        0%, 100% { transform: translateY(0px); }
+        33% { transform: translateY(-14px); }
+        66% { transform: translateY(7px); }
+      }
+
+      @keyframes parallaxSoft {
+        0%, 100% { transform: translate3d(0, 0, 0); }
+        50% { transform: translate3d(0, -10px, 0); }
+      }
+
+      @keyframes shimmerPass {
+        0%, 70%, 100% { transform: translateX(-120%); opacity: 0; }
+        12%, 24% { transform: translateX(120%); opacity: 1; }
       }
     </style>
   </head>
-  
-  <body class="min-h-screen bg-background text-foreground antialiased">
-    <!-- 
-      Accessibility: Skip to main content link 
-      (для пользователей скринридеров и навигации с клавиатуры)
-    -->
+
+  <body class="bg-background font-sans text-foreground antialiased">
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
     >
-      Перейти к основному содержимому
+      Vai al contenuto principale
     </a>
-    
-    <!-- 
-      Header будет вставлен сюда как отдельный компонент
-      Пример: <Header />
-    -->
-    
-    <!-- Основной контент страницы -->
+
     <main id="main-content" class="flex-grow">
       <slot />
     </main>
-    
-    <!-- 
-      Footer будет вставлен сюда как отдельный компонент
-      Пример: <Footer />
-    -->
-    
-    <!-- Scroll reveal observer -->
+
     <script>
       (function () {
         function initReveal() {
@@ -369,6 +383,7 @@ const ogImageURL = new URL(image, Astro.site);
           );
           els.forEach(function (el) { obs.observe(el); });
         }
+
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', initReveal);
         } else {

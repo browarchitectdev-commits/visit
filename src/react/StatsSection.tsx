@@ -20,7 +20,10 @@ export function StatsSection({ stats }: StatsSectionProps) {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
       },
       { threshold: 0.15 }
     );
@@ -29,54 +32,51 @@ export function StatsSection({ stats }: StatsSectionProps) {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden bg-primary px-4 py-10 sm:px-6 sm:py-12 lg:px-8"
-    >
-      {/* Dot grid texture */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-        style={{
-          backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)',
-          backgroundSize: '28px 28px',
-        }}
-        aria-hidden="true"
-      />
-      {/* Ambient glow */}
-      <div
-        className="pointer-events-none absolute -left-20 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-white/10 blur-[80px]"
-        style={{ animation: 'floatMedium 8s ease-in-out infinite' }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute right-8 top-6 h-28 w-28 rounded-full border border-white/10"
-        style={{ animation: 'floatFast 5s ease-in-out infinite' }}
-        aria-hidden="true"
-      />
+    <section ref={sectionRef} className="relative -mt-10 px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="editorial-panel relative overflow-hidden rounded-[2rem] px-5 py-6 sm:px-7 sm:py-7 lg:px-8">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(circle_at_left,rgba(182,106,89,0.18),transparent_70%)]" aria-hidden="true" />
+          <div className="pointer-events-none absolute -right-8 top-1/2 h-36 w-36 -translate-y-1/2 rounded-full border border-primary/10" aria-hidden="true" />
 
-      <div className="relative mx-auto max-w-7xl">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/15 bg-white/10 px-4 py-6 text-center backdrop-blur-sm"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(28px)',
-                transition: `opacity 0.65s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, transform 0.65s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s`,
-              }}
-            >
-              <div className="font-serif text-5xl font-bold text-white sm:text-6xl">
-                {stat.value}
-              </div>
-              <div className="mt-1 text-xs font-medium uppercase tracking-widest text-primary-foreground/60">
-                {stat.label}
-              </div>
+          <div className="mb-5 flex flex-col gap-3 border-b border-border/70 pb-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <span className="section-label">Studio numeri</span>
+              <h2 className="mt-4 max-w-xl font-serif text-3xl font-semibold tracking-tight text-card-foreground sm:text-4xl">
+                Una presenza elegante, costruita con precisione e fiducia.
+              </h2>
             </div>
-          ))}
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Ogni trattamento nasce da consulenza, studio del viso e una tecnica calibrata per un effetto raffinato.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="rounded-[1.6rem] border border-border/80 bg-white/55 px-4 py-5 shadow-[0_14px_30px_-24px_rgba(33,24,19,0.45)] backdrop-blur-sm"
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                  transition: `opacity 0.65s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, transform 0.65s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s`,
+                }}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="font-serif text-5xl font-semibold leading-none text-card-foreground sm:text-6xl">
+                    {stat.value}
+                  </div>
+                  <span className="rounded-full border border-primary/14 bg-primary/6 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
+                    Brow & Lip
+                  </span>
+                </div>
+                <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

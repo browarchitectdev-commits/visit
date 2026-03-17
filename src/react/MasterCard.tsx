@@ -11,6 +11,7 @@ interface MasterCardProps {
   instagram?: string;
   telegram?: string;
   index?: number;
+  featured?: boolean;
 }
 
 export function MasterCard({
@@ -21,67 +22,76 @@ export function MasterCard({
   photo,
   instagram,
   telegram,
-  index = 0,
+  featured = false,
 }: MasterCardProps) {
   const [isHovered, setIsHovered] = React.useState(false);
 
   return (
     <article
-      className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card/90"
+      className={`group shine-border relative overflow-hidden rounded-[1.75rem] border border-white/18 bg-card/15 sm:rounded-[2rem] ${
+        featured ? 'sm:col-span-2 lg:col-span-2 lg:grid lg:grid-cols-[1.05fr_0.95fr]' : ''
+      }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
         boxShadow: isHovered
-          ? '0 12px 32px -14px rgba(163,87,100,0.16), 0 6px 16px -8px rgba(0,0,0,0.08)'
-          : '0 1px 6px -3px rgba(0,0,0,0.06)',
-        transition: 'box-shadow 0.5s ease, transform 0.5s ease',
-        transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
+          ? '0 30px 58px -32px rgba(44,27,18,0.56)'
+          : '0 18px 42px -34px rgba(44,27,18,0.44)',
+        transition: 'box-shadow 0.45s ease, transform 0.45s ease',
+        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
       }}
     >
-      {/* Photo fills the full card */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+      <div className={`relative overflow-hidden bg-muted ${featured ? 'aspect-[4/4.4] sm:aspect-[4/3] lg:aspect-auto lg:h-full' : 'aspect-[3/4]'}`}>
         <img
           src={photo}
           alt={name}
           className="h-full w-full object-cover transition-transform duration-700"
-          style={{ transform: isHovered ? 'scale(1.03)' : 'scale(1)' }}
+          style={{ transform: isHovered ? 'scale(1.04)' : 'scale(1)' }}
         />
-        {/* Base gradient always visible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,7,0.05)_0%,rgba(10,8,7,0.78)_100%)]" />
 
-        {/* Hover overlay — slides up bio + social */}
-        <div
-          className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 transition-all duration-500"
-          style={{
-            transform: isHovered ? 'translateY(0)' : 'translateY(0)',
-          }}
-        >
-          {/* Name & position — always visible */}
-          <div>
-            <h3 className="font-serif text-2xl font-bold text-white leading-tight">{name}</h3>
-            <p className="mt-1 text-sm font-medium text-primary-foreground/80">{position}</p>
-            <p className="text-xs text-white/50 mt-0.5">Опыт: {experience} {experience === 1 ? 'год' : experience < 5 ? 'года' : 'лет'}</p>
+        <div className="absolute left-4 top-4 rounded-full border border-white/18 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
+          {featured ? 'Founder energy' : 'Team Brow & Lip'}
+        </div>
+
+        {featured && (
+          <div className="absolute bottom-3 left-3 right-3 rounded-[1.2rem] border border-white/14 bg-black/20 px-3 py-2.5 text-white backdrop-blur-md sm:bottom-4 sm:left-4 sm:right-4 sm:rounded-[1.35rem] sm:px-4 sm:py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Signature presence</p>
+            <p className="mt-1 text-sm font-medium">Precisione estetica, mano sicura, tono naturale.</p>
+          </div>
+        )}
+      </div>
+
+      <div className={`flex flex-col justify-end p-4 sm:p-5 ${featured ? 'bg-[linear-gradient(180deg,rgba(255,251,247,0.94),rgba(247,238,232,0.86))] lg:p-6' : ''}`}>
+        <div className={`rounded-[1.35rem] border ${featured ? 'border-border/70 bg-white/54' : 'border-white/12 bg-black/18'} p-3.5 backdrop-blur-md sm:rounded-[1.6rem] sm:p-4`}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className={`font-serif text-[1.8rem] font-semibold leading-tight sm:text-3xl ${featured ? 'text-card-foreground' : 'text-white'}`}>{name}</h3>
+              <p className={`mt-1 text-sm font-medium ${featured ? 'text-muted-foreground' : 'text-white/76'}`}>{position}</p>
+            </div>
+            <div className="text-right">
+              <p className={`text-[10px] uppercase tracking-[0.24em] ${featured ? 'text-muted-foreground' : 'text-white/42'}`}>Esperienza</p>
+              <p className="mt-1 font-serif text-2xl font-semibold text-[#d09b72]">{experience}+</p>
+            </div>
           </div>
 
-          {/* Bio — slides in on hover */}
           <p
-            className="text-sm leading-relaxed text-white/80 transition-all duration-500"
+            className={`mt-3 text-sm leading-relaxed transition-all duration-500 ${featured ? 'text-card-foreground/78' : 'text-white/76'}`}
             style={{
-              maxHeight: isHovered ? '80px' : '0px',
-              opacity: isHovered ? 1 : 0,
+              maxHeight: isHovered || featured ? '112px' : '0px',
+              opacity: isHovered || featured ? 1 : 0,
               overflow: 'hidden',
             }}
           >
             {bio}
           </p>
 
-          {/* Social links — appear on hover */}
           {(instagram || telegram) && (
             <div
-              className="flex gap-2 transition-all duration-500"
+              className="mt-3 flex gap-2 transition-all duration-500"
               style={{
-                opacity: isHovered ? 1 : 0,
-                transform: isHovered ? 'translateY(0)' : 'translateY(8px)',
+                opacity: isHovered || featured ? 1 : 0,
+                transform: isHovered || featured ? 'translateY(0)' : 'translateY(8px)',
               }}
             >
               {instagram && (
@@ -89,7 +99,9 @@ export function MasterCard({
                   href={instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex size-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                  className={`inline-flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors sm:size-9 ${
+                    featured ? 'bg-foreground text-background hover:opacity-88' : 'bg-white/12 text-white hover:bg-white/24'
+                  }`}
                   aria-label="Instagram"
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
@@ -102,7 +114,9 @@ export function MasterCard({
                   href={telegram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex size-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                  className={`inline-flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors sm:size-9 ${
+                    featured ? 'bg-foreground text-background hover:opacity-88' : 'bg-white/12 text-white hover:bg-white/24'
+                  }`}
                   aria-label="Telegram"
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">

@@ -4,19 +4,16 @@ import React from 'react';
 
 const features = [
   {
-    title: 'Сертифицированные мастера',
-    description:
-      'Наши специалисты прошли обучение у лучших тренеров индустрии и регулярно повышают квалификацию.',
+    title: 'Artiste certificate',
+    description: 'Formazione continua, occhio estetico e attenzione assoluta alla naturalezza del risultato.',
   },
   {
-    title: 'Премиальные пигменты',
-    description:
-      'Работаем только с органическими пигментами ведущих мировых брендов, которые не меняют цвет со временем.',
+    title: 'Pigmenti selezionati',
+    description: 'Texture stabili e tonalita pensate per valorizzare incarnato, labbra e sopracciglia.',
   },
   {
-    title: 'Полная стерильность',
-    description:
-      'Одноразовые расходники, автоклав и строгое соблюдение санитарных норм для вашей безопасности.',
+    title: 'Igiene rigorosa',
+    description: 'Materiali monouso, procedure controllate e ambiente riservato per un’esperienza impeccabile.',
   },
 ];
 
@@ -35,7 +32,10 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
       },
       { threshold: 0.1 }
     );
@@ -44,96 +44,71 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
   }, []);
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="px-4 py-10 sm:px-6 sm:py-12 lg:px-8"
-    >
+    <section id="about" ref={sectionRef} className="section-shell px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       <div className="mx-auto max-w-7xl">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          {/* Image with decorative frame */}
+        <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12">
           <div
             className="relative"
             style={{
               opacity: visible ? 1 : 0,
               transform: visible ? 'translateX(0)' : 'translateX(-32px)',
-              transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s',
+              transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.08s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.08s',
             }}
           >
-            {/* Offset decorative border */}
-            <div className="absolute -bottom-4 -right-4 h-full w-full rounded-3xl border-2 border-primary/20" />
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted shadow-xl shadow-black/10">
-              <img
-                src={image}
-                alt="О нашей студии"
-                className="h-full w-full object-cover"
-              />
-              {/* Subtle gradient overlay on lower-left (decorative) */}
-              <div className="absolute bottom-0 left-0 h-1/3 w-2/3 bg-gradient-to-tr from-primary/15 to-transparent" />
+            <div className="absolute -left-3 top-8 h-[68%] w-[88%] rounded-[2.25rem] border border-primary/18" />
+            <div className="editorial-panel relative overflow-hidden rounded-[2.25rem] p-3">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-muted">
+                <img src={image} alt="Studio Brow & Lip" className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(19,12,9,0.06)_0%,rgba(19,12,9,0.38)_100%)]" />
+              </div>
             </div>
-            {/* Floating accent badge */}
-            <div className="absolute -left-5 top-12 flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-lg shadow-black/8">
-              <span className="text-2xl font-serif font-bold text-primary">8+</span>
-              <span className="max-w-[90px] text-xs leading-tight text-muted-foreground">лет опыта в индустрии</span>
+
+            <div className="editorial-panel absolute -bottom-5 right-0 max-w-[15rem] rounded-[1.6rem] px-4 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Approccio su misura</p>
+              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">8+ anni</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                di esperienza nel valorizzare lineamenti, forma e colore con delicatezza.
+              </p>
             </div>
           </div>
 
-          {/* Content */}
           <div
             style={{
               opacity: visible ? 1 : 0,
               transform: visible ? 'translateX(0)' : 'translateX(32px)',
-              transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.22s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.22s',
+              transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.18s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.18s',
             }}
           >
-            <span className="section-label">О нашей студии</span>
-            <h2 className="mt-5 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            <span className="section-label">Lo studio</span>
+            <h2 className="mt-4 max-w-xl font-serif text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
               {title}
             </h2>
-            <div className="mt-6 space-y-4">
+            <div className="mt-5 space-y-4">
               {description.map((paragraph, idx) => (
-                <p
-                  key={idx}
-                  className="text-base leading-relaxed text-muted-foreground lg:text-lg"
-                >
+                <p key={idx} className="max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
                   {paragraph}
                 </p>
               ))}
             </div>
 
-            <div className="mt-10 flex flex-col gap-5">
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
               {features.map((feature, fi) => (
                 <div
                   key={feature.title}
-                  className="flex gap-4"
+                  className="editorial-panel rounded-[1.5rem] p-4"
                   style={{
                     opacity: visible ? 1 : 0,
                     transform: visible ? 'translateY(0)' : 'translateY(16px)',
-                    transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${0.4 + fi * 0.1}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${0.4 + fi * 0.1}s`,
+                    transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${0.34 + fi * 0.1}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${0.34 + fi * 0.1}s`,
                   }}
                 >
-                  <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-primary"
-                      aria-hidden="true"
-                    >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{feature.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </div>
+                  <h3 className="mt-4 font-semibold text-card-foreground">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -143,4 +118,3 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
     </section>
   );
 }
-

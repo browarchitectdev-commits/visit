@@ -13,14 +13,12 @@ import type { CollectionEntry } from 'astro:content';
 import type { Service } from '@/react/ServicesList';
 import type { Master } from '@/react/MastersList';
 
-// Получаем данные из Content Collections
 const servicesCollection = await getCollection('services');
 const mastersCollection = await getCollection('masters');
 const galleryCollection = await getCollection('gallery');
 const socialCollection = await getCollection('social');
 const settingsCollection = await getCollection('settings');
 
-// Преобразуем в подходящие типы
 const services: Service[] = servicesCollection.map((s: any) => ({
   id: s.id,
   data: {
@@ -49,12 +47,10 @@ const masters: Master[] = mastersCollection.map((m: any) => ({
   },
 }));
 
-// Сортируем по порядку
 const sortedServices = services.sort((a: Service, b: Service) => (a.data.order || 0) - (b.data.order || 0));
 const sortedMasters = masters.sort((a: Master, b: Master) => (a.data.order || 0) - (b.data.order || 0));
 const sortedGallery = galleryCollection.sort((a: any, b: any) => (a.data.order || 0) - (b.data.order || 0));
 
-// Готовим данные галереи
 const galleryImages = sortedGallery.map((item: any) => ({
   src: typeof item.data.imageAfter === 'string' ? item.data.imageAfter : item.data.imageAfter.src,
   alt: item.data.title,
@@ -139,7 +135,7 @@ const socialFeedRaw = socialCollection
     return {
       id: entry.id,
       platform: entry.data.platform,
-      title: entry.data.title || 'Публикация',
+      title: entry.data.title || 'Post',
       caption: entry.data.caption,
       postUrl: entry.data.postUrl,
       embedId,
@@ -164,68 +160,65 @@ const socialFeed: SocialFeedItem[] = socialFeedRaw
     embedId: post.embedId!,
   }));
 
-// Статистика
 const stats = [
-  { value: '500+', label: 'Довольных клиентов' },
-  { value: '8+', label: 'Лет опыта' },
-  { value: '100%', label: 'Стерильность' },
-  { value: '24/7', label: 'В социальных сетях' },
+  { value: '500+', label: 'Clienti soddisfatte' },
+  { value: '8+', label: 'Anni di esperienza' },
+  { value: '100%', label: 'Standard di igiene' },
+  { value: '24/7', label: 'Presenza social' },
 ];
 
-const pageTitle = 'Brow & Lip Studio - Перманентный макияж';
-const pageDescription = 'Профессиональные услуги перманентного макияжа бровей и губ от сертифицированных мастеров. Естественная красота надолго.';
+const pageTitle = 'Brow & Lip Studio';
+const pageDescription = 'Trucco permanente per sopracciglia e labbra in Italia: consulenza su misura, tecnica raffinata e risultato elegante.';
 
-const heroTitle = 'Естественная красота надолго';
-const heroDescription = 'Перманентный макияж бровей и губ от сертифицированных мастеров. Подчёркиваем вашу природную красоту с помощью авторских техник и премиальных пигментов.';
+const heroTitle = 'Bellezza permanente con un’eleganza naturale';
+const heroDescription = 'Trucco permanente per sopracciglia e labbra pensato per valorizzare il viso con equilibrio, delicatezza e una presenza sempre raffinata.';
 
-const aboutTitle = 'Красота, которой вы доверяете';
+const aboutTitle = 'Uno studio pensato per chi cerca precisione, gusto e discrezione';
 const aboutDescription = [
-  'Brow & Lip Studio — это пространство, созданное для тех, кто хочет подчеркнуть свою природную красоту. Мы специализируемся на перманентном макияже бровей и губ, используя современные техники, которые дарят максимально естественный результат.',
-  'Каждая процедура начинается с детальной консультации и построения индивидуальной формы, чтобы результат идеально подходил именно вам.',
+  'Brow & Lip Studio e uno spazio dedicato al trucco permanente di sopracciglia e labbra, dove tecnica e sensibilita estetica lavorano insieme per creare risultati armoniosi.',
+  'Ogni trattamento inizia da un confronto attento: analizziamo lineamenti, proporzioni e desideri della cliente per definire un look che resti naturale e sofisticato nel tempo.',
 ];
 
-// Development mode indicator
 const isDev = import.meta.env.DEV;
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
-  <!-- Development Admin Panel Link -->
+<Layout title={pageTitle} description={pageDescription} lang="it">
   {isDev && (
     <div class="fixed bottom-4 right-4 z-50">
       <a
         href="/admin"
-        class="flex items-center gap-2 rounded-full bg-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-purple-700 hover:scale-105"
-        title="Открыть админ-панель TinaCMS"
+        class="flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 hover:bg-neutral-800"
+        title="Apri il pannello admin TinaCMS"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
         </svg>
-        <span>Админка</span>
+        <span>Admin</span>
       </a>
     </div>
   )}
 
-  {/* Header */}
   <SiteHeader client:load />
 
-  {/* Hero Section */}
   <HeroSection
     client:visible
     title={heroTitle}
     description={heroDescription}
     backgroundImage="/images/hero.jpg"
-    ctaText="Записаться на консультацию"
+    ctaText="Prenota una consulenza"
     ctaHref="#booking"
     secondaryCTA={{
-      text: 'Наши услуги',
+      text: 'Scopri i trattamenti',
       href: '#services',
     }}
   />
 
-  {/* Stats Section */}
   <StatsSection client:visible stats={stats} />
 
-  {/* About Section */}
+  <div class="pointer-events-none relative mx-auto -mt-2 h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
+    <div class="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+  </div>
+
   <AboutSection
     client:visible
     image="/images/about.jpg"
@@ -233,40 +226,43 @@ const isDev = import.meta.env.DEV;
     description={aboutDescription}
   />
 
-  {/* Services Section */}
   <ServicesList client:visible services={sortedServices} />
 
-  {/* Masters Section */}
+  <div class="pointer-events-none relative mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
+    <div class="mx-auto h-full w-full bg-[radial-gradient(circle_at_center,rgba(224,188,145,0.16),transparent_60%)]"></div>
+  </div>
+
   <MastersList client:visible masters={sortedMasters} />
 
-  {/* Gallery Section */}
+  <div class="pointer-events-none relative mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
+    <div class="h-px w-full bg-gradient-to-r from-transparent via-[#d09b72]/40 to-transparent"></div>
+  </div>
+
   {galleryImages.length > 0 && <GallerySection client:visible images={galleryImages} />}
 
-  {/* Social Section */}
-  <section class="relative overflow-hidden bg-secondary/20 py-10 sm:py-12">
-    {/* Decorative background orbs */}
-    <div class="pointer-events-none absolute -top-16 right-0 h-72 w-72 rounded-full bg-primary/8 blur-[80px] animate-float-slow" aria-hidden="true"></div>
-    <div class="pointer-events-none absolute -bottom-16 left-0 h-64 w-64 rounded-full bg-[#1877f2]/6 blur-[80px] animate-float-medium" aria-hidden="true"></div>
+  <section class="relative overflow-hidden bg-secondary/30 py-8 sm:py-10 lg:py-12">
+    <div class="pointer-events-none absolute -top-16 right-0 h-72 w-72 rounded-full bg-primary/10 blur-[80px] animate-float-slow" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -bottom-16 left-0 h-64 w-64 rounded-full bg-[#e0bc91]/12 blur-[80px] animate-float-medium" aria-hidden="true"></div>
 
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      {/* Section Header */}
-      <div class="mx-auto max-w-2xl text-center" data-reveal>
-        <span class="section-label">Соцсети</span>
-        <h2 class="mt-5 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Мы в социальных сетях
-        </h2>
-        <p class="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Следите за свежими работами, видео и новостями студии
+      <div class="mx-auto grid max-w-5xl gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end" data-reveal>
+        <div>
+          <span class="section-label">Social presence</span>
+          <h2 class="mt-5 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Segui lo studio tra lavori, video e momenti reali.
+          </h2>
+        </div>
+        <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          Una selezione curata di contenuti per raccontare risultati, atmosfera e dettagli del nostro approccio.
         </p>
       </div>
 
-      {/* Profile cards */}
-      <div class="mx-auto mt-6 grid max-w-3xl gap-3 sm:grid-cols-3">
+      <div class="mx-auto mt-6 grid max-w-4xl gap-3 sm:grid-cols-3">
         <a
           href={socialProfiles.instagram.profileUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex items-center gap-3.5 rounded-2xl border border-border/70 bg-card/90 px-4 py-3.5 shadow-[0_1px_6px_-3px_rgba(0,0,0,0.07)] transition-all duration-300 hover:shadow-[0_8px_18px_-16px_rgba(0,0,0,0.12)] hover:border-primary/20"
+          class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5"
           data-reveal data-delay="100"
         >
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888] text-white shadow-sm">
@@ -278,14 +274,13 @@ const isDev = import.meta.env.DEV;
             <p class="text-sm font-semibold text-foreground">Instagram</p>
             <p class="truncate text-xs text-muted-foreground">@{socialProfiles.instagram.username}</p>
           </div>
-          <svg class="ml-auto h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
         </a>
 
         <a
           href={socialProfiles.tiktok.profileUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex items-center gap-3.5 rounded-2xl border border-border/70 bg-card/90 px-4 py-3.5 shadow-[0_1px_6px_-3px_rgba(0,0,0,0.07)] transition-all duration-300 hover:shadow-[0_8px_18px_-16px_rgba(0,0,0,0.12)] hover:border-border"
+          class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5"
           data-reveal data-delay="200"
         >
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black text-white shadow-sm">
@@ -297,14 +292,13 @@ const isDev = import.meta.env.DEV;
             <p class="text-sm font-semibold text-foreground">TikTok</p>
             <p class="truncate text-xs text-muted-foreground">@{socialProfiles.tiktok.username}</p>
           </div>
-          <svg class="ml-auto h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
         </a>
 
         <a
           href={socialProfiles.facebook.pageUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex items-center gap-3.5 rounded-2xl border border-border/70 bg-card/90 px-4 py-3.5 shadow-[0_1px_6px_-3px_rgba(0,0,0,0.07)] transition-all duration-300 hover:shadow-[0_8px_18px_-16px_rgba(0,0,0,0.12)] hover:border-[#1877f2]/20"
+          class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5"
           data-reveal data-delay="300"
         >
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1877f2] text-white shadow-sm">
@@ -316,16 +310,14 @@ const isDev = import.meta.env.DEV;
             <p class="text-sm font-semibold text-foreground">Facebook</p>
             <p class="truncate text-xs text-muted-foreground">{socialProfiles.facebook.pageName}</p>
           </div>
-          <svg class="ml-auto h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
         </a>
       </div>
 
-      {/* Post feed */}
       {socialFeed.length > 0 && (
         <div class="mx-auto mt-6 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {socialFeed.map((post, pi) => (
             <article
-              class="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-[0_1px_6px_-3px_rgba(0,0,0,0.07)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-16px_rgba(0,0,0,0.14)]"
+              class="editorial-panel overflow-hidden rounded-[1.7rem] transition-all duration-500 hover:-translate-y-0.5"
               data-reveal
               data-delay={String(pi * 100 + 100)}
             >
@@ -342,7 +334,6 @@ const isDev = import.meta.env.DEV;
                   class="w-full"
                   style="min-height: 390px; border: 0;"
                   loading="lazy"
-                  scrolling="no"
                   allowtransparency={true}
                   title={post.title}
                   referrerpolicy="no-referrer"
@@ -375,14 +366,14 @@ const isDev = import.meta.env.DEV;
 
               {(post.caption || post.postUrl) && (
                 <div class="flex items-center justify-between gap-2 border-t border-border/60 px-4 py-2.5">
-                  <p class="line-clamp-1 text-xs text-muted-foreground">{post.caption || 'Публикация студии'}</p>
+                  <p class="line-clamp-1 text-xs text-muted-foreground">{post.caption || 'Contenuto dallo studio'}</p>
                   <a
                     href={post.postUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="shrink-0 text-xs font-semibold text-primary transition-colors hover:text-primary/70"
                   >
-                    Открыть ↗
+                    Apri ↗
                   </a>
                 </div>
               )}
@@ -391,13 +382,12 @@ const isDev = import.meta.env.DEV;
         </div>
       )}
 
-      {/* CTA */}
       <div class="mt-6 text-center" data-reveal data-delay="200">
         <a
           href="/social"
-          class="btn-shimmer inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-semibold text-background shadow-sm transition-all duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="btn-shimmer inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-semibold text-background transition-all duration-300 hover:opacity-90"
         >
-          Все публикации
+          Tutti i contenuti
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
@@ -407,6 +397,5 @@ const isDev = import.meta.env.DEV;
     </div>
   </section>
 
-  {/* Footer */}
   <SiteFooter client:load />
 </Layout>

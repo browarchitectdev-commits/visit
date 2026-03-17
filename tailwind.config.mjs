@@ -23,7 +23,7 @@ export default {
         ring: 'var(--ring)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['Manrope', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         serif: ['Cormorant Garamond', 'Georgia', 'serif'],
         heading: ['Cormorant Garamond', 'serif'],
       },
