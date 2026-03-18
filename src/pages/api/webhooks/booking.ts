@@ -11,6 +11,13 @@ type CalBookingPayload = {
   };
 };
 
+export const GET: APIRoute = async () => {
+  return new Response(JSON.stringify({ message: 'Booking webhook is ready' }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const payload = (await request.json()) as CalBookingPayload;
