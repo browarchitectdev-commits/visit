@@ -1,0 +1,16 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="og" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d946ef;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#og)"/>
+  <text x="50%" y="45%" text-anchor="middle" fill="white" font-size="64" font-family="Arial, sans-serif" font-weight="bold">
+    Beauty Salon
+  </text>
+  <text x="50%" y="60%" text-anchor="middle" fill="white" font-size="32" font-family="Arial, sans-serif" opacity="0.9">
+    Профессиональный салон красоты
+  </text>
+</svg>
