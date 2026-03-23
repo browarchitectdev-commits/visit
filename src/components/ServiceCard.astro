@@ -1,66 +1,39 @@
 ---
-/**
- * ServiceCard Component
- * 
- * Карточка услуги для отображения на странице /services
- * 
- * Принципы:
- * - Использует типизированные данные из Content Collection
- * - Оптимизирует изображения через <Image /> компонент
- * - Следует Tailwind CSS utility-first подходу
- * - Семантичная HTML5 разметка (article)
- */
-
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  // Типизированный объект услуги из Content Collection
-  // CollectionEntry автоматически генерируется Astro из config.ts
   service: CollectionEntry<'services'>;
 }
 
 const { service } = Astro.props;
-
-// Деструктуризация данных для удобства
 const { name, price, duration, description, image } = service.data;
 
-// Форматирование цены с разделителем тысяч
 const formattedPrice = price.toLocaleString('ru-RU');
 
-// Форматирование длительности (60 мин → 1 ч / 90 мин → 1 ч 30 мин)
 const formatDuration = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  
+
   if (hours === 0) return `${mins} мин`;
   if (mins === 0) return `${hours} ч`;
   return `${hours} ч ${mins} мин`;
 };
 ---
 
-<!-- 
-  Семантичный <article> для карточки услуги
-  Адаптивная сетка через Tailwind Grid
--->
 <article
-  class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+  class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
   role="article"
   aria-label={`Услуга: ${name}`}
 >
-  <!-- Изображение с оптимизацией -->
   <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
-    <Image
+    <img
       src={image}
       alt={`Изображение услуги: ${name}`}
       class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-      widths={[400, 600, 800]}
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       loading="lazy"
       decoding="async"
     />
-    
-    <!-- Бейдж с длительностью (поверх изображения) -->
+
     <div
       class="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 backdrop-blur-sm"
     >
@@ -82,30 +55,24 @@ const formatDuration = (minutes: number): string => {
       <span>{formatDuration(duration)}</span>
     </div>
   </div>
-  
-  <!-- Контентная часть карточки -->
+
   <div class="flex flex-1 flex-col p-6">
-    <!-- Заголовок услуги -->
     <h3 class="mb-3 text-xl font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
       {name}
     </h3>
-    
-    <!-- Описание с ограничением высоты -->
+
     <p class="mb-4 flex-1 text-sm leading-relaxed text-gray-600 line-clamp-3">
       {description}
     </p>
-    
-    <!-- Футер карточки: Цена + CTA -->
+
     <div class="flex items-center justify-between border-t border-gray-100 pt-4">
-      <!-- Цена -->
       <div class="flex flex-col">
         <span class="text-sm font-medium text-gray-500">От</span>
         <span class="text-2xl font-bold text-gray-900">
           {formattedPrice} ₽
         </span>
       </div>
-      
-      <!-- Кнопка "Записаться" (можно вынести в отдельный компонент Button.astro) -->
+
       <button
         type="button"
         class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"

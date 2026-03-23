@@ -1,67 +1,41 @@
 ---
-/**
- * MasterCard Component
- * 
- * Карточка мастера для отображения на странице /masters
- * 
- * Принципы:
- * - Использует типизированные данные из Content Collection
- * - Оптимизирует изображения через <Image /> компонент
- * - Следует Tailwind CSS utility-first подходу
- * - Семантичная HTML5 разметка (article)
- */
-
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  // Типизированный объект мастера из Content Collection
-  // CollectionEntry автоматически генерируется Astro из config.ts
   master: CollectionEntry<'masters'>;
 }
 
 const { master } = Astro.props;
-
-// Деструктуризация данных для удобства
 const { name, position, experience, bio, photo, instagram, telegram } = master.data;
 
-// Форматирование опыта работы
 const formatExperience = (years: number): string => {
   const lastDigit = years % 10;
   const lastTwoDigits = years % 100;
-  
+
   if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
     return `${years} лет`;
   }
-  
+
   if (lastDigit === 1) return `${years} год`;
   if (lastDigit >= 2 && lastDigit <= 4) return `${years} года`;
   return `${years} лет`;
 };
 ---
 
-<!-- 
-  Семантичный <article> для карточки мастера
-  Адаптивная сетка через Tailwind Grid
--->
 <article
-  class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+  class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
   role="article"
   aria-label={`Мастер: ${name}`}
 >
-  <!-- Изображение с оптимизацией -->
   <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
-    <Image
+    <img
       src={photo}
       alt={`Фотография мастера: ${name}`}
       class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-      widths={[400, 600, 800]}
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       loading="lazy"
       decoding="async"
     />
-    
-    <!-- Бейдж с опытом (поверх изображения) -->
+
     <div
       class="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 backdrop-blur-sm"
     >
@@ -83,27 +57,21 @@ const formatExperience = (years: number): string => {
       <span>{formatExperience(experience)}</span>
     </div>
   </div>
-  
-  <!-- Контентная часть карточки -->
+
   <div class="flex flex-1 flex-col p-6">
-    <!-- Имя мастера -->
     <h3 class="mb-1 text-xl font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
       {name}
     </h3>
-    
-    <!-- Должность -->
+
     <p class="mb-4 text-sm font-medium text-blue-600">
       {position}
     </p>
-    
-    <!-- Биография с ограничением высоты -->
+
     <p class="mb-4 flex-1 text-sm leading-relaxed text-gray-600 line-clamp-4">
       {bio}
     </p>
-    
-    <!-- Футер карточки: Социальные сети + CTA -->
+
     <div class="flex items-center justify-between border-t border-gray-100 pt-4">
-      <!-- Социальные сети -->
       <div class="flex gap-2">
         {instagram && (
           <a
@@ -127,7 +95,7 @@ const formatExperience = (years: number): string => {
             </svg>
           </a>
         )}
-        
+
         {telegram && (
           <a
             href={telegram}
@@ -149,8 +117,7 @@ const formatExperience = (years: number): string => {
           </a>
         )}
       </div>
-      
-      <!-- Кнопка "Записаться" -->
+
       <button
         type="button"
         class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"

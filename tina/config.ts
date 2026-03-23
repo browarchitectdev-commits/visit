@@ -1,4 +1,5 @@
-import { defineConfig } from 'tinacms';
+import { defineConfig, TinaMediaStore } from 'tinacms';
+import type { MediaUploadOptions, TinaCMS } from 'tinacms';
 
 // Конфигурация TinaCMS
 // Все коллекции синхронизированы с src/content/config.ts
@@ -8,6 +9,39 @@ const isTinaDevCommand = argv.includes('dev');
 const isLocalOnly = process.env.TINA_LOCAL_ONLY === 'true' && isTinaDevCommand;
 const tinaClientId = isLocalOnly ? undefined : process.env.TINA_CLIENT_ID;
 const tinaToken = isLocalOnly ? undefined : process.env.TINA_TOKEN;
+
+const sanitizeMediaBasename = (filename: string) => {
+  const basename = filename.replace(/\.[^.]+$/, '');
+  return basename
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48) || 'image';
+};
+
+const buildUniqueMediaName = (filename: string, index: number) => {
+  const extensionMatch = filename.match(/(\.[^.]+)$/);
+  const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+  const safeBase = sanitizeMediaBasename(filename);
+  const timestamp = Date.now() + index;
+  const randomSuffix = Math.random().toString(36).slice(2, 8);
+
+  return `${timestamp}-${randomSuffix}-${safeBase}${extension}`;
+};
+
+class UniqueFilenameMediaStore extends TinaMediaStore {
+  async persist(files: MediaUploadOptions[]) {
+    const renamedFiles = files.map((item, index) => ({
+      ...item,
+      file: new File([item.file], buildUniqueMediaName(item.file.name, index), {
+        type: item.file.type,
+        lastModified: item.file.lastModified,
+      }),
+    }));
+
+    return super.persist(renamedFiles);
+  }
+}
 
 export default defineConfig({
   // Git-based хранилище
@@ -19,6 +53,10 @@ export default defineConfig({
   build: {
     outputFolder: 'admin',
     publicFolder: 'public',
+  },
+  cmsCallback: (cms: TinaCMS) => {
+    cms.media.store = new UniqueFilenameMediaStore(cms);
+    return cms;
   },
 
   // Конфигурация CMSMedia

@@ -2,8 +2,8 @@
   "title": "Перманентный макияж бровей - Натуральный эффект",
   "category": "brouws",
   "description": "Волосковая техника перманентного макияжа бровей. Использованы европейские пигменты. Результат сохраняется до 2 лет.",
-  "imageBefore": "./brows-before.jpg",
-  "imageAfter": "./brows-after.jpg",
+  "imageBefore": "/uploads/image6.jpg",
+  "imageAfter": "/uploads/unnamed (1).jpg",
   "masterName": "Анна Петрова",
   "order": 1,
   "isActive": true

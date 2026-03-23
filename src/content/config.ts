@@ -14,7 +14,7 @@ import { defineCollection, z } from 'astro:content';
  */
 const servicesCollection = defineCollection({
   type: 'data', // JSON-файлы (можно также использовать 'content' для Markdown)
-  schema: ({ image }) => z.object({
+  schema: z.object({
     // Название услуги (например, "Перманентный макияж бровей")
     name: z.string()
       .min(3, 'Название должно содержать минимум 3 символа')
@@ -35,8 +35,10 @@ const servicesCollection = defineCollection({
       .min(20, 'Описание должно быть информативным')
       .max(1000, 'Описание слишком длинное'),
     
-    // Изображение услуги (оптимизируется через astro:assets)
-    image: image(),
+    // Изображение услуги:
+    // - локальный файл в коллекции (оптимизируется через astro:assets)
+    // - либо строковый путь из public/uploads (из TinaCMS)
+    image: z.string().min(1, 'Укажите изображение'),
     
     // Порядок отображения на странице (опционально)
     order: z.number().int().optional(),
@@ -52,7 +54,7 @@ const servicesCollection = defineCollection({
  */
 const mastersCollection = defineCollection({
   type: 'data',
-  schema: ({ image }) => z.object({
+  schema: z.object({
     // Полное имя мастера
     name: z.string()
       .min(2, 'Имя слишком короткое')
@@ -73,8 +75,8 @@ const mastersCollection = defineCollection({
       .min(50, 'Биография должна быть подробной')
       .max(2000, 'Биография слишком длинная'),
     
-    // Фотография мастера
-    photo: image(),
+    // Фотография мастера (локальный asset или строковый путь из public/uploads)
+    photo: z.string().min(1, 'Укажите фотографию'),
     
     // Социальные сети (опционально)
     instagram: z.string().url().optional(),
@@ -94,7 +96,7 @@ const mastersCollection = defineCollection({
  */
 const galleryCollection = defineCollection({
   type: 'data',
-  schema: ({ image }) => z.object({
+  schema: z.object({
     // Название работы (например, "Перманентный макияж бровей")
     title: z.string()
       .min(3, 'Название должно содержать минимум 3 символа')
@@ -110,11 +112,11 @@ const galleryCollection = defineCollection({
       .min(10, 'Описание должно быть информативным')
       .max(500, 'Описание слишком длинное'),
     
-    // Фото "до"
-    imageBefore: image(),
+    // Фото "до" (локальный asset или строковый путь из public/uploads)
+    imageBefore: z.string().min(1, 'Укажите фото ДО'),
     
-    // Фото "после"
-    imageAfter: image(),
+    // Фото "после" (локальный asset или строковый путь из public/uploads)
+    imageAfter: z.string().min(1, 'Укажите фото ПОСЛЕ'),
     
     // Имя мастера (опционально)
     masterName: z.string().optional(),

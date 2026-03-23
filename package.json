@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "tinacms build --datalayer-port 9001 && astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "tina": "tinacms dev -c \"npm run dev\""

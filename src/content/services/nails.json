@@ -3,7 +3,7 @@
   "price": 1500,
   "duration": 120,
   "description": "Здесь подробное описание услугиЗдесь подробное описание услугиЗдесь подробное описание услуги",
-  "image": "./service-image.png",
+  "image": "/uploads/unnamed (1).jpg",
   "order": 2,
   "isActive": true
 }

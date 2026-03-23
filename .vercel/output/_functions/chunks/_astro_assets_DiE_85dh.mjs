@@ -1,6 +1,6 @@
 import { j as joinPaths, i as isRemotePath } from './path_tbLlI_c1.mjs';
 import { i as isRemoteAllowed, t as typeHandlers, a as types } from './index_BL6Pqka4.mjs';
-import { A as AstroError, ae as ExpectedImage, af as LocalImageUsedWrongly, ag as MissingImageDimension, ah as UnsupportedImageFormat, ai as IncompatibleDescriptorOptions, aj as UnsupportedImageConversion, ak as toStyleString, al as NoImageMetadata, am as FailedToFetchRemoteImageDimensions, an as RemoteImageNotAllowed, ao as ExpectedImageOptions, ap as ExpectedNotESMImage, aq as InvalidImageService, f as createAstro, c as createComponent, ar as ImageMissingAlt, m as maybeRenderHead, e as addAttribute, as as spreadAttributes, b as renderTemplate, at as ExperimentalFontsNotEnabled, au as FontFamilyNotFound, u as unescapeHTML } from './astro/server_D2pAwpJp.mjs';
+import { A as AstroError, ae as ExpectedImage, af as LocalImageUsedWrongly, ag as MissingImageDimension, ah as UnsupportedImageFormat, ai as IncompatibleDescriptorOptions, aj as UnsupportedImageConversion, ak as toStyleString, al as NoImageMetadata, am as FailedToFetchRemoteImageDimensions, an as RemoteImageNotAllowed, ao as ExpectedImageOptions, ap as ExpectedNotESMImage, aq as InvalidImageService, d as createAstro, c as createComponent, ar as ImageMissingAlt, m as maybeRenderHead, b as addAttribute, as as spreadAttributes, a as renderTemplate, at as ExperimentalFontsNotEnabled, au as FontFamilyNotFound, u as unescapeHTML } from './astro/server_Cfxm_v33.mjs';
 import { D as DEFAULT_OUTPUT_FORMAT, a as VALID_SUPPORTED_FORMATS, b as DEFAULT_HASH_PROPS } from './consts_Bd-1c2lz.mjs';
 import * as mime from 'mrmime';
 import 'clsx';
@@ -510,7 +510,7 @@ async function getConfiguredImageService() {
   if (!globalThis?.astroAsset?.imageService) {
     const { default: service } = await import(
       // @ts-expect-error
-      './sharp_BmabL0ka.mjs'
+      './sharp_C5aRG0kq.mjs'
     ).catch((e) => {
       const error = new AstroError(InvalidImageService);
       error.cause = e;
@@ -843,11 +843,10 @@ const assetQueryParams = undefined;
 
 const _astro_assets = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  Image: $$Image,
   getConfiguredImageService,
   getImage,
   imageConfig,
   isLocalService
 }, Symbol.toStringTag, { value: 'Module' }));
 
-export { $$Image as $, _astro_assets as _, baseService as b, getConfiguredImageService as g, imageConfig as i, parseQuality as p };
+export { _astro_assets as _, baseService as b, getConfiguredImageService as g, imageConfig as i, parseQuality as p };
