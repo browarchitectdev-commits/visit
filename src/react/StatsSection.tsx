@@ -40,13 +40,13 @@ export function StatsSection({ stats }: StatsSectionProps) {
 
           <div className="mb-5 flex flex-col gap-3 border-b border-border/70 pb-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <span className="section-label">Studio numeri</span>
+              <span className="section-label">Studioul in cifre</span>
               <h2 className="mt-4 max-w-xl font-serif text-3xl font-semibold tracking-tight text-card-foreground sm:text-4xl">
-                Una presenza elegante, costruita con precisione e fiducia.
+                O prezenta eleganta, construita cu precizie si incredere.
               </h2>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Ogni trattamento nasce da consulenza, studio del viso e una tecnica calibrata per un effetto raffinato.
+              Fiecare tratament porneste de la consultatie, studiul fetei si o tehnica calibrata pentru un efect rafinat.
             </p>
           </div>
 

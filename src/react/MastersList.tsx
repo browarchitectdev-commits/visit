@@ -59,13 +59,13 @@ export function MastersList({ masters }: MastersListProps) {
           }}
         >
           <div>
-            <span className="section-label">Il team</span>
+            <span className="section-label">Echipa</span>
             <h2 className="mt-4 font-serif text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Professioniste che lavorano con precisione, presenza e gusto.
+              Specialiste care lucreaza cu precizie, atentie si bun gust.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Un team selezionato che unisce mano tecnica, visione estetica e un modo di lavorare attento e riservato.
+            O echipa selectata care imbina tehnica, viziunea estetica si un mod de lucru atent si discret.
           </p>
         </div>
 

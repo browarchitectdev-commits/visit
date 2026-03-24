@@ -12,7 +12,7 @@ const ACTION_QUERY_PARAMS$1 = {
   actionName: "_action"};
 const ACTION_RPC_ROUTE_PATTERN = "/_actions/[...path]";
 
-const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "PUBLIC_TINA_CLIENT_ID": "f0cfc6d0-fcb2-4d23-b61b-2cd948bb666cd", "SITE": "https://your-beauty-salon.com", "SSR": true};
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "PUBLIC_CAL_BOOKING_URL": "https://cal.eu/nikomisha", "PUBLIC_TELEGRAM_BOT_URL": "https://t.me/pilotix_bot", "PUBLIC_TINA_CLIENT_ID": "f0cfc6d0-fcb2-4d23-b61b-2cd948bb666cd", "SITE": "https://your-beauty-salon.com", "SSR": true};
 const ACTION_QUERY_PARAMS = ACTION_QUERY_PARAMS$1;
 const codeToStatusMap = {
   // Implemented from IANA HTTP Status Code Registry

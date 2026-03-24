@@ -12,6 +12,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import type { Service } from '@/react/ServicesList';
 import type { Master } from '@/react/MastersList';
+import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const servicesCollection = await getCollection('services');
 const mastersCollection = await getCollection('masters');
@@ -161,34 +162,35 @@ const socialFeed: SocialFeedItem[] = socialFeedRaw
   }));
 
 const stats = [
-  { value: '500+', label: 'Clienti soddisfatte' },
-  { value: '8+', label: 'Anni di esperienza' },
-  { value: '100%', label: 'Standard di igiene' },
-  { value: '24/7', label: 'Presenza social' },
+  { value: '500+', label: 'Cliente multumite' },
+  { value: '8+', label: 'Ani de experienta' },
+  { value: '100%', label: 'Standarde de igiena' },
+  { value: '24/7', label: 'Prezenta social media' },
 ];
 
 const pageTitle = 'Brow & Lip Studio';
-const pageDescription = 'Trucco permanente per sopracciglia e labbra in Italia: consulenza su misura, tecnica raffinata e risultato elegante.';
+const pageDescription = 'Machiaj permanent pentru sprancene si buze in Italia: consultatie personalizata, tehnica rafinata si rezultat elegant.';
 
-const heroTitle = 'Bellezza permanente con un’eleganza naturale';
-const heroDescription = 'Trucco permanente per sopracciglia e labbra pensato per valorizzare il viso con equilibrio, delicatezza e una presenza sempre raffinata.';
+const heroTitle = 'Frumusete permanenta cu eleganta naturala';
+const heroDescription = 'Machiaj permanent pentru sprancene si buze gandit pentru a pune in valoare chipul cu echilibru, delicatete si rafinament.';
 
-const aboutTitle = 'Uno studio pensato per chi cerca precisione, gusto e discrezione';
+const aboutTitle = 'Un studio gandit pentru cine cauta precizie, gust si discretie';
 const aboutDescription = [
-  'Brow & Lip Studio e uno spazio dedicato al trucco permanente di sopracciglia e labbra, dove tecnica e sensibilita estetica lavorano insieme per creare risultati armoniosi.',
-  'Ogni trattamento inizia da un confronto attento: analizziamo lineamenti, proporzioni e desideri della cliente per definire un look che resti naturale e sofisticato nel tempo.',
+  'Brow & Lip Studio este un spatiu dedicat machiajului permanent pentru sprancene si buze, unde tehnica si sensibilitatea estetica lucreaza impreuna pentru rezultate armonioase.',
+  'Fiecare tratament incepe cu o discutie atenta: analizam trasaturile, proportiile si dorintele clientei pentru un look natural si sofisticat in timp.',
 ];
 
 const isDev = import.meta.env.DEV;
+const contactLinks = getPublicContactLinks();
 ---
 
-<Layout title={pageTitle} description={pageDescription} lang="it">
+<Layout title={pageTitle} description={pageDescription} lang="ro">
   {isDev && (
     <div class="fixed bottom-4 right-4 z-50">
       <a
         href="/admin"
         class="flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 hover:bg-neutral-800"
-        title="Apri il pannello admin TinaCMS"
+        title="Deschide panoul admin TinaCMS"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -198,17 +200,18 @@ const isDev = import.meta.env.DEV;
     </div>
   )}
 
-  <SiteHeader client:load />
+  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} showBookingCta={false} />
 
   <HeroSection
     client:visible
     title={heroTitle}
     description={heroDescription}
     backgroundImage="/images/hero.jpg"
-    ctaText="Prenota una consulenza"
-    ctaHref="#booking"
+    ctaText="Rezerva o consultatie"
+    bookingUrl={contactLinks.bookingUrl}
+    telegramUrl={contactLinks.telegramUrl}
     secondaryCTA={{
-      text: 'Scopri i trattamenti',
+      text: 'Descopera serviciile',
       href: '#services',
     }}
   />
@@ -226,7 +229,12 @@ const isDev = import.meta.env.DEV;
     description={aboutDescription}
   />
 
-  <ServicesList client:visible services={sortedServices} />
+  <ServicesList
+    client:visible
+    services={sortedServices}
+    bookingUrl={contactLinks.bookingUrl}
+    telegramUrl={contactLinks.telegramUrl}
+  />
 
   <div class="pointer-events-none relative mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
     <div class="mx-auto h-full w-full bg-[radial-gradient(circle_at_center,rgba(224,188,145,0.16),transparent_60%)]"></div>
@@ -247,24 +255,18 @@ const isDev = import.meta.env.DEV;
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mx-auto grid max-w-5xl gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end" data-reveal>
         <div>
-          <span class="section-label">Social presence</span>
+          <span class="section-label">Prezenta sociala</span>
           <h2 class="mt-5 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Segui lo studio tra lavori, video e momenti reali.
+            Urmareste studioul prin lucrari, video si momente reale.
           </h2>
         </div>
         <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Una selezione curata di contenuti per raccontare risultati, atmosfera e dettagli del nostro approccio.
+          O selectie de continuturi care arata rezultatele, atmosfera si detaliile modului nostru de lucru.
         </p>
       </div>
 
       <div class="mx-auto mt-6 grid max-w-4xl gap-3 sm:grid-cols-3">
-        <a
-          href={socialProfiles.instagram.profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5"
-          data-reveal data-delay="100"
-        >
+        <a href={socialProfiles.instagram.profileUrl} target="_blank" rel="noopener noreferrer" class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5" data-reveal data-delay="100">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888] text-white shadow-sm">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" />
@@ -276,13 +278,7 @@ const isDev = import.meta.env.DEV;
           </div>
         </a>
 
-        <a
-          href={socialProfiles.tiktok.profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5"
-          data-reveal data-delay="200"
-        >
+        <a href={socialProfiles.tiktok.profileUrl} target="_blank" rel="noopener noreferrer" class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5" data-reveal data-delay="200">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black text-white shadow-sm">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z" />
@@ -294,13 +290,7 @@ const isDev = import.meta.env.DEV;
           </div>
         </a>
 
-        <a
-          href={socialProfiles.facebook.pageUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5"
-          data-reveal data-delay="300"
-        >
+        <a href={socialProfiles.facebook.pageUrl} target="_blank" rel="noopener noreferrer" class="editorial-panel group flex items-center gap-3.5 rounded-[1.6rem] px-4 py-3.5 transition-all duration-300 hover:-translate-y-0.5" data-reveal data-delay="300">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1877f2] text-white shadow-sm">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -316,11 +306,7 @@ const isDev = import.meta.env.DEV;
       {socialFeed.length > 0 && (
         <div class="mx-auto mt-6 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {socialFeed.map((post, pi) => (
-            <article
-              class="editorial-panel overflow-hidden rounded-[1.7rem] transition-all duration-500 hover:-translate-y-0.5"
-              data-reveal
-              data-delay={String(pi * 100 + 100)}
-            >
+            <article class="editorial-panel overflow-hidden rounded-[1.7rem] transition-all duration-500 hover:-translate-y-0.5" data-reveal data-delay={String(pi * 100 + 100)}>
               <div class="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
                 <p class="line-clamp-1 text-[13px] font-medium text-foreground">{post.title}</p>
                 <span class={`ml-2 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${post.platform === 'instagram' ? 'bg-pink-50 text-pink-600 border border-pink-100' : post.platform === 'tiktok' ? 'bg-neutral-100 text-neutral-600 border border-neutral-200' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
@@ -329,51 +315,22 @@ const isDev = import.meta.env.DEV;
               </div>
 
               {post.platform === 'instagram' && (
-                <iframe
-                  src={`https://www.instagram.com/p/${post.embedId}/embed`}
-                  class="w-full"
-                  style="min-height: 390px; border: 0;"
-                  loading="lazy"
-                  allowtransparency={true}
-                  title={post.title}
-                  referrerpolicy="no-referrer"
-                />
+                <iframe src={`https://www.instagram.com/p/${post.embedId}/embed`} class="w-full" style="min-height: 390px; border: 0;" loading="lazy" allowtransparency={true} title={post.title} referrerpolicy="no-referrer" />
               )}
 
               {post.platform === 'tiktok' && (
-                <iframe
-                  src={`https://www.tiktok.com/embed/${post.embedId}`}
-                  class="w-full"
-                  style="min-height: 470px; border: 0;"
-                  loading="lazy"
-                  title={post.title}
-                  referrerpolicy="no-referrer"
-                  allowfullscreen
-                />
+                <iframe src={`https://www.tiktok.com/embed/${post.embedId}`} class="w-full" style="min-height: 470px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen />
               )}
 
               {post.platform === 'facebook' && (
-                <iframe
-                  src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId)}&show_text=true&width=500`}
-                  class="w-full"
-                  style="min-height: 450px; border: 0;"
-                  loading="lazy"
-                  title={post.title}
-                  referrerpolicy="no-referrer"
-                  allowfullscreen
-                />
+                <iframe src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId)}&show_text=true&width=500`} class="w-full" style="min-height: 450px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen />
               )}
 
               {(post.caption || post.postUrl) && (
                 <div class="flex items-center justify-between gap-2 border-t border-border/60 px-4 py-2.5">
-                  <p class="line-clamp-1 text-xs text-muted-foreground">{post.caption || 'Contenuto dallo studio'}</p>
-                  <a
-                    href={post.postUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="shrink-0 text-xs font-semibold text-primary transition-colors hover:text-primary/70"
-                  >
-                    Apri ↗
+                  <p class="line-clamp-1 text-xs text-muted-foreground">{post.caption || 'Continut din studio'}</p>
+                  <a href={post.postUrl} target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs font-semibold text-primary transition-colors hover:text-primary/70">
+                    Apri ?
                   </a>
                 </div>
               )}
@@ -383,11 +340,8 @@ const isDev = import.meta.env.DEV;
       )}
 
       <div class="mt-6 text-center" data-reveal data-delay="200">
-        <a
-          href="/social"
-          class="btn-shimmer inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-semibold text-background transition-all duration-300 hover:opacity-90"
-        >
-          Tutti i contenuti
+        <a href="/social" class="btn-shimmer inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-semibold text-background transition-all duration-300 hover:opacity-90">
+          Toate materialele
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
@@ -397,5 +351,5 @@ const isDev = import.meta.env.DEV;
     </div>
   </section>
 
-  <SiteFooter client:load />
+  <SiteFooter client:load telegramUrl={contactLinks.telegramUrl} />
 </Layout>

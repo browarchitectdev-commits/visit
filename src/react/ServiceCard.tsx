@@ -16,6 +16,8 @@ interface ServiceCardProps {
   index?: number;
   featured?: boolean;
   meta?: string;
+  bookingUrl?: string;
+  telegramUrl?: string;
 }
 
 export function ServiceCard({
@@ -55,7 +57,7 @@ export function ServiceCard({
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,10,8,0.02)_0%,rgba(14,10,8,0.55)_100%)]" />
         <div className="absolute left-4 top-4 flex items-center gap-2">
           <span className="rounded-full border border-white/15 bg-white/12 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-white backdrop-blur-sm">
-            Trattamento
+            Serviciu
           </span>
           {badge && (
             <span className="rounded-full bg-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary-foreground shadow-sm">
@@ -66,7 +68,7 @@ export function ServiceCard({
         {featured && (
           <div className="absolute bottom-4 left-4 right-4 rounded-[1.35rem] border border-white/14 bg-black/20 px-4 py-3 backdrop-blur-md">
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Best for</p>
-            <p className="mt-1 text-sm font-medium text-white">Chi desidera una presenza definita ma sempre naturale.</p>
+            <p className="mt-1 text-sm font-medium text-white">Pentru cine isi doreste un contur definit, dar mereu natural.</p>
           </div>
         )}
       </div>
@@ -78,11 +80,7 @@ export function ServiceCard({
               {title}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
-            {meta && (
-              <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
-                {meta}
-              </p>
-            )}
+            {meta && <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">{meta}</p>}
           </div>
           <span className="text-gradient font-serif text-3xl font-semibold">
             {featured ? '01' : `0${items.length}`}
@@ -98,21 +96,13 @@ export function ServiceCard({
           ))}
         </div>
 
-        <div className={`flex ${featured ? 'flex-col gap-3 sm:flex-row' : ''}`}>
-          <a
-            href="#booking"
-            className={`btn-shimmer inline-flex items-center justify-center rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-background transition-all duration-300 hover:opacity-92 ${
-              featured ? 'sm:flex-1' : 'w-full'
-            }`}
-          >
-            Prenota il trattamento
-          </a>
-          {featured && (
+        {featured && (
+          <div className="flex items-center justify-start">
             <span className="inline-flex items-center justify-center rounded-full border border-border/70 bg-white/55 px-4 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground sm:w-auto">
-              Editorial choice
+              Alegere editoriale
             </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </article>
   );

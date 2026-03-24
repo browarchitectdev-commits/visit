@@ -44,13 +44,13 @@ export function GallerySection({ images }: GallerySectionProps) {
           }}
         >
           <div>
-            <span className="section-label">Portfolio</span>
+            <span className="section-label">Portofoliu</span>
             <h2 className="mt-4 font-serif text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Un editoriale di dettagli, tono e trasformazioni delicate.
+              O selectie de detalii, tonuri si transformari delicate.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
-            La galleria ora lavora come una rivista visiva: contrasti di formato, primi piani e risultati che restano eleganti.
+            Galeria functioneaza ca o revista vizuala: contraste de format, prim-planuri si rezultate care raman elegante.
           </p>
         </div>
 
@@ -89,7 +89,7 @@ export function GallerySection({ images }: GallerySectionProps) {
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,9,8,0.06)_0%,rgba(13,9,8,0.62)_100%)]" />
                 <div className="absolute left-3 top-3 rounded-full border border-white/16 bg-white/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[10px] sm:tracking-[0.22em]">
-                  {index === 0 ? 'Signature result' : 'Editorial detail'}
+                  {index === 0 ? 'Rezultat definitoriu' : 'Detaliu editorial'}
                 </div>
                 <div
                   className="absolute inset-x-0 bottom-0 p-3 transition-all duration-500 sm:p-4"
@@ -100,7 +100,7 @@ export function GallerySection({ images }: GallerySectionProps) {
                 >
                   <div className="rounded-[1.1rem] border border-white/12 bg-black/18 px-3 py-2.5 backdrop-blur-md sm:rounded-[1.35rem] sm:px-4 sm:py-3">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/48 sm:text-[10px] sm:tracking-[0.22em]">
-                      {index === 0 ? 'Featured composition' : 'Studio portfolio'}
+                      {index === 0 ? 'Compozitie principala' : 'Portofoliul studioului'}
                     </p>
                     <p className="mt-1 text-xs font-medium text-white sm:text-sm">{image.alt}</p>
                   </div>

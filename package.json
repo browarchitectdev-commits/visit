@@ -9,7 +9,9 @@
     "build": "tinacms build --datalayer-port 9001 && astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "tina": "tinacms dev -c \"npm run dev\""
+    "tina": "tinacms dev -c \"npm run dev\"",
+    "bot:start": "node ./bot/index.mjs",
+    "bot:check": "node --check ./bot/index.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

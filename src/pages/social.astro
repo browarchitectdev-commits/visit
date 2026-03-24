@@ -13,6 +13,7 @@ import { SiteHeader } from '@/react/SiteHeader';
 import { SiteFooter } from '@/react/SiteFooter';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const pageTitle = 'Мы в социальных сетях';
 const pageDescription =
@@ -161,10 +162,11 @@ const facebookPosts: SocialPost[] = socialCollection
 
 const validFacebookPosts = facebookPosts.filter((post: SocialPost) => !!post.embedId);
 const invalidFacebookPostsCount = facebookPosts.length - validFacebookPosts.length;
+const contactLinks = getPublicContactLinks();
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <SiteHeader client:load />
+  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} />
 
   <main id="main-content">
     <!-- ─── Hero ─── -->
@@ -585,5 +587,5 @@ const invalidFacebookPostsCount = facebookPosts.length - validFacebookPosts.leng
     </section>
   </main>
 
-  <SiteFooter client:load />
+  <SiteFooter client:load telegramUrl={contactLinks.telegramUrl} />
 </Layout>

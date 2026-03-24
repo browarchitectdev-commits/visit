@@ -1,14 +1,20 @@
 'use client';
 
+import { TelegramIcon } from './TelegramIcon';
+
 const footerLinks = [
-  { label: 'Trattamenti', href: '#services' },
+  { label: 'Servicii', href: '#services' },
   { label: 'Studio', href: '#about' },
-  { label: 'Portfolio', href: '#gallery' },
-  { label: 'Team', href: '#masters' },
+  { label: 'Portofoliu', href: '#gallery' },
+  { label: 'Echipa', href: '#masters' },
   { label: 'Social', href: '/social' },
 ];
 
-export function SiteFooter() {
+interface SiteFooterProps {
+  telegramUrl?: string;
+}
+
+export function SiteFooter({ telegramUrl }: SiteFooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -39,13 +45,13 @@ export function SiteFooter() {
               <div>
                 <span className="block font-serif text-2xl font-semibold text-white">Brow & Lip Studio</span>
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-white/42">
-                  Permanent beauty in Italy
+                  Frumusete permanenta in Italia
                 </span>
               </div>
             </a>
 
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/62">
-              Studio di trucco permanente per sopracciglia e labbra: atmosfera riservata, tecniche soft e risultati eleganti costruiti su misura.
+              Studio de machiaj permanent pentru sprancene si buze: atmosfera discreta, tehnici delicate si rezultate elegante create pe masura.
             </p>
 
             <div className="mt-5 flex gap-2.5">
@@ -60,22 +66,22 @@ export function SiteFooter() {
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                 </svg>
               </a>
-              <a
-                href="https://telegram.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-white/72 transition-all hover:border-[#e0bc91]/40 hover:bg-white/12 hover:text-white"
-                aria-label="Telegram"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.328-.373-.115l-6.869 4.332-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.54-.203 1.01.122.84 1.125z" />
-                </svg>
-              </a>
+              {telegramUrl && (
+                <a
+                  href={telegramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-white/72 transition-all hover:border-[#e0bc91]/40 hover:bg-white/12 hover:text-white"
+                  aria-label="Telegram"
+                >
+                  <TelegramIcon />
+                </a>
+              )}
             </div>
           </div>
 
           <div>
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigazione</h4>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigare</h4>
             <nav className="mt-5 flex flex-col gap-3">
               {footerLinks.map((link) => (
                 <a key={link.href} href={link.href} className="text-sm text-white/68 transition-colors hover:text-white">
@@ -86,7 +92,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Contatti</h4>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Contacte</h4>
             <div className="mt-5 flex flex-col gap-3 text-sm text-white/68">
               <a href="tel:+390000000000" className="transition-colors hover:text-white">
                 +39 000 000 0000
@@ -94,7 +100,7 @@ export function SiteFooter() {
               <a href="mailto:ciao@browlip.it" className="transition-colors hover:text-white">
                 ciao@browlip.it
               </a>
-              <p>Italia, su appuntamento</p>
+              <p>Italia, doar cu programare</p>
             </div>
           </div>
         </div>
@@ -103,14 +109,14 @@ export function SiteFooter() {
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-white/42">
-            &copy; {currentYear} Brow & Lip Studio. Tutti i diritti riservati.
+            &copy; {currentYear} Brow & Lip Studio. Toate drepturile rezervate.
           </p>
           <div className="flex gap-6">
             <a href="/privacy" className="text-xs text-white/42 transition-colors hover:text-white">
-              Privacy Policy
+              Politica de confidentialitate
             </a>
             <a href="/terms" className="text-xs text-white/42 transition-colors hover:text-white">
-              Termini di utilizzo
+              Termeni de utilizare
             </a>
           </div>
         </div>

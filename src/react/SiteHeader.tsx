@@ -1,16 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { TelegramIcon } from './TelegramIcon';
 
 const navLinks = [
-  { label: 'Trattamenti', href: '#services' },
+  { label: 'Servicii', href: '#services' },
   { label: 'Studio', href: '#about' },
-  { label: 'Portfolio', href: '#gallery' },
-  { label: 'Team', href: '#masters' },
+  { label: 'Portofoliu', href: '#gallery' },
+  { label: 'Echipa', href: '#masters' },
   { label: 'Social', href: '/social' },
 ];
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  bookingUrl?: string;
+  telegramUrl?: string;
+  showBookingCta?: boolean;
+}
+
+export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: SiteHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -57,7 +64,7 @@ export function SiteHeader() {
               Brow & Lip
             </span>
             <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 ${mutedTextClass}`}>
-              Permanent Beauty Studio
+              Studio de frumusete permanenta
             </span>
           </div>
         </a>
@@ -85,18 +92,20 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden lg:block">
-          <a
-            href="#booking"
-            className={`btn-shimmer inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 ${
-              scrolled
-                ? 'bg-foreground text-background hover:opacity-92'
-                : 'border border-white/18 bg-white/12 text-white backdrop-blur-md hover:bg-white/18'
-            }`}
-          >
-            Prenota ora
-          </a>
-        </div>
+        {/* <div className="hidden lg:flex lg:items-center lg:gap-2.5">
+          {telegramUrl && (
+            <a
+              href={telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-full bg-[#229ED9] px-3 py-2.5 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1c8fc4]"
+              aria-label="Deschide Telegram"
+              title="Deschide Telegram"
+            >
+              <TelegramIcon className="h-4 w-4" />
+            </a>
+          )}
+        </div> */}
 
         <button
           className={`flex size-10 items-center justify-center rounded-full transition-colors lg:hidden ${borderClass} ${headerTextClass}`}
@@ -139,17 +148,33 @@ export function SiteHeader() {
               {link.label}
             </a>
           ))}
-          <a
-            href="#booking"
-            onClick={() => setMobileOpen(false)}
-            className={`btn-shimmer mt-3 inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold ${
-              scrolled
-                ? 'bg-foreground text-background'
-                : 'border border-white/15 bg-white/12 text-white'
-            }`}
-          >
-            Prenota una consulenza
-          </a>
+          {showBookingCta && bookingUrl && (
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileOpen(false)}
+              className={`btn-shimmer mt-3 inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold ${
+                scrolled
+                  ? 'bg-foreground text-background'
+                  : 'border border-white/15 bg-white/12 text-white'
+              }`}
+            >
+              Rezerva o consultatie
+            </a>
+          )}
+          {telegramUrl && (
+            <a
+              href={telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileOpen(false)}
+              className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#229ED9] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1c8fc4]"
+            >
+              <TelegramIcon className="h-4 w-4" />
+              Scrie-ne pe Telegram
+            </a>
+          )}
         </nav>
       </div>
     </header>

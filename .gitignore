@@ -34,3 +34,4 @@ pnpm-debug.log*
 
 # TinaCMS
 tina/__generated__/
+bot/data/

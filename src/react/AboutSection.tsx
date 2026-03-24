@@ -1,19 +1,19 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 
 const features = [
   {
-    title: 'Artiste certificate',
-    description: 'Formazione continua, occhio estetico e attenzione assoluta alla naturalezza del risultato.',
+    title: 'Specialiste certificate',
+    description: 'Formare continua, ochi estetic si atentie deplina la naturaletea rezultatului.',
   },
   {
-    title: 'Pigmenti selezionati',
-    description: 'Texture stabili e tonalita pensate per valorizzare incarnato, labbra e sopracciglia.',
+    title: 'Pigmenti selectati',
+    description: 'Texturi stabile si nuante gandite pentru a pune in valoare tenul, buzele si sprancenele.',
   },
   {
-    title: 'Igiene rigorosa',
-    description: 'Materiali monouso, procedure controllate e ambiente riservato per un’esperienza impeccabile.',
+    title: 'Igiena riguroasa',
+    description: 'Materiale de unica folosinta, proceduri controlate si un cadru privat pentru o experienta impecabila.',
   },
 ];
 
@@ -58,16 +58,16 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
             <div className="absolute -left-3 top-8 h-[68%] w-[88%] rounded-[2.25rem] border border-primary/18" />
             <div className="editorial-panel relative overflow-hidden rounded-[2.25rem] p-3">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-muted">
-                <img src={image} alt="Studio Brow & Lip" className="h-full w-full object-cover" />
+                <img src={image} alt="Studioul Brow & Lip" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(19,12,9,0.06)_0%,rgba(19,12,9,0.38)_100%)]" />
               </div>
             </div>
 
             <div className="editorial-panel absolute -bottom-5 right-0 max-w-[15rem] rounded-[1.6rem] px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Approccio su misura</p>
-              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">8+ anni</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Abordare personalizata</p>
+              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">8+ ani</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                di esperienza nel valorizzare lineamenti, forma e colore con delicatezza.
+                de experienta in evidentierea trasaturilor, formei si culorii cu delicatete.
               </p>
             </div>
           </div>
@@ -79,7 +79,7 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
               transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.18s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.18s',
             }}
           >
-            <span className="section-label">Lo studio</span>
+            <span className="section-label">Studioul</span>
             <h2 className="mt-4 max-w-xl font-serif text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
               {title}
             </h2>
@@ -118,3 +118,4 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
     </section>
   );
 }
+

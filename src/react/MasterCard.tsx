@@ -51,13 +51,13 @@ export function MasterCard({
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,7,0.05)_0%,rgba(10,8,7,0.78)_100%)]" />
 
         <div className="absolute left-4 top-4 rounded-full border border-white/18 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
-          {featured ? 'Founder energy' : 'Team Brow & Lip'}
+          {featured ? 'Fondatoare' : 'Echipa Brow & Lip'}
         </div>
 
         {featured && (
           <div className="absolute bottom-3 left-3 right-3 rounded-[1.2rem] border border-white/14 bg-black/20 px-3 py-2.5 text-white backdrop-blur-md sm:bottom-4 sm:left-4 sm:right-4 sm:rounded-[1.35rem] sm:px-4 sm:py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Signature presence</p>
-            <p className="mt-1 text-sm font-medium">Precisione estetica, mano sicura, tono naturale.</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Prezenta definitorie</p>
+            <p className="mt-1 text-sm font-medium">Precizie estetica, mana sigura, ton natural.</p>
           </div>
         )}
       </div>
@@ -70,7 +70,7 @@ export function MasterCard({
               <p className={`mt-1 text-sm font-medium ${featured ? 'text-muted-foreground' : 'text-white/76'}`}>{position}</p>
             </div>
             <div className="text-right">
-              <p className={`text-[10px] uppercase tracking-[0.24em] ${featured ? 'text-muted-foreground' : 'text-white/42'}`}>Esperienza</p>
+              <p className={`text-[10px] uppercase tracking-[0.24em] ${featured ? 'text-muted-foreground' : 'text-white/42'}`}>Experienta</p>
               <p className="mt-1 font-serif text-2xl font-semibold text-[#d09b72]">{experience}+</p>
             </div>
           </div>
