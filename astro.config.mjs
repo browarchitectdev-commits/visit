@@ -7,7 +7,7 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://your-beauty-salon.com', // Замените на реальный домен
-  output: 'static',
+  output: 'server',
   adapter: vercel(),
   integrations: [
     tailwind(),
