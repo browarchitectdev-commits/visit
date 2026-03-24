@@ -118,19 +118,12 @@ const STATUS_LABELS = {
   reschedule_requested: 'Нужно новое время',
 };
 
-const DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-  timeZone: 'UTC',
-});
-
 const escapeHtml = (value) =>
   String(value)
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
+    .replaceAll('\"', '&quot;');
 
 const isAdmin = (userId) => ADMIN_IDS.has(String(userId));
 const getMenuForUser = (userId) => (isAdmin(userId) ? ADMIN_MENU : CLIENT_MENU);
@@ -138,9 +131,103 @@ const getConversationKey = (userId) => String(userId);
 const nowIso = () => new Date().toISOString();
 const isCalendarBookingEnabled = () => isGoogleCalendarConfigured(process.env);
 
+const DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+
+const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+const FULL_DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+});
+
+const WEEKDAY_LABELS = ['\u041f\u043d', '\u0412\u0442', '\u0421\u0440', '\u0427\u0442', '\u041f\u0442', '\u0421\u0431', '\u0412\u0441'];
+
+const parseDateKeyLocal = (dateKey) => {
+  const match = String(dateKey ?? '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    year: Number(match[1]),
+    month: Number(match[2]),
+    day: Number(match[3]),
+  };
+};
+
+const parseMonthKey = (monthKey) => {
+  const match = String(monthKey ?? '').match(/^(\d{4})-(\d{2})$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    year: Number(match[1]),
+    month: Number(match[2]),
+  };
+};
+
+const formatMonthKey = (year, month) => `${year}-${String(month).padStart(2, '0')}`;
+
+const getMonthKey = (dateKey) => {
+  const parsed = parseDateKeyLocal(dateKey);
+  return parsed ? formatMonthKey(parsed.year, parsed.month) : null;
+};
+
+const buildUtcDateFromKey = (dateKey) => {
+  const parsed = parseDateKeyLocal(dateKey);
+
+  if (!parsed) {
+    return null;
+  }
+
+  return new Date(Date.UTC(parsed.year, parsed.month - 1, parsed.day, 12, 0, 0, 0));
+};
+
+const shiftMonthKey = (monthKey, deltaMonths) => {
+  const parsed = parseMonthKey(monthKey);
+
+  if (!parsed) {
+    return null;
+  }
+
+  const shifted = new Date(Date.UTC(parsed.year, parsed.month - 1 + deltaMonths, 1, 12, 0, 0, 0));
+  return formatMonthKey(shifted.getUTCFullYear(), shifted.getUTCMonth() + 1);
+};
+
+const getCalendarMonths = (dateOptions) => Array.from(new Set(dateOptions.map((dateKey) => getMonthKey(dateKey)).filter(Boolean)));
+
 const formatDateLabel = (dateKey) => {
-  const [year, month, day] = dateKey.split('-').map(Number);
-  return DATE_LABEL_FORMATTER.format(new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0)));
+  const date = buildUtcDateFromKey(dateKey);
+  return date ? DATE_LABEL_FORMATTER.format(date) : dateKey;
+};
+
+const formatFullDateLabel = (dateKey) => {
+  const date = buildUtcDateFromKey(dateKey);
+  return date ? FULL_DATE_LABEL_FORMATTER.format(date) : dateKey;
+};
+
+const formatMonthLabel = (monthKey) => {
+  const parsed = parseMonthKey(monthKey);
+
+  if (!parsed) {
+    return monthKey;
+  }
+
+  return MONTH_LABEL_FORMATTER.format(new Date(Date.UTC(parsed.year, parsed.month - 1, 1, 12, 0, 0, 0)));
 };
 
 const createRows = (items, rowSize) => {
@@ -153,34 +240,91 @@ const createRows = (items, rowSize) => {
   return rows;
 };
 
-function buildDateKeyboard(dateKeys) {
+const buildDateKeyboard = (dateOptions, { visibleMonth, selectedDateKey } = {}) => {
+  const selectableDates = new Set(dateOptions);
+  const months = getCalendarMonths(dateOptions);
+  const activeMonth = months.includes(visibleMonth) ? visibleMonth : getMonthKey(selectedDateKey ?? dateOptions[0]);
+  const parsedMonth = parseMonthKey(activeMonth);
+
+  if (!parsedMonth) {
+    return {
+      inline_keyboard: [[{ text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' }]],
+    };
+  }
+
+  const currentDateKey = listDateOptions({ timeZone: BOOKING_TIME_ZONE, days: 1 })[0];
+  const firstDayDate = new Date(Date.UTC(parsedMonth.year, parsedMonth.month - 1, 1, 12, 0, 0, 0));
+  const startOffset = (firstDayDate.getUTCDay() + 6) % 7;
+  const daysInMonth = new Date(Date.UTC(parsedMonth.year, parsedMonth.month, 0, 12, 0, 0, 0)).getUTCDate();
+  const cells = [];
+
+  for (let index = 0; index < startOffset; index += 1) {
+    cells.push({ text: ' ', callback_data: 'pick_noop' });
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const dateKey = `${parsedMonth.year}-${String(parsedMonth.month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    if (!selectableDates.has(dateKey)) {
+      cells.push({ text: '\u00b7', callback_data: 'pick_noop' });
+      continue;
+    }
+
+    let text = String(day);
+
+    if (dateKey === selectedDateKey) {
+      text = `\u25cf${day}`;
+    } else if (dateKey === currentDateKey) {
+      text = `\u25e6${day}`;
+    }
+
+    cells.push({ text, callback_data: `pick_date:${dateKey}` });
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push({ text: ' ', callback_data: 'pick_noop' });
+  }
+
+  const previousMonth = shiftMonthKey(activeMonth, -1);
+  const nextMonth = shiftMonthKey(activeMonth, 1);
+
   return {
     inline_keyboard: [
-      ...createRows(
-        dateKeys.map((dateKey) => ({
-          text: formatDateLabel(dateKey),
-          callback_data: `pick_date:${dateKey}`,
-        })),
-        2,
-      ),
-      [{ text: 'Отмена', callback_data: 'pick_cancel' }],
+      [
+        {
+          text: months.includes(previousMonth) ? '\u2039' : ' ',
+          callback_data: months.includes(previousMonth) ? `pick_month:${previousMonth}` : 'pick_noop',
+        },
+        {
+          text: formatMonthLabel(activeMonth),
+          callback_data: 'pick_noop',
+        },
+        {
+          text: months.includes(nextMonth) ? '\u203a' : ' ',
+          callback_data: months.includes(nextMonth) ? `pick_month:${nextMonth}` : 'pick_noop',
+        },
+      ],
+      WEEKDAY_LABELS.map((label) => ({ text: label, callback_data: 'pick_noop' })),
+      ...createRows(cells, 7),
+      [{ text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' }],
     ],
   };
-}
+};
 
 function buildTimeKeyboard(dateKey, slots) {
   return {
     inline_keyboard: [
+      [{ text: formatDateLabel(dateKey), callback_data: 'pick_noop' }],
       ...createRows(
         slots.map((slot) => ({
           text: slot,
           callback_data: `pick_time:${dateKey}|${slot.replace(':', '.')}`,
         })),
-        3,
+        4,
       ),
       [
-        { text: 'Другой день', callback_data: 'pick_back:date' },
-        { text: 'Отмена', callback_data: 'pick_cancel' },
+        { text: '\u2039 \u041a \u0434\u0430\u0442\u0430\u043c', callback_data: 'pick_back:date' },
+        { text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' },
       ],
     ],
   };
@@ -190,12 +334,13 @@ function buildNoSlotsKeyboard() {
   return {
     inline_keyboard: [
       [
-        { text: 'Выбрать другой день', callback_data: 'pick_back:date' },
-        { text: 'Отмена', callback_data: 'pick_cancel' },
+        { text: '\u2039 \u041a \u0434\u0430\u0442\u0430\u043c', callback_data: 'pick_back:date' },
+        { text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' },
       ],
     ],
   };
 }
+
 
 const isCyrillicCodePoint = (codePoint) => codePoint >= 0x0400 && codePoint <= 0x04ff;
 
@@ -297,6 +442,83 @@ async function answerCallbackQuery(callbackQueryId, text) {
     callback_query_id: callbackQueryId,
     text,
   });
+}
+
+async function editMessage(chatId, messageId, text, extra = {}) {
+  return telegramRequest('editMessageText', {
+    chat_id: chatId,
+    message_id: messageId,
+    text,
+    parse_mode: 'HTML',
+    ...extra,
+  });
+}
+
+async function renderDatePicker({ chatId, conversation, messageId, promptText }) {
+  const dateOptions = listDateOptions({
+    timeZone: BOOKING_TIME_ZONE,
+    days: BOOKING_DATE_WINDOW_DAYS,
+  });
+  const keyboard = buildDateKeyboard(dateOptions, {
+    visibleMonth: conversation?.calendarMonth,
+    selectedDateKey: conversation?.draft?.dateKey,
+  });
+  const text = [
+    '<b>\u0412\u044b\u0431\u043e\u0440 \u0434\u0430\u0442\u044b</b>',
+    conversation?.draft?.service ? `\u0423\u0441\u043b\u0443\u0433\u0430: ${escapeHtml(conversation.draft.service)}` : '',
+    promptText ?? '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0435\u043d\u044c \u0432 \u043a\u0430\u043b\u0435\u043d\u0434\u0430\u0440\u0435 \u043d\u0438\u0436\u0435.',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  if (messageId) {
+    return editMessage(chatId, messageId, text, { reply_markup: keyboard });
+  }
+
+  return sendMessage(chatId, text, { reply_markup: keyboard });
+}
+
+async function renderTimePicker({ chatId, messageId, dateKey }) {
+  const slots = await getAvailableSlotsForDate({
+    calendarId: process.env.GOOGLE_CALENDAR_ID,
+    serviceAccountJson: process.env.GOOGLE_SERVICE_ACCOUNT_JSON,
+    dateKey,
+    timeZone: BOOKING_TIME_ZONE,
+    durationMinutes: DEFAULT_BOOKING_DURATION_MINUTES,
+    slotIntervalMinutes: SLOT_INTERVAL_MINUTES,
+    workingHoursStart: WORKING_HOURS_START,
+    workingHoursEnd: WORKING_HOURS_END,
+  });
+
+  if (slots.length === 0) {
+    const text = [
+      '<b>\u0421\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f</b>',
+      `\u041d\u0430 ${escapeHtml(formatFullDateLabel(dateKey))} \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u044b\u0445 \u0441\u043b\u043e\u0442\u043e\u0432 \u043d\u0435 \u043e\u0441\u0442\u0430\u043b\u043e\u0441\u044c.`,
+      '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043e\u0439 \u0434\u0435\u043d\u044c.',
+    ].join('\n');
+
+    if (messageId) {
+      await editMessage(chatId, messageId, text, { reply_markup: buildNoSlotsKeyboard() });
+    } else {
+      await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
+    }
+
+    return false;
+  }
+
+  const text = [
+    '<b>\u0421\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f</b>',
+    `\u0414\u0430\u0442\u0430: ${escapeHtml(formatFullDateLabel(dateKey))}`,
+    '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u043d\u044b\u0439 \u0441\u043b\u043e\u0442.',
+  ].join('\n');
+
+  if (messageId) {
+    await editMessage(chatId, messageId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
+  } else {
+    await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
+  }
+
+  return true;
 }
 
 async function setConversation(userId, state) {
@@ -431,44 +653,6 @@ async function showMainMenu(chatId, userId, introText = 'Выберите дей
   });
 }
 
-async function sendDatePicker(chatId, userId, text = 'Выберите дату записи:') {
-  const dateOptions = listDateOptions({
-    timeZone: BOOKING_TIME_ZONE,
-    days: BOOKING_DATE_WINDOW_DAYS,
-  });
-
-  await sendMessage(chatId, text, {
-    reply_markup: buildDateKeyboard(dateOptions),
-  });
-}
-
-async function sendTimePicker(chatId, userId, dateKey) {
-  const slots = await getAvailableSlotsForDate({
-    calendarId: process.env.GOOGLE_CALENDAR_ID,
-    serviceAccountJson: process.env.GOOGLE_SERVICE_ACCOUNT_JSON,
-    dateKey,
-    timeZone: BOOKING_TIME_ZONE,
-    durationMinutes: DEFAULT_BOOKING_DURATION_MINUTES,
-    slotIntervalMinutes: SLOT_INTERVAL_MINUTES,
-    workingHoursStart: WORKING_HOURS_START,
-    workingHoursEnd: WORKING_HOURS_END,
-  });
-
-  if (slots.length === 0) {
-    await sendMessage(
-      chatId,
-      `На ${escapeHtml(formatDateLabel(dateKey))} свободных слотов не осталось. Выберите другой день.`,
-      { reply_markup: buildNoSlotsKeyboard() },
-    );
-    return false;
-  }
-
-  await sendMessage(chatId, `Выберите время на ${escapeHtml(formatDateLabel(dateKey))}:`, {
-    reply_markup: buildTimeKeyboard(dateKey, slots),
-  });
-  return true;
-}
-
 async function handleStart(message) {
   await clearConversation(message.from.id);
   await showMainMenu(
@@ -568,7 +752,11 @@ async function handleConversation(message, conversation) {
         ...nextConversation,
         step: 'date',
       });
-      await sendDatePicker(message.chat.id, message.from.id, 'Отлично. Теперь выберите дату записи:');
+      await renderDatePicker({
+        chatId: message.chat.id,
+        conversation: { ...nextConversation, step: 'date' },
+        promptText: 'Отлично. Теперь выберите дату записи.',
+      });
       return true;
     }
 
@@ -675,49 +863,82 @@ async function handleBookingPickerCallback(callbackQuery) {
 
   const conversation = await getConversation(actorId);
 
+  if (data === 'pick_noop') {
+    await answerCallbackQuery(callbackQuery.id, '');
+    return true;
+  }
+
   if (data === 'pick_cancel') {
     await clearConversation(actorId);
-    await answerCallbackQuery(callbackQuery.id, 'Запись отменена');
-    await showMainMenu(message.chat.id, actorId, 'Запись отменена. Выберите действие:');
+    await answerCallbackQuery(callbackQuery.id, '\u0417\u0430\u043f\u0438\u0441\u044c \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u0430');
+    await showMainMenu(message.chat.id, actorId, '\u0417\u0430\u043f\u0438\u0441\u044c \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u0430. \u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435:');
     return true;
   }
 
   if (!conversation || conversation.type !== 'booking') {
-    await answerCallbackQuery(callbackQuery.id, 'Сессия записи не найдена');
+    await answerCallbackQuery(callbackQuery.id, '\u0421\u0435\u0441\u0441\u0438\u044f \u0437\u0430\u043f\u0438\u0441\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430');
+    return true;
+  }
+
+  if (data.startsWith('pick_month:')) {
+    const nextMonth = data.slice('pick_month:'.length);
+    const nextConversation = {
+      ...conversation,
+      calendarMonth: nextMonth,
+    };
+    await setConversation(actorId, nextConversation);
+    await answerCallbackQuery(callbackQuery.id, '\u041c\u0435\u0441\u044f\u0446 \u043e\u0431\u043d\u043e\u0432\u043b\u0451\u043d');
+    await renderDatePicker({
+      chatId: message.chat.id,
+      conversation: nextConversation,
+      messageId: message.message_id,
+    });
     return true;
   }
 
   if (data === 'pick_back:date') {
-    await setConversation(actorId, {
+    const nextConversation = {
       ...conversation,
       step: 'date',
+    };
+    await setConversation(actorId, nextConversation);
+    await answerCallbackQuery(callbackQuery.id, '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043e\u0439 \u0434\u0435\u043d\u044c');
+    await renderDatePicker({
+      chatId: message.chat.id,
+      conversation: nextConversation,
+      messageId: message.message_id,
+      promptText: '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043d\u043e\u0432\u0443\u044e \u0434\u0430\u0442\u0443 \u0437\u0430\u043f\u0438\u0441\u0438.',
     });
-    await answerCallbackQuery(callbackQuery.id, 'Выберите другой день');
-    await sendDatePicker(message.chat.id, actorId, 'Выберите новую дату записи:');
     return true;
   }
 
   if (data.startsWith('pick_date:')) {
     const dateKey = data.slice('pick_date:'.length);
-
-    await setConversation(actorId, {
+    const nextConversation = {
       ...conversation,
       step: 'time',
+      calendarMonth: getMonthKey(dateKey),
       draft: {
         ...conversation.draft,
         dateKey,
       },
-    });
+    };
+
+    await setConversation(actorId, nextConversation);
 
     try {
-      const hasSlots = await sendTimePicker(message.chat.id, actorId, dateKey);
-      await answerCallbackQuery(callbackQuery.id, hasSlots ? 'Дата выбрана' : 'На этот день слотов нет');
+      const hasSlots = await renderTimePicker({
+        chatId: message.chat.id,
+        messageId: message.message_id,
+        dateKey,
+      });
+      await answerCallbackQuery(callbackQuery.id, hasSlots ? '\u0414\u0430\u0442\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u0430' : '\u0412\u0441\u0435 \u0441\u043b\u043e\u0442\u044b \u0437\u0430\u043d\u044f\u0442\u044b');
     } catch (error) {
       console.error('[telegram-bot] Failed to fetch Google Calendar slots', error);
-      await answerCallbackQuery(callbackQuery.id, 'Не удалось загрузить слоты');
+      await answerCallbackQuery(callbackQuery.id, '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0441\u043b\u043e\u0442\u044b');
       await sendMessage(
         message.chat.id,
-        'Не удалось загрузить свободное время из Google Calendar. Попробуйте ещё раз чуть позже.',
+        '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f \u0438\u0437 Google Calendar. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437 \u0447\u0443\u0442\u044c \u043f\u043e\u0437\u0436\u0435.',
         { reply_markup: getMenuForUser(actorId) },
       );
     }
@@ -730,13 +951,14 @@ async function handleBookingPickerCallback(callbackQuery) {
     const timeKey = rawTime?.replace('.', ':');
 
     if (!dateKey || !timeKey) {
-      await answerCallbackQuery(callbackQuery.id, 'Некорректный слот');
+      await answerCallbackQuery(callbackQuery.id, '\u041d\u0435\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 \u0441\u043b\u043e\u0442');
       return true;
     }
 
     await setConversation(actorId, {
       ...conversation,
       step: 'notes',
+      calendarMonth: getMonthKey(dateKey),
       draft: {
         ...conversation.draft,
         dateKey,
@@ -744,10 +966,10 @@ async function handleBookingPickerCallback(callbackQuery) {
       },
     });
 
-    await answerCallbackQuery(callbackQuery.id, 'Время выбрано');
+    await answerCallbackQuery(callbackQuery.id, '\u0412\u0440\u0435\u043c\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043e');
     await sendMessage(
       message.chat.id,
-      `Вы выбрали ${escapeHtml(`${dateKey} ${timeKey}`)}. Добавьте комментарий или отправьте "-" если комментария нет.`,
+      `\u0412\u044b \u0432\u044b\u0431\u0440\u0430\u043b\u0438 ${escapeHtml(`${dateKey} ${timeKey}`)}. \u0414\u043e\u0431\u0430\u0432\u044c\u0442\u0435 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0438\u043b\u0438 \u043e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 "-" \u0435\u0441\u043b\u0438 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0435\u0442.`,
       { reply_markup: getMenuForUser(actorId) },
     );
     return true;
@@ -755,6 +977,7 @@ async function handleBookingPickerCallback(callbackQuery) {
 
   return false;
 }
+
 
 async function handleClientCommand(message) {
   const text = message.text.trim();
