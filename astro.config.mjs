@@ -8,7 +8,9 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   site: 'https://your-beauty-salon.com', // Замените на реальный домен
   output: 'server',
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: { enabled: true }, // Это заставит Vercel использовать актуальную конфигурацию
+  }),
   integrations: [
     tailwind(),
     react(),
@@ -24,11 +26,11 @@ export default defineConfig({
     remotePatterns: [],
   },
   // Vite конфигурация для path aliases
-  vite: {
-    resolve: {
-      alias: {
-        '@': '/src',
-      },
-    },
-  },
+  // vite: {
+  //   resolve: {
+  //     alias: {
+  //       '@': '/src',
+  //     },
+  //   },
+  // },
 });
