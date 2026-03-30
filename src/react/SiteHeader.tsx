@@ -15,9 +15,15 @@ interface SiteHeaderProps {
   bookingUrl?: string;
   telegramUrl?: string;
   showBookingCta?: boolean;
+  homeNavigation?: boolean;
 }
 
-export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: SiteHeaderProps) {
+export function SiteHeader({
+  bookingUrl,
+  telegramUrl,
+  showBookingCta = true,
+  homeNavigation = false,
+}: SiteHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,6 +31,10 @@ export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: S
   const mutedTextClass = scrolled ? 'text-muted-foreground' : 'text-white/88 drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]';
   const borderClass = scrolled ? 'border-border/70 bg-white/40' : 'border-white/18 bg-white/10';
   const mobilePanelClass = scrolled ? 'bg-background/90' : 'bg-[#1f1612]/84';
+  const resolvedNavLinks = navLinks.map((link) => ({
+    ...link,
+    href: homeNavigation && link.href.startsWith('#') ? `/${link.href}` : link.href,
+  }));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -46,7 +56,7 @@ export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: S
       }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <a href="#" className="group flex items-center gap-3">
+        <a href="/" className="group flex items-center gap-3">
           <div
             className="relative flex size-11 items-center justify-center overflow-hidden rounded-full border border-white/20 shadow-[0_16px_28px_-18px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-[1.06] group-hover:rotate-[4deg]"
             style={{ animation: 'floatMedium 7s ease-in-out infinite' }}
@@ -63,14 +73,14 @@ export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: S
             <span className={`block font-serif text-xl font-semibold tracking-tight transition-colors duration-300 ${headerTextClass}`}>
               Brow & Lip
             </span>
-            <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 ${mutedTextClass}`}>
+            <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 !text-white ${mutedTextClass}`}>
               Studio de frumusete permanenta
             </span>
           </div>
         </a>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
-          {navLinks.map((link) => (
+          {resolvedNavLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -78,7 +88,7 @@ export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: S
             >
               <span
                 className={`transition-colors duration-300 ${
-                  scrolled ? 'text-muted-foreground group-hover:text-foreground' : 'text-white/88 group-hover:text-white'
+                  scrolled ? 'text-muted-foreground group-hover:text-foreground' : '!text-white group-hover:!text-white'
                 }`}
               >
                 {link.label}
@@ -136,7 +146,7 @@ export function SiteHeader({ bookingUrl, telegramUrl, showBookingCta = true }: S
         }}
       >
         <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile navigation">
-          {navLinks.map((link) => (
+          {resolvedNavLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
