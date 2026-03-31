@@ -7,6 +7,10 @@
  */
 
 import Layout from '@/layouts/Layout.astro';
+import { SiteHeader } from '@/react/SiteHeader';
+import { getPublicContactLinks } from '@/lib/publicLinks';
+
+const contactLinks = getPublicContactLinks();
 
 // SEO мета-данные
 const pageTitle = 'Политика конфиденциальности';
@@ -17,6 +21,8 @@ const lastUpdated = '01 марта 2026';
 ---
 
 <Layout title={pageTitle} description={pageDescription} noIndex={true}>
+  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
+
   <!-- Hero секция -->
   <section class="bg-gradient-to-br from-blue-50 to-indigo-50 py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">

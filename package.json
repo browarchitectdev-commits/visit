@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-   "build": "tinacms build && astro build",
+    "build": "tinacms build && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "tina": "tinacms dev -c \"npm run dev\"",
@@ -19,6 +19,7 @@
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/tailwind": "^5.1.2",
     "@astrojs/vercel": "^9.0.5",
+    "@supabase/supabase-js": "^2.101.0",
     "@tinacms/cli": "^2.1.8",
     "astro": "^5.0.0",
     "react": "^18.3.1",

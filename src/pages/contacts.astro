@@ -1,9 +1,13 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import { SiteHeader } from '@/react/SiteHeader';
+import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const pageTitle = 'Contacte';
 const pageDescription =
   'Ia legatura cu noi prin telefon, email sau retele sociale. Suntem disponibili pentru programari si consultatii personalizate.';
+const contactStatus = Astro.url.searchParams.get('contact');
+const contactLinks = getPublicContactLinks();
 
 const contacts = {
   phone: '+39 000 000 0000',
@@ -23,6 +27,8 @@ const contacts = {
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="ro">
+  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
+
   <section class="bg-gradient-to-br from-[#f8efe8] via-[#f7ece5] to-[#efe2d8] py-20">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="text-center">
@@ -102,13 +108,33 @@ const contacts = {
       </div>
 
       <div class="space-y-8">
-        <div class="rounded-[2rem] border border-border/70 bg-card p-8 shadow-[0_24px_60px_-44px_rgba(33,24,19,0.35)]">
+        <div id="contact-form" class="rounded-[2rem] border border-border/70 bg-card p-8 shadow-[0_24px_60px_-44px_rgba(33,24,19,0.35)]">
           <h2 class="font-serif text-3xl font-semibold text-card-foreground">Scrie-ne direct</h2>
           <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
             Daca preferi, ne poti lasa un mesaj si revenim cat mai curand posibil.
           </p>
 
+          {contactStatus === 'success' && (
+            <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              Mesajul a fost trimis cu succes. L-am salvat si l-am trimis administratorului pe Telegram.
+            </div>
+          )}
+
+          {contactStatus === 'validation' && (
+            <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Completeaza toate campurile obligatorii si confirma acordul pentru prelucrarea datelor.
+            </div>
+          )}
+
+          {contactStatus === 'error' && (
+            <div class="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+              Nu am reusit sa trimitem mesajul acum. Incearca din nou sau contacteaza-ne prin Telegram.
+            </div>
+          )}
+
           <form class="mt-6 space-y-5" method="POST" action="/api/contact">
+            <input type="text" name="company" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+
             <div>
               <label for="name" class="mb-2 block text-sm font-medium text-card-foreground">Nume</label>
               <input type="text" id="name" name="name" required class="w-full rounded-xl border border-border bg-background px-4 py-3 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25" placeholder="Numele tau" />

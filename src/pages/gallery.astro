@@ -8,7 +8,11 @@
 
 import Layout from '@/layouts/Layout.astro';
 import BeforeAfterCard from '@/components/BeforeAfterCard.astro';
+import { SiteHeader } from '@/react/SiteHeader';
 import { getCollection } from 'astro:content';
+import { getPublicContactLinks } from '@/lib/publicLinks';
+
+const contactLinks = getPublicContactLinks();
 
 // Получаем все работы из Content Collection
 const allGalleryItems = await getCollection('gallery');
@@ -56,6 +60,8 @@ const pageDescription = `Портфолио наших лучших работ. 
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
+  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
+
   <!-- Hero секция -->
   <section class="bg-gradient-to-br from-blue-50 to-indigo-50 py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
