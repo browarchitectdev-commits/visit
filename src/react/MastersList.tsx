@@ -45,7 +45,7 @@ export function MastersList({ masters }: MastersListProps) {
   const activeMasters = masters.filter((master) => master.data.isActive);
 
   return (
-    <section id="masters" className="relative overflow-hidden bg-secondary/45 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+    <section id="masters" data-section-cinema className="section-shell relative overflow-hidden bg-secondary/45 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
       <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 bg-[radial-gradient(circle,rgba(182,106,89,0.16),transparent_66%)] blur-[40px]" aria-hidden="true" />
       <div className="pointer-events-none absolute left-0 bottom-0 h-64 w-64 bg-[radial-gradient(circle,rgba(217,189,147,0.18),transparent_66%)] blur-[44px]" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">

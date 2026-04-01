@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ProgressiveImage } from './ProgressiveImage';
 
 interface GallerySectionProps {
   images: Array<{
@@ -31,7 +32,7 @@ export function GallerySection({ images }: GallerySectionProps) {
   }, []);
 
   return (
-    <section id="gallery" className="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+    <section id="gallery" data-section-cinema className="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
       <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-[32rem] -translate-x-1/2 bg-[radial-gradient(circle,rgba(224,188,145,0.18),transparent_68%)] blur-[38px]" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">
         <div
@@ -72,7 +73,7 @@ export function GallerySection({ images }: GallerySectionProps) {
             return (
               <div
                 key={image.src}
-                className={`group shine-border relative overflow-hidden rounded-[1.45rem] bg-muted sm:rounded-[1.9rem] ${layoutClass}`}
+                className={`cinematic-card group glass-sheen shine-border relative overflow-hidden rounded-[1.45rem] bg-muted sm:rounded-[1.9rem] ${layoutClass}`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
@@ -81,10 +82,10 @@ export function GallerySection({ images }: GallerySectionProps) {
                   transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${index * 0.07}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${index * 0.07}s`,
                 }}
               >
-                <img
+                <ProgressiveImage
                   src={image.src}
                   alt={image.alt}
-                  className="h-full w-full object-cover transition-transform duration-700"
+                  className="cinematic-media h-full w-full object-cover transition-transform duration-700"
                   style={{ transform: hoveredIndex === index ? 'scale(1.06)' : 'scale(1)' }}
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,9,8,0.06)_0%,rgba(13,9,8,0.62)_100%)]" />
@@ -98,7 +99,7 @@ export function GallerySection({ images }: GallerySectionProps) {
                     opacity: hoveredIndex === index ? 1 : 0.9,
                   }}
                 >
-                  <div className="rounded-[1.1rem] border border-white/12 bg-black/18 px-3 py-2.5 backdrop-blur-md sm:rounded-[1.35rem] sm:px-4 sm:py-3">
+                  <div className="cinematic-panel rounded-[1.1rem] border border-white/12 bg-black/18 px-3 py-2.5 backdrop-blur-md sm:rounded-[1.35rem] sm:px-4 sm:py-3">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/48 sm:text-[10px] sm:tracking-[0.22em]">
                       {index === 0 ? 'Compozitie principala' : 'Portofoliul studioului'}
                     </p>

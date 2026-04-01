@@ -232,8 +232,6 @@ const contactLinks = getPublicContactLinks();
   <ServicesList
     client:visible
     services={sortedServices}
-    bookingUrl={contactLinks.bookingUrl}
-    telegramUrl={contactLinks.telegramUrl}
   />
 
   <div class="pointer-events-none relative mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
@@ -248,7 +246,7 @@ const contactLinks = getPublicContactLinks();
 
   {galleryImages.length > 0 && <GallerySection client:visible images={galleryImages} />}
 
-  <section id="social" class="relative overflow-hidden scroll-mt-28 bg-secondary/30 py-8 sm:py-10 lg:py-12">
+  <section id="social" data-section-cinema class="section-shell relative overflow-hidden scroll-mt-28 bg-secondary/30 py-8 sm:py-10 lg:py-12">
     <div class="pointer-events-none absolute -top-16 right-0 h-72 w-72 rounded-full bg-primary/10 blur-[80px] animate-float-slow" aria-hidden="true"></div>
     <div class="pointer-events-none absolute -bottom-16 left-0 h-64 w-64 rounded-full bg-[#e0bc91]/12 blur-[80px] animate-float-medium" aria-hidden="true"></div>
 
@@ -315,15 +313,24 @@ const contactLinks = getPublicContactLinks();
               </div>
 
               {post.platform === 'instagram' && (
-                <iframe src={`https://www.instagram.com/p/${post.embedId}/embed`} class="w-full" style="min-height: 390px; border: 0;" loading="lazy" allowtransparency={true} title={post.title} referrerpolicy="no-referrer" />
+                <div class="embed-shell" style="min-height: 390px;">
+                  <div class="embed-skeleton"></div>
+                  <iframe src={`https://www.instagram.com/p/${post.embedId}/embed`} class="w-full" style="min-height: 390px; border: 0;" loading="lazy" allowtransparency={true} title={post.title} referrerpolicy="no-referrer" />
+                </div>
               )}
 
               {post.platform === 'tiktok' && (
-                <iframe src={`https://www.tiktok.com/embed/${post.embedId}`} class="w-full" style="min-height: 470px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen />
+                <div class="embed-shell" style="min-height: 470px;">
+                  <div class="embed-skeleton"></div>
+                  <iframe src={`https://www.tiktok.com/embed/${post.embedId}`} class="w-full" style="min-height: 470px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen />
+                </div>
               )}
 
               {post.platform === 'facebook' && (
-                <iframe src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId)}&show_text=true&width=500`} class="w-full" style="min-height: 450px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen />
+                <div class="embed-shell" style="min-height: 450px;">
+                  <div class="embed-skeleton"></div>
+                  <iframe src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId)}&show_text=true&width=500`} class="w-full" style="min-height: 450px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen />
+                </div>
               )}
 
               {(post.caption || post.postUrl) && (
@@ -351,5 +358,76 @@ const contactLinks = getPublicContactLinks();
     </div>
   </section>
 
+  <section data-section-cinema class="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+    <div class="mx-auto max-w-7xl">
+      <div class="cinematic-card editorial-panel glass-sheen shine-border rounded-[2rem] p-6 text-center shadow-[0_24px_70px_-50px_rgba(73,45,28,0.4)] sm:p-8 lg:p-10">
+        <p class="text-sm uppercase tracking-[0.22em] text-muted-foreground">Rezervare</p>
+        <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          Alege modul in care vrei sa rezervi
+        </h2>
+        <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          Daca stii deja serviciul dorit, deschide direct calendarul. Daca vrei sa ne scrii intai, foloseste Telegram si alegem impreuna varianta potrivita.
+        </p>
+        <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+          {contactLinks.bookingUrl && (
+            <a
+              href={contactLinks.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-shimmer inline-flex items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all duration-300 hover:opacity-92"
+            >
+              Rezerva prin calendar
+            </a>
+          )}
+          {contactLinks.telegramUrl && (
+            <a
+              href={contactLinks.telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 rounded-full border border-[#229ED9]/20 bg-[#229ED9] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#1c8fc4]"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.328-.373-.115l-6.869 4.332-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.54-.203 1.01.122.84 1.125z" />
+              </svg>
+              Scrie-ne pe Telegram
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
   <SiteFooter client:load telegramUrl={contactLinks.telegramUrl} />
+
+  <script>
+    function initEmbedSkeletons() {
+      document.querySelectorAll('.embed-shell iframe').forEach((iframe) => {
+        const frame = iframe as HTMLIFrameElement;
+        if (frame.dataset.skeletonBound === 'true') return;
+
+        frame.dataset.skeletonBound = 'true';
+
+        const shell = frame.closest('.embed-shell');
+        if (!shell) return;
+
+        const markLoaded = () => {
+          shell.classList.add('is-loaded');
+        };
+
+        frame.addEventListener('load', markLoaded, { once: true });
+
+        window.setTimeout(() => {
+          shell.classList.add('is-loaded');
+        }, 4500);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initEmbedSkeletons);
+    } else {
+      initEmbedSkeletons();
+    }
+
+    document.addEventListener('astro:page-load', initEmbedSkeletons);
+  </script>
 </Layout>

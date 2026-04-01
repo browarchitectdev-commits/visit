@@ -28,7 +28,6 @@ export function SiteHeader({
   const [scrolled, setScrolled] = useState(false);
 
   const headerTextClass = scrolled ? 'text-foreground' : 'text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]';
-  const mutedTextClass = scrolled ? 'text-muted-foreground' : 'text-white/88 drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]';
   const borderClass = scrolled ? 'border-border/70 bg-white/40' : 'border-white/18 bg-white/10';
   const mobilePanelClass = scrolled ? 'bg-background/90' : 'bg-[#1f1612]/84';
   const resolvedNavLinks = navLinks.map((link) => ({

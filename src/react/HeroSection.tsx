@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { TelegramIcon } from './TelegramIcon';
+import { ProgressiveImage } from './ProgressiveImage';
 
 interface HeroSectionProps {
   title: string;
@@ -36,23 +38,75 @@ export function HeroSection({
   secondaryCTA,
   backgroundImage = '/images/hero.jpg',
 }: HeroSectionProps) {
+  const [parallaxEnabled, setParallaxEnabled] = useState(false);
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    const sync = () => {
+      setParallaxEnabled(!motionQuery.matches && hoverQuery.matches);
+    };
+
+    sync();
+    motionQuery.addEventListener('change', sync);
+    hoverQuery.addEventListener('change', sync);
+
+    return () => {
+      motionQuery.removeEventListener('change', sync);
+      hoverQuery.removeEventListener('change', sync);
+    };
+  }, []);
+
+  const handlePointerMove = (event: React.MouseEvent<HTMLElement>) => {
+    if (!parallaxEnabled) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+
+    setPointer({ x, y });
+  };
+
+  const resetPointer = () => setPointer({ x: 0, y: 0 });
+  const parallaxTransform = (strengthX: number, strengthY: number, scale = 1) =>
+    `translate3d(${pointer.x * strengthX}px, ${pointer.y * strengthY}px, 0) scale(${scale})`;
+
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden pt-16">
+    <section
+      className="relative flex min-h-screen items-center overflow-hidden pt-16"
+      onMouseMove={handlePointerMove}
+      onMouseLeave={resetPointer}
+    >
       {backgroundImage && (
         <div className="absolute inset-0">
-          <img
+          <ProgressiveImage
             src={backgroundImage}
             alt="Interno dello studio Brow & Lip"
-            className="h-full w-full object-cover"
+            wrapperClassName="absolute inset-0"
+            className="hero-image-drift h-full w-full object-cover"
+            skeletonClassName="bg-[linear-gradient(180deg,rgba(61,42,34,0.88),rgba(26,18,15,0.96))]"
+            loading="eager"
+            style={{
+              transform: parallaxEnabled ? parallaxTransform(-10, -8, 1.06) : undefined,
+            }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,12,10,0.84)_0%,rgba(18,12,10,0.6)_38%,rgba(18,12,10,0.18)_100%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_20%,rgba(224,188,145,0.18),transparent_26%),linear-gradient(180deg,rgba(18,12,10,0.1)_0%,rgba(18,12,10,0.54)_100%)]" />
+          <div className="hero-grid absolute inset-0" />
+          <div className="absolute inset-x-0 top-0 h-48 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),transparent)] opacity-70" />
         </div>
       )}
 
       <div
         className="pointer-events-none absolute -right-24 top-24 h-[28rem] w-[28rem] rounded-full bg-[#e0bc91]/18 blur-[110px]"
-        style={{ animation: 'floatSlow 9s ease-in-out infinite' }}
+        style={{
+          animation: 'floatSlow 9s ease-in-out infinite',
+          transform: parallaxEnabled ? parallaxTransform(18, -14, 1) : undefined,
+        }}
         aria-hidden="true"
       />
       <div
@@ -60,12 +114,34 @@ export function HeroSection({
         style={{ animation: 'floatMedium 6s ease-in-out infinite' }}
         aria-hidden="true"
       />
+      <div
+        className="ambient-orb absolute left-[12%] top-[18%] h-24 w-24 border border-white/12 bg-white/8"
+        style={{
+          animationDuration: '18s',
+          transform: parallaxEnabled ? parallaxTransform(-12, -10, 1) : undefined,
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className="ambient-orb absolute bottom-[18%] right-[10%] h-40 w-40 bg-[#d9bd93]/18"
+        style={{
+          animationDuration: '22s',
+          animationDelay: '-6s',
+          transform: parallaxEnabled ? parallaxTransform(16, 14, 1) : undefined,
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-x-[16%] top-[14%] h-px bg-gradient-to-r from-transparent via-white/24 to-transparent"
+        style={{ animation: 'fadeIn 1.2s ease 0.5s both' }}
+        aria-hidden="true"
+      />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-        <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.08fr)_23rem]">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.08fr)_23rem]">
           <div className="max-w-3xl">
             <span
-              className="mb-5 inline-flex max-w-full rounded-full border border-white/15 bg-white/8 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/72 backdrop-blur-sm sm:px-4 sm:text-[11px] sm:tracking-[0.3em]"
+              className="glass-sheen mb-5 inline-flex max-w-full rounded-full border border-white/15 bg-white/8 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/72 backdrop-blur-sm sm:px-4 sm:text-[11px] sm:tracking-[0.3em]"
               style={{
                 animation: 'fadeInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both',
                 color: 'rgba(255,255,255,0.9)',
@@ -154,7 +230,7 @@ export function HeroSection({
               {heroHighlights.map((item, index) => (
                 <div
                   key={item.label}
-                  className="shine-border rounded-[1.4rem] border border-white/12 bg-white/8 px-4 py-3.5 backdrop-blur-md sm:rounded-[1.5rem] sm:py-4"
+                  className="glass-sheen shine-border rounded-[1.4rem] border border-white/12 bg-white/8 px-4 py-3.5 backdrop-blur-md transition-transform duration-500 hover:-translate-y-1 sm:rounded-[1.5rem] sm:py-4"
                   style={{ animationDelay: `${index * 0.8}s` }}
                 >
                   <p
@@ -179,7 +255,7 @@ export function HeroSection({
             >
               <div className="grid grid-cols-[5.5rem_1fr] items-center gap-3 rounded-[1.4rem] bg-[linear-gradient(180deg,rgba(255,251,247,0.18),rgba(255,251,247,0.08))] p-2.5">
                 <div className="overflow-hidden rounded-[1.2rem]">
-                  <img
+                  <ProgressiveImage
                     src="/images/director.jpg"
                     alt="Fondatoarea Brow & Lip Studio"
                     className="h-28 w-full object-cover object-top"
@@ -202,19 +278,24 @@ export function HeroSection({
 
           <div
             className="parallax-soft relative hidden lg:block"
-            style={{ animation: 'fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.78s both' }}
+            style={{
+              animation: 'fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.78s both',
+              transform: parallaxEnabled ? parallaxTransform(-14, -10, 1) : undefined,
+            }}
           >
-            <div className="editorial-panel shine-border relative overflow-hidden rounded-[2.3rem] p-3 shadow-[0_36px_70px_-34px_rgba(22,14,10,0.72)]">
+            <div className="editorial-panel glass-sheen shine-border relative overflow-hidden rounded-[2.3rem] p-3 shadow-[0_36px_70px_-34px_rgba(22,14,10,0.72)]">
+              <div className="ambient-orb absolute -right-8 top-16 h-28 w-28 bg-[#f3d7b6]/22" style={{ animationDuration: '20s' }} aria-hidden="true" />
               <div className="relative overflow-hidden rounded-[1.8rem] bg-[#d8b1a6]">
-                <img
+                <ProgressiveImage
                   src="/images/director.jpg"
                   alt="Fondatoarea Brow & Lip Studio"
-                  className="h-[34rem] w-full object-cover object-top"
+                  className="hero-image-drift h-[34rem] w-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(24,15,11,0.04)_0%,rgba(24,15,11,0.16)_52%,rgba(24,15,11,0.58)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_18%,rgba(255,255,255,0.2),transparent_24%)] mix-blend-screen" />
               </div>
 
-              <div className="absolute inset-x-7 bottom-7 rounded-[1.7rem] border border-white/12 bg-[#1d140f]/54 p-5 text-white backdrop-blur-md">
+              <div className="glass-sheen absolute inset-x-7 bottom-7 rounded-[1.7rem] border border-white/12 bg-[#1d140f]/54 p-5 text-white backdrop-blur-md">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-white/48">
                   Fondatoare / Directoare Artistica
                 </p>
@@ -227,7 +308,7 @@ export function HeroSection({
               </div>
             </div>
 
-            <div className="absolute -left-10 top-8 w-40 rounded-[1.5rem] border border-white/16 bg-[#2a1e19]/84 p-4 text-white shadow-[0_22px_42px_-26px_rgba(0,0,0,0.55)] backdrop-blur-md">
+            <div className="glass-sheen absolute -left-10 top-8 w-40 rounded-[1.5rem] border border-white/16 bg-[#2a1e19]/84 p-4 text-white shadow-[0_22px_42px_-26px_rgba(0,0,0,0.55)] backdrop-blur-md">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">
                 Directie artistica
               </p>
@@ -239,7 +320,7 @@ export function HeroSection({
               </p>
             </div>
 
-            <div className="absolute -bottom-6 right-5 rounded-[1.5rem] border border-white/12 bg-white/92 px-4 py-4 text-card-foreground shadow-[0_22px_44px_-28px_rgba(0,0,0,0.52)]">
+            <div className="glass-sheen absolute -bottom-6 right-5 rounded-[1.5rem] border border-white/12 bg-white/92 px-4 py-4 text-card-foreground shadow-[0_22px_44px_-28px_rgba(0,0,0,0.52)]">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
                 Semnatura studioului
               </p>

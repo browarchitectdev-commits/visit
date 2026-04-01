@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { ProgressiveImage } from './ProgressiveImage';
 
 interface MasterCardProps {
   name: string;
@@ -24,29 +24,17 @@ export function MasterCard({
   telegram,
   featured = false,
 }: MasterCardProps) {
-  const [isHovered, setIsHovered] = React.useState(false);
-
   return (
     <article
-      className={`group shine-border relative overflow-hidden rounded-[1.75rem] border border-white/18 bg-card/15 sm:rounded-[2rem] ${
+      className={`cinematic-card group glass-sheen shine-border relative overflow-hidden rounded-[1.75rem] border border-white/18 bg-card/15 sm:rounded-[2rem] ${
         featured ? 'sm:col-span-2 lg:col-span-2 lg:grid lg:grid-cols-[1.05fr_0.95fr]' : ''
       }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        boxShadow: isHovered
-          ? '0 30px 58px -32px rgba(44,27,18,0.56)'
-          : '0 18px 42px -34px rgba(44,27,18,0.44)',
-        transition: 'box-shadow 0.45s ease, transform 0.45s ease',
-        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-      }}
     >
       <div className={`relative overflow-hidden bg-muted ${featured ? 'aspect-[4/4.4] sm:aspect-[4/3] lg:aspect-auto lg:h-full' : 'aspect-[3/4]'}`}>
-        <img
+        <ProgressiveImage
           src={photo}
           alt={name}
-          className="h-full w-full object-cover transition-transform duration-700"
-          style={{ transform: isHovered ? 'scale(1.04)' : 'scale(1)' }}
+          className="cinematic-media h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,7,0.05)_0%,rgba(10,8,7,0.78)_100%)]" />
 
@@ -63,8 +51,8 @@ export function MasterCard({
       </div>
 
       <div className={`flex flex-col justify-end p-4 sm:p-5 ${featured ? 'bg-[linear-gradient(180deg,rgba(255,251,247,0.94),rgba(247,238,232,0.86))] lg:p-6' : ''}`}>
-        <div className={`rounded-[1.35rem] border ${featured ? 'border-border/70 bg-white/54' : 'border-white/12 bg-black/18'} p-3.5 backdrop-blur-md sm:rounded-[1.6rem] sm:p-4`}>
-          <div className="flex items-start justify-between gap-4">
+        <div className={`cinematic-panel rounded-[1.35rem] border ${featured ? 'border-border/70 bg-white/54' : 'border-white/12 bg-black/18'} p-3.5 backdrop-blur-md sm:rounded-[1.6rem] sm:p-4`}>
+          <div className="cinematic-copy flex items-start justify-between gap-4">
             <div>
               <h3 className={`font-serif text-[1.8rem] font-semibold leading-tight sm:text-3xl ${featured ? 'text-card-foreground' : 'text-white'}`}>{name}</h3>
               <p className={`mt-1 text-sm font-medium ${featured ? 'text-muted-foreground' : 'text-white/76'}`}>{position}</p>
@@ -76,10 +64,10 @@ export function MasterCard({
           </div>
 
           <p
-            className={`mt-3 text-sm leading-relaxed transition-all duration-500 ${featured ? 'text-card-foreground/78' : 'text-white/76'}`}
+            className={`cinematic-copy mt-3 text-sm leading-relaxed transition-all duration-500 ${featured ? 'text-card-foreground/78' : 'text-white/76'}`}
             style={{
-              maxHeight: isHovered || featured ? '112px' : '0px',
-              opacity: isHovered || featured ? 1 : 0,
+              maxHeight: featured ? '112px' : 'none',
+              opacity: 1,
               overflow: 'hidden',
             }}
           >
@@ -87,13 +75,7 @@ export function MasterCard({
           </p>
 
           {(instagram || telegram) && (
-            <div
-              className="mt-3 flex gap-2 transition-all duration-500"
-              style={{
-                opacity: isHovered || featured ? 1 : 0,
-                transform: isHovered || featured ? 'translateY(0)' : 'translateY(8px)',
-              }}
-            >
+            <div className="cinematic-copy mt-3 flex gap-2 transition-all duration-500">
               {instagram && (
                 <a
                   href={instagram}

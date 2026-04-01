@@ -44,7 +44,7 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="section-shell px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+    <section id="about" ref={sectionRef} data-section-cinema className="section-shell px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       <div className="mx-auto max-w-7xl">
         <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12">
           <div
