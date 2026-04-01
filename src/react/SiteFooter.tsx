@@ -7,15 +7,20 @@ const footerLinks = [
   { label: 'Studio', href: '#about' },
   { label: 'Portofoliu', href: '#gallery' },
   { label: 'Echipa', href: '#masters' },
-  { label: 'Social', href: '/social' },
+  { label: 'Social', href: '#social' },
 ];
 
 interface SiteFooterProps {
   telegramUrl?: string;
+  homeNavigation?: boolean;
 }
 
-export function SiteFooter({ telegramUrl }: SiteFooterProps) {
+export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterProps) {
   const currentYear = new Date().getFullYear();
+  const resolvedFooterLinks = footerLinks.map((link) => ({
+    ...link,
+    href: homeNavigation && link.href.startsWith('#') ? `/${link.href}` : link.href,
+  }));
 
   return (
     <footer className="relative overflow-hidden border-t border-border/80 bg-[#201713] text-white">
@@ -83,7 +88,7 @@ export function SiteFooter({ telegramUrl }: SiteFooterProps) {
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigare</h4>
             <nav className="mt-5 flex flex-col gap-3">
-              {footerLinks.map((link) => (
+              {resolvedFooterLinks.map((link) => (
                 <a key={link.href} href={link.href} className="text-sm text-white/68 transition-colors hover:text-white">
                   {link.label}
                 </a>

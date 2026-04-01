@@ -8,7 +8,7 @@ const navLinks = [
   { label: 'Studio', href: '#about' },
   { label: 'Portofoliu', href: '#gallery' },
   { label: 'Echipa', href: '#masters' },
-  { label: 'Social', href: '/social' },
+  { label: 'Social', href: '#social' },
 ];
 
 interface SiteHeaderProps {
@@ -73,7 +73,7 @@ export function SiteHeader({
             <span className={`block font-serif text-xl font-semibold tracking-tight transition-colors duration-300 ${headerTextClass}`}>
               Brow & Lip
             </span>
-            <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 !text-white ${mutedTextClass}`}>
+            <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 ${headerTextClass}`}>
               Studio de frumusete permanenta
             </span>
           </div>
