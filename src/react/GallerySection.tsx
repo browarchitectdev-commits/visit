@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import { ProgressiveImage } from './ProgressiveImage';
+import { useInViewOnce } from './hooks/useInViewOnce';
 
 interface GallerySectionProps {
   images: Array<{
@@ -11,25 +12,8 @@ interface GallerySectionProps {
 }
 
 export function GallerySection({ images }: GallerySectionProps) {
-  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-  const headerRef = React.useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = headerRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { ref: headerRef, visible } = useInViewOnce<HTMLDivElement>();
 
   return (
     <section id="gallery" data-section-cinema className="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">

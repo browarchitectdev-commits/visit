@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React from 'react';
+import { useInViewOnce } from './hooks/useInViewOnce';
 
 const features = [
   {
@@ -24,24 +24,7 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ image, title, description }: AboutSectionProps) {
-  const sectionRef = React.useRef<HTMLElement>(null);
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  const { ref: sectionRef, visible } = useInViewOnce<HTMLElement>();
 
   return (
     <section id="about" ref={sectionRef} data-section-cinema className="section-shell px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">

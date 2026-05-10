@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useInViewOnce } from './hooks/useInViewOnce';
 
 interface StatsItem {
   value: string;
@@ -12,27 +12,10 @@ interface StatsSectionProps {
 }
 
 export function StatsSection({ stats }: StatsSectionProps) {
-  const sectionRef = React.useRef<HTMLElement>(null);
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  const { ref: sectionRef, visible } = useInViewOnce<HTMLElement>(0.15);
 
   return (
-    <section ref={sectionRef} data-section-cinema className="relative -mt-10 px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
+    <section ref={sectionRef} className="relative -mt-10 px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="editorial-panel relative overflow-hidden rounded-[2rem] px-5 py-6 sm:px-7 sm:py-7 lg:px-8">
           <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(circle_at_left,rgba(182,106,89,0.18),transparent_70%)]" aria-hidden="true" />

@@ -3,10 +3,12 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   service: CollectionEntry<'services'>;
+  index?: number;
 }
 
-const { service } = Astro.props;
+const { service, index = 0 } = Astro.props;
 const { name, price, duration, description, image } = service.data;
+const animationDelay = index * 0.1; // 0s, 0.1s, 0.2s, etc.
 
 const formattedPrice = price.toLocaleString('ru-RU');
 
@@ -21,7 +23,9 @@ const formatDuration = (minutes: number): string => {
 ---
 
 <article
-  class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+  class="scroll-card group flex flex-col overflow-hidden rounded-2xl bg-white"
+  data-scroll-card
+  data-reveal-delay={String(animationDelay)}
   role="article"
   aria-label={`Услуга: ${name}`}
 >
@@ -83,3 +87,23 @@ const formatDuration = (minutes: number): string => {
     </div>
   </div>
 </article>
+
+<style>
+  .scroll-card {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s ease;
+    will-change: opacity, transform;
+  }
+  .scroll-card.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .scroll-card.is-visible:hover {
+    transform: translateY(-4px) scale(1);
+    box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.15);
+  }
+</style>

@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { MasterCard } from './MasterCard';
+import { useInViewOnce } from './hooks/useInViewOnce';
 
 export interface Master {
   id: string;
@@ -23,24 +23,7 @@ interface MastersListProps {
 }
 
 export function MastersList({ masters }: MastersListProps) {
-  const headerRef = React.useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = headerRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  const { ref: headerRef, visible } = useInViewOnce<HTMLDivElement>();
 
   const activeMasters = masters.filter((master) => master.data.isActive);
 

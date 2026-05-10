@@ -64,8 +64,8 @@ const pageDescription = `Профессиональные услуги перм�
       {
         activeServices.length > 0 ? (
           <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {activeServices.map((service: any) => (
-              <ServiceCard service={service} />
+            {activeServices.map((service: any, index: number) => (
+              <ServiceCard service={service} index={index} />
             ))}
           </div>
         ) : (
@@ -97,3 +97,53 @@ const pageDescription = `Профессиональные услуги перм�
     </div>
   </section>
 </Layout>
+
+<script is:inline>
+  let servicesRevealObserver;
+
+  const initServicesReveal = () => {
+    const cards = document.querySelectorAll('[data-scroll-card]');
+    if (!cards.length) return;
+
+    if (servicesRevealObserver) {
+      servicesRevealObserver.disconnect();
+    }
+
+    // Если пользователь предпочитает уменьшенное движение — показываем сразу
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      cards.forEach((card) => card.classList.add('is-visible'));
+      return;
+    }
+
+    servicesRevealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target;
+          if (!(target instanceof HTMLElement)) return;
+
+          if (entry.isIntersecting) {
+            // Устанавливаем stagger-задержку и показываем через transition
+            const delay = target.dataset.revealDelay ?? '0';
+            target.style.transitionDelay = `${delay}s`;
+            target.classList.add('is-visible');
+          } else {
+            // Убираем видимость без задержки — сердцевина повторяемости
+            target.style.transitionDelay = '0s';
+            target.classList.remove('is-visible');
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    cards.forEach((card) => servicesRevealObserver.observe(card));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initServicesReveal, { once: true });
+  } else {
+    initServicesReveal();
+  }
+
+  document.addEventListener('astro:page-load', initServicesReveal);
+</script>

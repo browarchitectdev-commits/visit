@@ -25,12 +25,9 @@ export default defineConfig({
     domains: [],
     remotePatterns: [],
   },
-  // Vite конфигурация для path aliases
-  // vite: {
-  //   resolve: {
-  //     alias: {
-  //       '@': '/src',
-  //     },
-  //   },
-  // },
+  vite: {
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+    },
+  },
 });

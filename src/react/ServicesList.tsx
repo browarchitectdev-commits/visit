@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { ServiceCard } from './ServiceCard';
+import { useInViewOnce } from './hooks/useInViewOnce';
 
 export interface Service {
   id: string;
@@ -21,24 +21,7 @@ interface ServicesListProps {
 }
 
 export function ServicesList({ services }: ServicesListProps) {
-  const headerRef = React.useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = headerRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  const { ref: headerRef, visible } = useInViewOnce<HTMLDivElement>();
 
   const activeServices = services.filter((service) => service.data.isActive);
 
