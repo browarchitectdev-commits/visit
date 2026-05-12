@@ -11,7 +11,9 @@
     "astro": "astro",
     "tina": "tinacms dev -c \"npm run dev\"",
     "bot:start": "node ./bot/index.mjs",
-    "bot:check": "node --check ./bot/index.mjs"
+    "bot:check": "node --check ./bot/index.mjs",
+    "bot:vercel:set-webhook": "node ./bot_vercel/register-webhook.mjs",
+    "bot:vercel:delete-webhook": "node ./bot_vercel/delete-webhook.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
