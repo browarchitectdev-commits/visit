@@ -1,149 +1,62 @@
 ---
-/**
- * Страница "Услуги"
- * 
- * Демонстрирует правильное использование Content Collections:
- * 1. Получение данных через getCollection()
- * 2. Фильтрация и сортировка на этапе сборки
- * 3. Передача типизированных данных в компоненты
- */
-
 import Layout from '@/layouts/Layout.astro';
-import ServiceCard from '@/components/ServiceCard.astro';
 import { SiteHeader } from '@/react/SiteHeader';
+import { SiteFooter } from '@/react/SiteFooter';
+import ServiceCard from '@/components/ServiceCard.astro';
 import { getCollection } from 'astro:content';
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const contactLinks = getPublicContactLinks();
-
-// Получаем все услуги из Content Collection
-// Это происходит на этапе сборки (Build Time), а не в рантайме
-const allServices = await getCollection('services');
-
-// Фильтруем только активные услуги и сортируем по порядку
-const activeServices = allServices
+const services = (await getCollection('services'))
   .filter((service: any) => service.data.isActive)
-  .sort((a: any, b: any) => {
-    // Сортировка по полю 'order' (если указано), затем по названию
-    const orderA = a.data.order ?? 999;
-    const orderB = b.data.order ?? 999;
-    
-    if (orderA !== orderB) {
-      return orderA - orderB;
-    }
-    
-    return a.data.name.localeCompare(b.data.name, 'ru');
-  });
+  .sort((a: any, b: any) => (a.data.order ?? 999) - (b.data.order ?? 999));
 
-// SEO мета-данные
-const pageTitle = 'Наши услуги';
-const pageDescription = `Профессиональные услуги перманентного макияжа. ${activeServices.length} услуг от опытных мастеров.`;
+const pageTitle = 'Servizi';
+const pageDescription = 'Scopri i trattamenti di Brow & Lip Studio: sopracciglia, labbra e dettagli estetici personalizzati.';
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout title={pageTitle} description={pageDescription} lang="it">
   <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
-  <!-- Hero секция -->
-  <section class="bg-gradient-to-br from-blue-50 to-indigo-50 py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-          Наши услуги
-        </h1>
-        <p class="mx-auto max-w-2xl text-lg text-gray-600">
-          Мы предлагаем полный спектр услуг по перманентному макияжу и уходу за лицом.
-          Используем только сертифицированные материалы европейского качества.
-        </p>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Список услуг -->
-  <section class="py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      {
-        activeServices.length > 0 ? (
-          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {activeServices.map((service: any, index: number) => (
-              <ServiceCard service={service} index={index} />
-            ))}
-          </div>
-        ) : (
-          <div class="rounded-lg bg-yellow-50 p-8 text-center">
-            <p class="text-lg text-yellow-800">
-              Услуги временно недоступны. Пожалуйста, вернитесь позже.
-            </p>
-          </div>
-        )
-      }
-    </div>
-  </section>
-  
-  <!-- CTA секция -->
-  <section class="bg-blue-600 py-16">
-    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-      <h2 class="mb-4 text-3xl font-bold text-white">
-        Не нашли нужную услугу?
-      </h2>
-      <p class="mb-8 text-lg text-blue-100">
-        Свяжитесь с нами, и мы подберем индивидуальное решение для вас
+  <section class="section-shell relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 lg:px-8">
+    <div class="kinetic-lines opacity-35" aria-hidden="true"></div>
+    <div class="mx-auto max-w-5xl text-center" data-reveal>
+      <span class="section-label">Servizi</span>
+      <h1 class="mt-5 font-serif text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
+        Trattamenti calibrati sul tuo viso.
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        Ogni servizio parte da proporzioni, colore naturale e stile personale, per un risultato elegante e leggibile nel tempo.
       </p>
-      <a
-        href="/contacts"
-        class="inline-block rounded-lg bg-white px-8 py-3 font-semibold text-blue-600 transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
-      >
-        Связаться с нами
+    </div>
+  </section>
+
+  <section class="px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      {services.length > 0 ? (
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service: any, index: number) => <ServiceCard service={service} index={index} />)}
+        </div>
+      ) : (
+        <div class="editorial-panel rounded-[2rem] p-8 text-center text-muted-foreground">
+          I servizi non sono momentaneamente disponibili.
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="px-4 py-12 sm:px-6 lg:px-8">
+    <div class="editorial-panel chromatic-frame mx-auto max-w-5xl rounded-[2rem] p-8 text-center">
+      <p class="text-sm uppercase tracking-[0.22em] text-muted-foreground">Consulenza</p>
+      <h2 class="mt-3 font-serif text-4xl font-semibold text-foreground">Non sai quale trattamento scegliere?</h2>
+      <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        Scrivici: valutiamo insieme forma, intensita e tempistiche prima di fissare l’appuntamento.
+      </p>
+      <a href="/contacts" class="btn-shimmer mt-6 inline-flex rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background">
+        Contattaci
       </a>
     </div>
   </section>
+
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
 </Layout>
-
-<script is:inline>
-  let servicesRevealObserver;
-
-  const initServicesReveal = () => {
-    const cards = document.querySelectorAll('[data-scroll-card]');
-    if (!cards.length) return;
-
-    if (servicesRevealObserver) {
-      servicesRevealObserver.disconnect();
-    }
-
-    // Если пользователь предпочитает уменьшенное движение — показываем сразу
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      cards.forEach((card) => card.classList.add('is-visible'));
-      return;
-    }
-
-    servicesRevealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const target = entry.target;
-          if (!(target instanceof HTMLElement)) return;
-
-          if (entry.isIntersecting) {
-            // Устанавливаем stagger-задержку и показываем через transition
-            const delay = target.dataset.revealDelay ?? '0';
-            target.style.transitionDelay = `${delay}s`;
-            target.classList.add('is-visible');
-          } else {
-            // Убираем видимость без задержки — сердцевина повторяемости
-            target.style.transitionDelay = '0s';
-            target.classList.remove('is-visible');
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-
-    cards.forEach((card) => servicesRevealObserver.observe(card));
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initServicesReveal, { once: true });
-  } else {
-    initServicesReveal();
-  }
-
-  document.addEventListener('astro:page-load', initServicesReveal);
-</script>

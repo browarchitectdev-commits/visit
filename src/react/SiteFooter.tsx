@@ -3,10 +3,10 @@
 import { TelegramIcon } from './TelegramIcon';
 
 const footerLinks = [
-  { label: 'Servicii', href: '#services' },
+  { label: 'Servizi', href: '#services' },
   { label: 'Studio', href: '#about' },
-  { label: 'Portofoliu', href: '#gallery' },
-  { label: 'Echipa', href: '#masters' },
+  { label: 'Portfolio', href: '#gallery' },
+  { label: 'Team', href: '#masters' },
   { label: 'Social', href: '#social' },
 ];
 
@@ -50,13 +50,13 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
               <div>
                 <span className="block font-serif text-2xl font-semibold text-white">Brow & Lip Studio</span>
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-white/42">
-                  Frumusete permanenta in Italia
+                  Bellezza permanente in Italia
                 </span>
               </div>
             </a>
 
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/62">
-              Studio de machiaj permanent pentru sprancene si buze: atmosfera discreta, tehnici delicate si rezultate elegante create pe masura.
+              Studio di trucco permanente per sopracciglia e labbra: atmosfera riservata, tecniche delicate e risultati eleganti su misura.
             </p>
 
             <div className="mt-5 flex gap-2.5">
@@ -86,7 +86,7 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
           </div>
 
           <div>
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigare</h4>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigazione</h4>
             <nav className="mt-5 flex flex-col gap-3">
               {resolvedFooterLinks.map((link) => (
                 <a key={link.href} href={link.href} className="text-sm text-white/68 transition-colors hover:text-white">
@@ -97,7 +97,7 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
           </div>
 
           <div>
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Contacte</h4>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Contatti</h4>
             <div className="mt-5 flex flex-col gap-3 text-sm text-white/68">
               <a href="tel:+390000000000" className="transition-colors hover:text-white">
                 +39 000 000 0000
@@ -105,7 +105,7 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
               <a href="mailto:ciao@browlip.it" className="transition-colors hover:text-white">
                 ciao@browlip.it
               </a>
-              <p>Italia, doar cu programare</p>
+              <p>Italia, solo su appuntamento</p>
             </div>
           </div>
         </div>
@@ -114,14 +114,14 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-white/42">
-            &copy; {currentYear} Brow & Lip Studio. Toate drepturile rezervate.
+            &copy; {currentYear} Brow & Lip Studio. Tutti i diritti riservati.
           </p>
           <div className="flex gap-6">
             <a href="/privacy" className="text-xs text-white/42 transition-colors hover:text-white">
-              Politica de confidentialitate
+              Privacy Policy
             </a>
             <a href="/terms" className="text-xs text-white/42 transition-colors hover:text-white">
-              Termeni de utilizare
+              Termini di utilizzo
             </a>
           </div>
         </div>

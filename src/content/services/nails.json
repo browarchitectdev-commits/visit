@@ -1,8 +1,8 @@
 {
-  "name": "Покраска ногтей",
+  "name": "Trucco permanente labbra",
   "price": 1500,
   "duration": 120,
-  "description": "Здесь подробное описание услугиЗдесь подробное описание услугиЗдесь подробное описание услуги",
+  "description": "Tonalita morbida e contorno naturale per labbra piu definite, fresche e proporzionate. Il trattamento viene personalizzato in base al colore di partenza e al risultato desiderato.",
   "image": "/uploads/unnamed (1).jpg",
   "order": 2,
   "isActive": true

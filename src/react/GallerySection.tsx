@@ -18,6 +18,7 @@ export function GallerySection({ images }: GallerySectionProps) {
   return (
     <section id="gallery" data-section-cinema className="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
       <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-[32rem] -translate-x-1/2 bg-[radial-gradient(circle,rgba(224,188,145,0.18),transparent_68%)] blur-[38px]" aria-hidden="true" />
+      <div className="kinetic-lines opacity-40" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">
         <div
           ref={headerRef}
@@ -29,13 +30,13 @@ export function GallerySection({ images }: GallerySectionProps) {
           }}
         >
           <div>
-            <span className="section-label">Portofoliu</span>
+            <span className="section-label">Portfolio</span>
             <h2 className="mt-4 font-serif text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              O selectie de detalii, tonuri si transformari delicate.
+              Una selezione di dettagli, tonalita e trasformazioni delicate.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Galeria functioneaza ca o revista vizuala: contraste de format, prim-planuri si rezultate care raman elegante.
+            La galleria funziona come un magazine visivo: formati a contrasto, primi piani e risultati che restano eleganti.
           </p>
         </div>
 
@@ -57,7 +58,7 @@ export function GallerySection({ images }: GallerySectionProps) {
             return (
               <div
                 key={image.src}
-                className={`cinematic-card group glass-sheen shine-border relative overflow-hidden rounded-[1.45rem] bg-muted sm:rounded-[1.9rem] ${layoutClass}`}
+                className={`cinematic-card group chromatic-frame glass-sheen shine-border relative overflow-hidden rounded-[1.45rem] bg-muted sm:rounded-[1.9rem] ${layoutClass}`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
@@ -73,8 +74,8 @@ export function GallerySection({ images }: GallerySectionProps) {
                   style={{ transform: hoveredIndex === index ? 'scale(1.06)' : 'scale(1)' }}
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,9,8,0.06)_0%,rgba(13,9,8,0.62)_100%)]" />
-                <div className="absolute left-3 top-3 rounded-full border border-white/16 bg-white/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[10px] sm:tracking-[0.22em]">
-                  {index === 0 ? 'Rezultat definitoriu' : 'Detaliu editorial'}
+                <div className="absolute left-3 top-3 rounded-full border border-white/16 bg-[linear-gradient(135deg,rgba(255,255,255,0.16),rgba(243,208,140,0.18),rgba(241,154,163,0.14))] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[10px] sm:tracking-[0.22em]">
+                  {index === 0 ? 'Risultato distintivo' : 'Dettaglio editoriale'}
                 </div>
                 <div
                   className="absolute inset-x-0 bottom-0 p-3 transition-all duration-500 sm:p-4"
@@ -85,7 +86,7 @@ export function GallerySection({ images }: GallerySectionProps) {
                 >
                   <div className="cinematic-panel rounded-[1.1rem] border border-white/12 bg-black/18 px-3 py-2.5 backdrop-blur-md sm:rounded-[1.35rem] sm:px-4 sm:py-3">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/48 sm:text-[10px] sm:tracking-[0.22em]">
-                      {index === 0 ? 'Compozitie principala' : 'Portofoliul studioului'}
+                      {index === 0 ? 'Composizione principale' : 'Portfolio dello studio'}
                     </p>
                     <p className="mt-1 text-xs font-medium text-white sm:text-sm">{image.alt}</p>
                   </div>

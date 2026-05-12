@@ -18,21 +18,21 @@ interface HeroSectionProps {
 }
 
 const trustItems = [
-  'Consultatie personalizata',
+  'Consulenza personalizzata',
   'Pigmenti premium',
-  'Studio privat in Italia',
+  'Studio privato in Italia',
 ];
 
 const heroHighlights = [
-  { label: 'Efect', value: 'Definire delicata' },
-  { label: 'Durata medie', value: 'Sesiune de 2h' },
-  { label: 'Stil', value: 'Eleganta naturala' },
+  { label: 'Effetto', value: 'Definizione delicata' },
+  { label: 'Durata media', value: 'Sessione di 2h' },
+  { label: 'Stile', value: 'Eleganza naturale' },
 ];
 
 export function HeroSection({
   title,
   description,
-  ctaText = 'Rezerva o consultatie',
+  ctaText = 'Prenota una consulenza',
   bookingUrl,
   telegramUrl,
   secondaryCTA,
@@ -90,6 +90,7 @@ export function HeroSection({
             className="hero-image-drift h-full w-full object-cover"
             skeletonClassName="bg-[linear-gradient(180deg,rgba(61,42,34,0.88),rgba(26,18,15,0.96))]"
             loading="eager"
+            fetchPriority="high"
             style={{
               transform: parallaxEnabled ? parallaxTransform(-10, -8, 1.06) : undefined,
             }}
@@ -97,6 +98,12 @@ export function HeroSection({
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,12,10,0.84)_0%,rgba(18,12,10,0.6)_38%,rgba(18,12,10,0.18)_100%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_20%,rgba(224,188,145,0.18),transparent_26%),linear-gradient(180deg,rgba(18,12,10,0.1)_0%,rgba(18,12,10,0.54)_100%)]" />
           <div className="hero-grid absolute inset-0" />
+          <div className="kinetic-lines opacity-80" aria-hidden="true" />
+          <div className="motion-ribbon-field opacity-70" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
           <div className="absolute inset-x-0 top-0 h-48 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),transparent)] opacity-70" />
         </div>
       )}
@@ -141,18 +148,18 @@ export function HeroSection({
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.08fr)_23rem]">
           <div className="max-w-3xl">
             <span
-              className="glass-sheen mb-5 inline-flex max-w-full rounded-full border border-white/15 bg-white/8 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/72 backdrop-blur-sm sm:px-4 sm:text-[11px] sm:tracking-[0.3em]"
+              className="glass-sheen chromatic-frame mb-5 inline-flex max-w-full rounded-full border border-white/15 bg-white/8 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/72 backdrop-blur-sm sm:px-4 sm:text-[11px] sm:tracking-[0.3em]"
               style={{
                 animation: 'fadeInUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both',
                 color: 'rgba(255,255,255,0.9)',
                 textShadow: '0 2px 10px rgba(0,0,0,0.35)',
               }}
             >
-              Machiaj permanent pentru sprancene si buze
+              Trucco permanente per sopracciglia e labbra
             </span>
 
             <h1
-              className="max-w-3xl font-serif text-[3.2rem] font-semibold leading-[0.92] tracking-[-0.04em] text-white sm:text-6xl lg:text-[5.7rem]"
+              className="max-w-3xl font-serif text-[3.2rem] font-semibold leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-[5.7rem]"
               style={{ animation: 'fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.24s both' }}
             >
               {title}
@@ -197,7 +204,7 @@ export function HeroSection({
                   href={bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-shimmer inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_20px_44px_-18px_rgba(182,106,89,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_54px_-22px_rgba(182,106,89,0.8)] sm:w-auto sm:px-8"
+                  className="btn-shimmer chromatic-frame inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_20px_44px_-18px_rgba(193,95,100,0.72)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_54px_-22px_rgba(193,95,100,0.82)] sm:w-auto sm:px-8"
                 >
                   {ctaText}
                 </a>
@@ -210,7 +217,7 @@ export function HeroSection({
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/24 bg-[#229ED9] px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1c8fc4] sm:w-auto sm:px-8"
                 >
                   <TelegramIcon />
-                  Scrie-ne pe Telegram
+                  Scrivici su Telegram
                 </a>
               )}
               {secondaryCTA && (
@@ -230,7 +237,7 @@ export function HeroSection({
               {heroHighlights.map((item, index) => (
                 <div
                   key={item.label}
-                  className="glass-sheen shine-border rounded-[1.4rem] border border-white/12 bg-white/8 px-4 py-3.5 backdrop-blur-md transition-transform duration-500 hover:-translate-y-1 sm:rounded-[1.5rem] sm:py-4"
+                  className="glass-sheen shine-border color-sweep rounded-[1.4rem] border border-white/12 bg-white/8 px-4 py-3.5 backdrop-blur-md transition-transform duration-500 hover:-translate-y-1 sm:rounded-[1.5rem] sm:py-4"
                   style={{ animationDelay: `${index * 0.8}s` }}
                 >
                   <p
@@ -257,19 +264,19 @@ export function HeroSection({
                 <div className="overflow-hidden rounded-[1.2rem]">
                   <ProgressiveImage
                     src="/images/director.jpg"
-                    alt="Fondatoarea Brow & Lip Studio"
+                    alt="Fondatrice di Brow & Lip Studio"
                     className="h-28 w-full object-cover object-top"
                   />
                 </div>
                 <div className="pr-1">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/52">
-                    Fondatoare / Directoare
+                    Fondatrice / Direttrice
                   </p>
                   <p className="mt-2 font-serif text-2xl font-semibold leading-none text-white">
                     Brow & Lip
                   </p>
                   <p className="mt-2 text-xs leading-relaxed text-white/76">
-                    Chipul studioului, cu o viziune eleganta si atenta pentru fiecare clienta.
+                    Il volto dello studio, con una visione elegante e attenta per ogni cliente.
                   </p>
                 </div>
               </div>
@@ -283,12 +290,12 @@ export function HeroSection({
               transform: parallaxEnabled ? parallaxTransform(-14, -10, 1) : undefined,
             }}
           >
-            <div className="editorial-panel glass-sheen shine-border relative overflow-hidden rounded-[2.3rem] p-3 shadow-[0_36px_70px_-34px_rgba(22,14,10,0.72)]">
+            <div className="editorial-panel chromatic-frame glass-sheen shine-border relative overflow-hidden rounded-[2.3rem] p-3 shadow-[0_36px_70px_-34px_rgba(22,14,10,0.72)]">
               <div className="ambient-orb absolute -right-8 top-16 h-28 w-28 bg-[#f3d7b6]/22" style={{ animationDuration: '20s' }} aria-hidden="true" />
               <div className="relative overflow-hidden rounded-[1.8rem] bg-[#d8b1a6]">
                 <ProgressiveImage
                   src="/images/director.jpg"
-                  alt="Fondatoarea Brow & Lip Studio"
+                  alt="Fondatrice di Brow & Lip Studio"
                   className="hero-image-drift h-[34rem] w-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(24,15,11,0.04)_0%,rgba(24,15,11,0.16)_52%,rgba(24,15,11,0.58)_100%)]" />
@@ -297,35 +304,35 @@ export function HeroSection({
 
               <div className="glass-sheen absolute inset-x-7 bottom-7 rounded-[1.7rem] border border-white/12 bg-[#1d140f]/54 p-5 text-white backdrop-blur-md">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-white/48">
-                  Fondatoare / Directoare Artistica
+                  Fondatrice / Direttrice artistica
                 </p>
                 <h2 className="mt-2 font-serif text-3xl font-semibold leading-tight text-white">
-                  Chipul studioului si al viziunii sale estetice.
+                  Il volto dello studio e della sua visione estetica.
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-white/76">
-                  O abordare feminina, precisa si rafinata pentru a pune in valoare fiecare trasatura.
+                  Un approccio femminile, preciso e raffinato per valorizzare ogni lineamento.
                 </p>
               </div>
             </div>
 
             <div className="glass-sheen absolute -left-10 top-8 w-40 rounded-[1.5rem] border border-white/16 bg-[#2a1e19]/84 p-4 text-white shadow-[0_22px_42px_-26px_rgba(0,0,0,0.55)] backdrop-blur-md">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">
-                Directie artistica
+                Direzione artistica
               </p>
               <p className="mt-2 font-serif text-2xl font-semibold text-white">
                 Brow & Lip
               </p>
               <p className="mt-2 text-xs leading-relaxed text-white/72">
-                Eleganta naturala, ton personalizat, prezenta impecabila.
+                Eleganza naturale, tono personalizzato, presenza impeccabile.
               </p>
             </div>
 
             <div className="glass-sheen absolute -bottom-6 right-5 rounded-[1.5rem] border border-white/12 bg-white/92 px-4 py-4 text-card-foreground shadow-[0_22px_44px_-28px_rgba(0,0,0,0.52)]">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                Semnatura studioului
+                Firma dello studio
               </p>
               <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">
-                Precizie si frumusete
+                Precisione e bellezza
               </p>
             </div>
           </div>
@@ -338,7 +345,7 @@ export function HeroSection({
       >
         <div className="flex flex-col items-center gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.34em] text-white/36">
-            Deruleaza
+            Scorri
           </span>
           <div className="relative h-12 w-px overflow-hidden bg-white/16">
             <div

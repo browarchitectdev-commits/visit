@@ -67,12 +67,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     inquiryId = String(insertResult.data.id);
 
     const telegramMessage = [
-      '<b>Mesaj nou din formularul de contact</b>',
+      '<b>Nuovo messaggio dal modulo contatti</b>',
       inquiryId ? `ID: <code>${escapeTelegramHtml(inquiryId)}</code>` : '',
-      `Nume: <b>${escapeTelegramHtml(name)}</b>`,
+      `Nome: <b>${escapeTelegramHtml(name)}</b>`,
       `Telefon: <code>${escapeTelegramHtml(phone)}</code>`,
       email ? `Email: <code>${escapeTelegramHtml(email)}</code>` : '',
-      `Mesaj: ${escapeTelegramHtml(message)}`,
+      `Messaggio: ${escapeTelegramHtml(message)}`,
       sourcePage ? `Pagina: ${escapeTelegramHtml(sourcePage)}` : '',
       ipAddress ? `IP: <code>${escapeTelegramHtml(ipAddress)}</code>` : '',
     ]

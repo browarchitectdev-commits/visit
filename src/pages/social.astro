@@ -1,13 +1,4 @@
 ---
-/**
- * Страница "Социальные сети"
- *
- * Содержит:
- * - Instagram embed (iframe)
- * - TikTok embed (iframe)
- * - Facebook embed (iframe)
- */
-
 import Layout from '@/layouts/Layout.astro';
 import { SiteHeader } from '@/react/SiteHeader';
 import { SiteFooter } from '@/react/SiteFooter';
@@ -15,576 +6,136 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
-const pageTitle = 'Мы в социальных сетях';
-const pageDescription =
-  'Следите за нашими работами и новостями в Instagram, TikTok и Facebook. Brow & Lip Studio — перманентный макияж.';
+type SocialEntry = CollectionEntry<'social'>;
+type SettingsEntry = CollectionEntry<'settings'>;
 
 function extractInstagramPostId(postUrl: string): string | null {
-  try {
-    const url = new URL(postUrl);
-    const parts = url.pathname.split('/').filter(Boolean);
-    const markerIndex = parts.findIndex((part) =>
-      ['p', 'reel', 'tv'].includes(part.toLowerCase()),
-    );
-
-    if (markerIndex !== -1 && parts[markerIndex + 1]) {
-      return parts[markerIndex + 1];
-    }
-  } catch {
-    // Игнорируем ошибку URL и пробуем regex fallback ниже.
-  }
-
   const match = postUrl.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
   return match?.[1] ?? null;
 }
 
 function extractTikTokVideoId(postUrl: string): string | null {
-  try {
-    const url = new URL(postUrl);
-    const parts = url.pathname.split('/').filter(Boolean);
-    const videoIndex = parts.findIndex((part) => part.toLowerCase() === 'video');
-
-    if (videoIndex !== -1 && parts[videoIndex + 1]) {
-      return parts[videoIndex + 1];
-    }
-  } catch {
-    // Игнорируем ошибку URL и пробуем regex fallback ниже.
-  }
-
   const match = postUrl.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/i);
   return match?.[1] ?? null;
 }
 
-function extractFacebookPostUrl(postUrl: string): string | null {
+function normalizeFacebookPostUrl(postUrl: string): string | null {
   try {
     const url = new URL(postUrl);
-
-    if (!/facebook\.com$/i.test(url.hostname)) {
-      return null;
-    }
-
-    // Share-ссылки Facebook обычно не подходят для plugins/post.php.
-    if (/^\/share\//i.test(url.pathname)) {
-      return null;
-    }
-
-    // Для permalink.php важны query-параметры story_fbid/id.
-    if (/\/permalink\.php$/i.test(url.pathname)) {
-      return `${url.origin}${url.pathname}${url.search}`;
-    }
-
-    // Для /posts/... и /reel/... убираем трекинговые query/hash.
+    if (!/facebook\.com$/i.test(url.hostname) || /^\/share\//i.test(url.pathname)) return null;
+    if (/\/permalink\.php$/i.test(url.pathname)) return `${url.origin}${url.pathname}${url.search}`;
     return `${url.origin}${url.pathname}`.replace(/\/$/, '');
   } catch {
     return null;
   }
 }
 
-type SocialEntry = CollectionEntry<'social'>;
-
-interface SocialPost {
-  id: string;
-  embedId: string | null;
-  postUrl: string;
-  title: string;
-  caption?: string;
-}
-
-type SettingsEntry = CollectionEntry<'settings'>;
-
-const socialCollection: SocialEntry[] = await getCollection('social');
-const settingsCollection: SettingsEntry[] = await getCollection('settings');
-
-const settings = settingsCollection[0]?.data;
-
-const instagram = {
-  username: settings?.instagramUsername || 'browarchitect.studio',
-  profileUrl: settings?.instagramProfileUrl || 'https://www.instagram.com/browarchitect.studio/',
-};
-
-const tiktok = {
-  username: settings?.tiktokUsername || 'browarchitect.studio',
-  profileUrl: settings?.tiktokProfileUrl || 'https://www.tiktok.com/@browarchitect.stu',
-};
-
-const facebook = {
-  pageName: settings?.facebookPageName || 'Brow & Lip Studio',
-  pageUrl: settings?.facebookPageUrl || 'https://www.facebook.com/browarchitect.studio',
-  showPageEmbed: settings?.facebookShowPageEmbed ?? false,
-};
-
-const instagramPosts: SocialPost[] = socialCollection
-  .filter((entry: SocialEntry) => entry.data.platform === 'instagram' && entry.data.isActive)
-  .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
-  .map((entry: SocialEntry) => {
-    const embedId = extractInstagramPostId(entry.data.postUrl);
-
-    return {
-      id: entry.id,
-      embedId,
-      postUrl: entry.data.postUrl,
-      title: entry.data.title || 'Пост в Instagram',
-      caption: entry.data.caption,
-    };
-  });
-
-const validInstagramPosts = instagramPosts.filter((post: SocialPost) => !!post.embedId);
-const invalidInstagramPostsCount = instagramPosts.length - validInstagramPosts.length;
-
-const tiktokPosts: SocialPost[] = socialCollection
-  .filter((entry: SocialEntry) => entry.data.platform === 'tiktok' && entry.data.isActive)
-  .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
-  .map((entry: SocialEntry) => {
-    const embedId = extractTikTokVideoId(entry.data.postUrl);
-
-    return {
-      id: entry.id,
-      embedId,
-      postUrl: entry.data.postUrl,
-      title: entry.data.title || 'Видео в TikTok',
-      caption: entry.data.caption,
-    };
-  });
-
-const validTikTokPosts = tiktokPosts.filter((post: SocialPost) => !!post.embedId);
-const invalidTikTokPostsCount = tiktokPosts.length - validTikTokPosts.length;
-
-const facebookPosts: SocialPost[] = socialCollection
-  .filter((entry: SocialEntry) => entry.data.platform === 'facebook' && entry.data.isActive)
-  .sort((a: SocialEntry, b: SocialEntry) => (a.data.order ?? 999) - (b.data.order ?? 999))
-  .map((entry: SocialEntry) => ({
-    id: entry.id,
-    embedId: extractFacebookPostUrl(entry.data.postUrl),
-    postUrl: entry.data.postUrl,
-    title: entry.data.title || 'Пост в Facebook',
-    caption: entry.data.caption,
-  }));
-
-const validFacebookPosts = facebookPosts.filter((post: SocialPost) => !!post.embedId);
-const invalidFacebookPostsCount = facebookPosts.length - validFacebookPosts.length;
 const contactLinks = getPublicContactLinks();
+const socialCollection: SocialEntry[] = await getCollection('social');
+const settings = ((await getCollection('settings')) as SettingsEntry[])[0]?.data;
+
+const profiles = [
+  {
+    label: 'Instagram',
+    user: settings?.instagramUsername || 'browarchitect.studio',
+    url: settings?.instagramProfileUrl || 'https://www.instagram.com/browarchitect.studio/',
+    className: 'from-[#f09433] via-[#e6683c] to-[#bc1888]',
+  },
+  {
+    label: 'TikTok',
+    user: settings?.tiktokUsername || 'browarchitect.stu',
+    url: settings?.tiktokProfileUrl || 'https://www.tiktok.com/@browarchitect.stu',
+    className: 'from-black to-neutral-700',
+  },
+  {
+    label: 'Facebook',
+    user: settings?.facebookPageName || 'Brow & Lip Studio',
+    url: settings?.facebookPageUrl || 'https://www.facebook.com/profile.php?id=61575579803996',
+    className: 'from-[#1877f2] to-[#1254a8]',
+  },
+];
+
+const posts = socialCollection
+  .filter((entry) => entry.data.isActive)
+  .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999))
+  .map((entry) => {
+    const platform = entry.data.platform;
+    const embedId =
+      platform === 'instagram'
+        ? extractInstagramPostId(entry.data.postUrl)
+        : platform === 'tiktok'
+          ? extractTikTokVideoId(entry.data.postUrl)
+          : normalizeFacebookPostUrl(entry.data.postUrl);
+
+    return {
+      id: entry.id,
+      platform,
+      title: entry.data.title || 'Contenuto social',
+      caption: entry.data.caption,
+      postUrl: entry.data.postUrl,
+      embedId,
+    };
+  })
+  .filter((post) => !!post.embedId);
+
+const pageTitle = 'Social';
+const pageDescription = 'Segui Brow & Lip Studio su Instagram, TikTok e Facebook: lavori, risultati e momenti dallo studio.';
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout title={pageTitle} description={pageDescription} lang="it">
   <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
-  <main id="main-content">
-    <!-- ─── Hero ─── -->
-    <section
-      class="relative overflow-hidden bg-gradient-to-br from-[#fdf6f6] via-[#f8eded] to-[#f2e4e3] py-20"
-      aria-labelledby="social-hero-heading"
-    >
-      <!-- Декоративные круги фона -->
-      <div
-        class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"
-        aria-hidden="true"
-      ></div>
+  <section class="section-shell relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 lg:px-8">
+    <div class="kinetic-lines opacity-35" aria-hidden="true"></div>
+    <div class="mx-auto max-w-5xl text-center" data-reveal>
+      <span class="section-label">Social</span>
+      <h1 class="mt-5 font-serif text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
+        Lavori, video e dettagli dallo studio.
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        Una raccolta aggiornata di contenuti social per vedere atmosfera, risultati e piccoli momenti reali.
+      </p>
+    </div>
+  </section>
 
-      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <!-- Иконки соцсетей -->
-          <div
-            class="mb-6 flex items-center justify-center gap-4"
-            aria-hidden="true"
-          >
-            <!-- Instagram -->
-            <span
-              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888] shadow-md"
-            >
-              <svg
-                class="h-6 w-6 text-white"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
-                ></path>
-              </svg>
-            </span>
+  <section class="px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mx-auto grid max-w-5xl gap-4 sm:grid-cols-3">
+      {profiles.map((profile) => (
+        <a href={profile.url} target="_blank" rel="noopener noreferrer" class="editorial-panel group rounded-[1.6rem] p-5 transition-transform hover:-translate-y-1">
+          <div class={`h-11 w-11 rounded-2xl bg-gradient-to-br ${profile.className}`}></div>
+          <p class="mt-4 text-sm font-semibold text-card-foreground">{profile.label}</p>
+          <p class="mt-1 truncate text-xs text-muted-foreground">{profile.user}</p>
+        </a>
+      ))}
+    </div>
+  </section>
 
-            <!-- TikTok -->
-            <span
-              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-black shadow-md"
-            >
-              <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z"></path>
-              </svg>
-            </span>
-
-            <!-- Facebook -->
-            <span
-              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1877f2] shadow-md"
-            >
-              <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </span>
+  <section class="px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <article class="editorial-panel overflow-hidden rounded-[1.7rem]">
+          <div class="flex items-center justify-between border-b border-border/60 px-4 py-3">
+            <p class="line-clamp-1 text-sm font-medium text-card-foreground">{post.title}</p>
+            <span class="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">{post.platform}</span>
           </div>
 
-          <h1
-            id="social-hero-heading"
-            class="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
-          >
-            Мы в социальных сетях
-          </h1>
-          <p class="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Следите за свежими работами, акциями и лайфхаками по уходу за бровями и губами —
-            в Instagram, TikTok и Facebook.
-          </p>
+          {post.platform === 'instagram' && (
+            <iframe src={`https://www.instagram.com/p/${post.embedId}/embed`} class="w-full" style="min-height: 410px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer"></iframe>
+          )}
+          {post.platform === 'tiktok' && (
+            <iframe src={`https://www.tiktok.com/embed/${post.embedId}`} class="w-full" style="min-height: 500px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen></iframe>
+          )}
+          {post.platform === 'facebook' && (
+            <iframe src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId)}&show_text=true&width=500`} class="w-full" style="min-height: 460px; border: 0;" loading="lazy" title={post.title} referrerpolicy="no-referrer" allowfullscreen></iframe>
+          )}
 
-          <!-- Кнопки перехода в соцсети -->
-          <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href={instagram.profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#e6683c] to-[#bc1888] px-7 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <svg
-                class="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
-                ></path>
-              </svg>
-              @{instagram.username}
-            </a>
-            <a
-              href={tiktok.profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 rounded-full bg-black px-7 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z" />
-              </svg>
-              @{tiktok.username}
-            </a>
-            <a
-              href={facebook.pageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 rounded-full bg-[#1877f2] px-7 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-              {facebook.pageName}
-            </a>
+          <div class="border-t border-border/60 px-4 py-3">
+            <a href={post.postUrl} target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-primary">Apri il post</a>
           </div>
-        </div>
-      </div>
-    </section>
+        </article>
+      ))}
+    </div>
+  </section>
 
-    <!-- ─── Instagram Posts ─── -->
-    <section class="bg-background py-16" aria-labelledby="instagram-section-heading">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <!-- Заголовок секции -->
-        <div class="mb-10 flex flex-col items-center gap-2 text-center">
-          <div
-            class="mb-2 inline-flex h-1.5 w-16 rounded-full bg-gradient-to-r from-[#e6683c] to-[#bc1888]"
-            aria-hidden="true"
-          ></div>
-          <h2
-            id="instagram-section-heading"
-            class="text-2xl font-bold text-foreground sm:text-3xl"
-          >
-            Последние публикации
-          </h2>
-          <p class="max-w-xl text-muted-foreground">
-            Актуальные работы и новости студии прямо из Instagram.
-          </p>
-        </div>
-
-        {invalidInstagramPostsCount > 0 && (
-          <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
-            Пропущено записей из-за некорректной ссылки: {invalidInstagramPostsCount}.
-          </div>
-        )}
-
-        {validInstagramPosts.length > 0 ? (
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {validInstagramPosts.map((post) => (
-              <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
-                <div class="flex items-center gap-2 border-b border-border px-4 py-3">
-                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#bc1888]">
-                    <svg
-                      class="h-4 w-4 text-white"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                    </svg>
-                  </span>
-                  <span class="line-clamp-1 text-xs font-medium text-muted-foreground">
-                    {post.title}
-                  </span>
-                </div>
-
-                <div class="relative bg-muted">
-                  <iframe
-                    src={`https://www.instagram.com/p/${post.embedId}/embed`}
-                    class="w-full"
-                    style="min-height: 480px; border: 0;"
-                    loading="lazy"
-                    allowtransparency={true}
-                    title={post.title}
-                    referrerpolicy="no-referrer"
-                  />
-                </div>
-
-                {post.caption && (
-                  <div class="border-t border-border px-4 py-3">
-                    <p class="line-clamp-2 text-xs text-muted-foreground">{post.caption}</p>
-                  </div>
-                )}
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div class="py-20 text-center text-muted-foreground">
-            <svg class="mx-auto mb-4 h-12 w-12 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 20.25h16.5M3.75 3.75h16.5"/>
-            </svg>
-            <p>Пока нет публикаций. Добавьте ссылки на посты в TinaCMS.</p>
-          </div>
-        )}
-
-        <!-- CTA под постами -->
-        <div class="mt-12 text-center">
-          <a
-            href={instagram.profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 rounded-full border-2 border-primary px-8 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Смотреть все публикации
-            <svg
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── TikTok Posts ─── -->
-    <section class="border-t border-border bg-secondary/20 py-16" aria-labelledby="tiktok-section-heading">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-10 flex flex-col items-center gap-2 text-center">
-          <div class="mb-2 inline-flex h-1.5 w-16 rounded-full bg-black" aria-hidden="true"></div>
-          <h2 id="tiktok-section-heading" class="text-2xl font-bold text-foreground sm:text-3xl">
-            TikTok видео
-          </h2>
-          <p class="max-w-xl text-muted-foreground">
-            Короткие видео с результатами процедур и закулисьем студии.
-          </p>
-        </div>
-
-        {invalidTikTokPostsCount > 0 && (
-          <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
-            Пропущено TikTok-записей из-за некорректной ссылки: {invalidTikTokPostsCount}.
-          </div>
-        )}
-
-        {validTikTokPosts.length > 0 ? (
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {validTikTokPosts.map((post) => (
-              <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
-                <div class="flex items-center gap-2 border-b border-border px-4 py-3">
-                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-black">
-                    <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.77a4.85 4.85 0 01-1.02-.08z" />
-                    </svg>
-                  </span>
-                  <span class="line-clamp-1 text-xs font-medium text-muted-foreground">{post.title}</span>
-                </div>
-
-                <div class="relative bg-muted">
-                  <iframe
-                    src={`https://www.tiktok.com/embed/${post.embedId}`}
-                    class="w-full"
-                    style="min-height: 575px; border: 0;"
-                    loading="lazy"
-                    title={post.title}
-                    referrerpolicy="no-referrer"
-                    allowfullscreen
-                  />
-                </div>
-
-                {post.caption && (
-                  <div class="border-t border-border px-4 py-3">
-                    <p class="line-clamp-2 text-xs text-muted-foreground">{post.caption}</p>
-                  </div>
-                )}
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div class="py-20 text-center text-muted-foreground">
-            <svg class="mx-auto mb-4 h-12 w-12 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v8.25a3.75 3.75 0 1 1-3-3.674" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c1.5 2 3.5 3 6 3" />
-            </svg>
-            <p>Пока нет TikTok видео. Добавьте ссылки на видео в TinaCMS.</p>
-          </div>
-        )}
-
-        <div class="mt-12 text-center">
-          <a
-            href={tiktok.profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 rounded-full border-2 border-foreground bg-black px-8 py-3 text-sm font-semibold text-white transition-all hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Смотреть TikTok профиль
-            <svg
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── Facebook Posts ─── -->
-    <section class="border-t border-border bg-background py-16" aria-labelledby="facebook-section-heading">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-10 flex flex-col items-center gap-2 text-center">
-          <div class="mb-2 inline-flex h-1.5 w-16 rounded-full bg-[#1877f2]" aria-hidden="true"></div>
-          <h2 id="facebook-section-heading" class="text-2xl font-bold text-foreground sm:text-3xl">
-            Facebook
-          </h2>
-          <p class="max-w-xl text-muted-foreground">
-            Таймлайн страницы студии и отдельные публикации в Facebook.
-          </p>
-        </div>
-
-        {facebook.showPageEmbed && (
-          <div class="mb-12 flex justify-center">
-            <div class="w-full overflow-hidden rounded-2xl border border-border shadow-sm" style="max-width: 500px;">
-              <iframe
-                src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(facebook.pageUrl)}&tabs=timeline&width=500&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&locale=ru_RU`}
-                class="w-full"
-                style="height: 600px; border: 0;"
-                loading="lazy"
-                title={`${facebook.pageName} — Facebook`}
-                referrerpolicy="no-referrer"
-                allowfullscreen
-              />
-            </div>
-          </div>
-        )}
-
-        {invalidFacebookPostsCount > 0 && (
-          <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm text-amber-800">
-            Некоторые Facebook-ссылки не подходят для embed (например, /share/...).
-          </div>
-        )}
-
-        <!-- Отдельные записи из Tina -->
-        {validFacebookPosts.length > 0 && (
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {validFacebookPosts.map((post) => (
-              <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
-                <div class="flex items-center gap-2 border-b border-border px-4 py-3">
-                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-[#1877f2]">
-                    <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                  </span>
-                  <span class="line-clamp-1 text-xs font-medium text-muted-foreground">{post.title}</span>
-                </div>
-
-                <div class="relative bg-muted">
-                  <iframe
-                    src={`https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(post.embedId!)}&show_text=true&width=500`}
-                    class="w-full"
-                    style="min-height: 500px; border: 0;"
-                    loading="lazy"
-                    title={post.title}
-                    referrerpolicy="no-referrer"
-                    allowfullscreen
-                  />
-                </div>
-
-                <div class="flex flex-col items-center gap-3 border-t border-border bg-[#f0f2f5] px-4 py-4 text-center">
-                  {post.caption && (
-                    <p class="line-clamp-4 text-sm text-gray-700">{post.caption}</p>
-                  )}
-                  <a
-                    href={post.postUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 rounded-full bg-[#1877f2] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  >
-                    Открыть в Facebook
-                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-
-        <div class="mt-12 text-center">
-          <a
-            href={facebook.pageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 rounded-full bg-[#1877f2] px-8 py-3 text-sm font-semibold text-white shadow-md transition-all hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Открыть Facebook страницу
-            <svg
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <SiteFooter client:load telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
 </Layout>

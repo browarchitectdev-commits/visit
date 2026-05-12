@@ -26,7 +26,8 @@ export function ServicesList({ services }: ServicesListProps) {
   const activeServices = services.filter((service) => service.data.isActive);
 
   return (
-    <section id="services" data-section-cinema className="section-shell px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+    <section id="services" data-section-cinema className="section-shell relative overflow-hidden px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      <div className="kinetic-lines opacity-35" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">
         <div
           ref={headerRef}
@@ -38,13 +39,13 @@ export function ServicesList({ services }: ServicesListProps) {
           }}
         >
           <div>
-            <span className="section-label">Servicii</span>
+            <span className="section-label">Servizi</span>
             <h2 className="mt-4 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Sprancene si buze conturate pentru trasaturile tale.
+              Sopracciglia e labbra disegnate per i tuoi lineamenti.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Alegem forma, intensitatea si nuanta pentru un rezultat sofisticat, echilibrat si personal.
+            Scegliamo forma, intensita e tonalita per un risultato sofisticato, equilibrato e personale.
           </p>
         </div>
 
@@ -68,7 +69,7 @@ export function ServicesList({ services }: ServicesListProps) {
                 badge={index === 0 ? 'Signature' : undefined}
                 index={index}
                 featured={index === 0}
-                meta={index === 0 ? 'Most requested' : index === 1 ? 'Soft technique' : 'Tailored look'}
+                meta={index === 0 ? 'Piu richiesto' : index === 1 ? 'Tecnica soft' : 'Look su misura'}
               />
             </div>
           ))}

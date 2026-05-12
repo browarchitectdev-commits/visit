@@ -26,7 +26,7 @@ export function MasterCard({
 }: MasterCardProps) {
   return (
     <article
-      className={`cinematic-card group glass-sheen shine-border relative overflow-hidden rounded-[1.75rem] border border-white/18 bg-card/15 sm:rounded-[2rem] ${
+      className={`cinematic-card group chromatic-frame glass-sheen shine-border relative overflow-hidden rounded-[1.75rem] border border-white/18 bg-card/15 sm:rounded-[2rem] ${
         featured ? 'sm:col-span-2 lg:col-span-2 lg:grid lg:grid-cols-[1.05fr_0.95fr]' : ''
       }`}
     >
@@ -37,29 +37,34 @@ export function MasterCard({
           className="cinematic-media h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,7,0.05)_0%,rgba(10,8,7,0.78)_100%)]" />
+        <div className="motion-ribbon-field opacity-50" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
 
-        <div className="absolute left-4 top-4 rounded-full border border-white/18 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
-          {featured ? 'Fondatoare' : 'Echipa Brow & Lip'}
+        <div className="absolute left-4 top-4 rounded-full border border-white/18 bg-[linear-gradient(135deg,rgba(255,255,255,0.16),rgba(243,208,140,0.16),rgba(193,95,100,0.14))] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
+          {featured ? 'Fondatrice' : 'Team Brow & Lip'}
         </div>
 
         {featured && (
           <div className="absolute bottom-3 left-3 right-3 rounded-[1.2rem] border border-white/14 bg-black/20 px-3 py-2.5 text-white backdrop-blur-md sm:bottom-4 sm:left-4 sm:right-4 sm:rounded-[1.35rem] sm:px-4 sm:py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Prezenta definitorie</p>
-            <p className="mt-1 text-sm font-medium">Precizie estetica, mana sigura, ton natural.</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Presenza distintiva</p>
+            <p className="mt-1 text-sm font-medium">Precisione estetica, mano sicura, tono naturale.</p>
           </div>
         )}
       </div>
 
       <div className={`flex flex-col justify-end p-4 sm:p-5 ${featured ? 'bg-[linear-gradient(180deg,rgba(255,251,247,0.94),rgba(247,238,232,0.86))] lg:p-6' : ''}`}>
-        <div className={`cinematic-panel rounded-[1.35rem] border ${featured ? 'border-border/70 bg-white/54' : 'border-white/12 bg-black/18'} p-3.5 backdrop-blur-md sm:rounded-[1.6rem] sm:p-4`}>
+        <div className={`cinematic-panel color-sweep rounded-[1.35rem] border ${featured ? 'border-border/70 bg-white/56' : 'border-white/12 bg-black/18'} p-3.5 backdrop-blur-md sm:rounded-[1.6rem] sm:p-4`}>
           <div className="cinematic-copy flex items-start justify-between gap-4">
             <div>
               <h3 className={`font-serif text-[1.8rem] font-semibold leading-tight sm:text-3xl ${featured ? 'text-card-foreground' : 'text-white'}`}>{name}</h3>
               <p className={`mt-1 text-sm font-medium ${featured ? 'text-muted-foreground' : 'text-white/76'}`}>{position}</p>
             </div>
             <div className="text-right">
-              <p className={`text-[10px] uppercase tracking-[0.24em] ${featured ? 'text-muted-foreground' : 'text-white/42'}`}>Experienta</p>
-              <p className="mt-1 font-serif text-2xl font-semibold text-[#d09b72]">{experience}+</p>
+              <p className={`text-[10px] uppercase tracking-[0.24em] ${featured ? 'text-muted-foreground' : 'text-white/42'}`}>Esperienza</p>
+              <p className="text-gradient mt-1 font-serif text-2xl font-semibold">{experience}+</p>
             </div>
           </div>
 

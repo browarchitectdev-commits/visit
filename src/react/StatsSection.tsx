@@ -17,19 +17,24 @@ export function StatsSection({ stats }: StatsSectionProps) {
   return (
     <section ref={sectionRef} className="relative -mt-10 px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="editorial-panel relative overflow-hidden rounded-[2rem] px-5 py-6 sm:px-7 sm:py-7 lg:px-8">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(circle_at_left,rgba(182,106,89,0.18),transparent_70%)]" aria-hidden="true" />
+        <div className="editorial-panel chromatic-frame color-sweep relative overflow-hidden rounded-[2rem] px-5 py-6 sm:px-7 sm:py-7 lg:px-8">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(circle_at_left,rgba(193,95,100,0.2),transparent_70%)]" aria-hidden="true" />
           <div className="pointer-events-none absolute -right-8 top-1/2 h-36 w-36 -translate-y-1/2 rounded-full border border-primary/10" aria-hidden="true" />
+          <div className="motion-ribbon-field opacity-50" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
 
           <div className="mb-5 flex flex-col gap-3 border-b border-border/70 pb-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <span className="section-label">Studioul in cifre</span>
+              <span className="section-label">Lo studio in numeri</span>
               <h2 className="mt-4 max-w-xl font-serif text-3xl font-semibold tracking-tight text-card-foreground sm:text-4xl">
-                O prezenta eleganta, construita cu precizie si incredere.
+                Una presenza elegante, costruita con precisione e fiducia.
               </h2>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Fiecare tratament porneste de la consultatie, studiul fetei si o tehnica calibrata pentru un efect rafinat.
+              Ogni trattamento parte dalla consulenza, dallo studio del viso e da una tecnica calibrata per un effetto raffinato.
             </p>
           </div>
 
@@ -37,7 +42,7 @@ export function StatsSection({ stats }: StatsSectionProps) {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="rounded-[1.6rem] border border-border/80 bg-white/55 px-4 py-5 shadow-[0_14px_30px_-24px_rgba(33,24,19,0.45)] backdrop-blur-sm"
+                className="color-sweep rounded-[1.6rem] border border-border/80 bg-white/58 px-4 py-5 shadow-[0_14px_30px_-24px_rgba(33,24,19,0.45)] backdrop-blur-sm"
                 style={{
                   opacity: visible ? 1 : 0,
                   transform: visible ? 'translateY(0)' : 'translateY(24px)',
@@ -48,7 +53,7 @@ export function StatsSection({ stats }: StatsSectionProps) {
                   <div className="font-serif text-5xl font-semibold leading-none text-card-foreground sm:text-6xl">
                     {stat.value}
                   </div>
-                  <span className="rounded-full border border-primary/14 bg-primary/6 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
+                  <span className="rounded-full border border-primary/14 bg-[linear-gradient(135deg,rgba(193,95,100,0.1),rgba(243,208,140,0.18))] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
                     Brow & Lip
                   </span>
                 </div>

@@ -1,303 +1,49 @@
 ---
-/**
- * Страница "Галерея"
- * 
- * Демонстрирует портфолио работ с фотографиями "до/после"
- * Включает фильтрацию по категориям услуг
- */
-
 import Layout from '@/layouts/Layout.astro';
-import BeforeAfterCard from '@/components/BeforeAfterCard.astro';
 import { SiteHeader } from '@/react/SiteHeader';
+import { SiteFooter } from '@/react/SiteFooter';
+import BeforeAfterCard from '@/components/BeforeAfterCard.astro';
 import { getCollection } from 'astro:content';
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const contactLinks = getPublicContactLinks();
-
-// Получаем все работы из Content Collection
-const allGalleryItems = await getCollection('gallery');
-
-// Фильтруем только активные работы и сортируем
-const activeItems = allGalleryItems
+const items = (await getCollection('gallery'))
   .filter((item: any) => item.data.isActive)
-  .sort((a: any, b: any) => {
-    // Сортировка по полю 'order' (если указано), затем по дате (новые первыми)
-    const orderA = a.data.order ?? 999;
-    const orderB = b.data.order ?? 999;
-    
-    if (orderA !== orderB) {
-      return orderA - orderB;
-    }
-    
-    // Если даты есть, сортируем по дате (новые первыми)
-    if (a.data.date && b.data.date) {
-      return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
-    }
-    
-    return 0;
-  });
+  .sort((a: any, b: any) => (a.data.order ?? 999) - (b.data.order ?? 999));
 
-// Группировка работ по категориям для статистики
-const categoryStats = activeItems.reduce((acc: any, item: any) => {
-  const cat = item.data.category;
-  acc[cat] = (acc[cat] || 0) + 1;
-  return acc;
-}, {} as Record<string, number>);
-
-// Маппинг категорий на русские названия
-const categoryNames: Record<string, string> = {
-  brouws: 'Брови',
-  lips: 'Губы',
-  eyeliner: 'Межресничка',
-  nails: 'Ногти',
-  face: 'Уход за лицом',
-  other: 'Другое',
-};
-
-// SEO мета-данные
-const pageTitle = 'Галерея работ';
-const pageDescription = `Портфолио наших лучших работ. ${activeItems.length} фотографий до и после процедур перманентного макияжа.`;
+const pageTitle = 'Portfolio';
+const pageDescription = 'Portfolio dei lavori Brow & Lip Studio: sopracciglia, labbra e trasformazioni delicate.';
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout title={pageTitle} description={pageDescription} lang="it">
   <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
-  <!-- Hero секция -->
-  <section class="bg-gradient-to-br from-blue-50 to-indigo-50 py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-          Наши работы
-        </h1>
-        <p class="mx-auto max-w-2xl text-lg text-gray-600">
-          Фотографии "до и после" реальных процедур. Каждая работа выполнена нашими сертифицированными мастерами
-          с использованием профессиональных материалов европейского качества.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Фильтры по категориям (статичные) -->
-  <section class="border-b border-gray-200 bg-white py-8">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <button
-          data-filter="all"
-          class="filter-btn active rounded-full px-5 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Все работы ({activeItems.length})
-        </button>
-        
-        {Object.entries(categoryStats).map(([category, count]) => (
-          <button
-            data-filter={category}
-            class="filter-btn rounded-full px-5 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            {categoryNames[category]} ({count})
-          </button>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Галерея работ -->
-  <section class="py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      {
-        activeItems.length > 0 ? (
-          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" id="gallery-grid">
-            {activeItems.map((item: any) => (
-              <div class="gallery-item" data-category={item.data.category}>
-                <BeforeAfterCard item={item} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div class="rounded-lg bg-yellow-50 p-8 text-center">
-            <p class="text-lg text-yellow-800">
-              Галерея временно пуста. Скоро здесь появятся наши работы.
-            </p>
-          </div>
-        )
-      }
-    </div>
-  </section>
-
-  <!-- Информационная секция -->
-  <section class="bg-white py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-12 lg:grid-cols-2">
-        <!-- О фотографиях -->
-        <div>
-          <h2 class="mb-4 text-2xl font-bold text-gray-900">
-            О наших фотографиях
-          </h2>
-          <div class="space-y-4 text-gray-600">
-            <p>
-              Все фотографии в галерее — реальные работы наших мастеров. Мы не используем
-              фильтры или ретушь, чтобы вы могли оценить истинное качество наших услуг.
-            </p>
-            <p>
-              Фото "до" делается непосредственно перед процедурой, а фото "после" — 
-              сразу по завершении работы или через несколько недель после полного заживления.
-            </p>
-          </div>
-        </div>
-
-        <!-- Гарантии качества -->
-        <div>
-          <h2 class="mb-4 text-2xl font-bold text-gray-900">
-            Наши гарантии
-          </h2>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-3">
-              <svg
-                class="mt-1 h-5 w-5 flex-shrink-0 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span class="text-gray-600">
-                Используем только сертифицированные пигменты европейского производства
-              </span>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg
-                class="mt-1 h-5 w-5 flex-shrink-0 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span class="text-gray-600">
-                Строгое соблюдение санитарных норм и правил стерилизации
-              </span>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg
-                class="mt-1 h-5 w-5 flex-shrink-0 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span class="text-gray-600">
-                Бесплатная коррекция в течение месяца после процедуры
-              </span>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg
-                class="mt-1 h-5 w-5 flex-shrink-0 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span class="text-gray-600">
-                Индивидуальный подход к каждому клиенту
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA секция -->
-  <section class="bg-blue-600 py-16">
-    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-      <h2 class="mb-4 text-3xl font-bold text-white">
-        Хотите такой же результат?
-      </h2>
-      <p class="mb-8 text-lg text-blue-100">
-        Запишитесь на консультацию, и мы подберем процедуру специально для вас
+  <section class="section-shell relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 lg:px-8">
+    <div class="kinetic-lines opacity-35" aria-hidden="true"></div>
+    <div class="mx-auto max-w-5xl text-center" data-reveal>
+      <span class="section-label">Portfolio</span>
+      <h1 class="mt-5 font-serif text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
+        Risultati reali, dettagli delicati.
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        Una selezione di lavori per osservare forma, colore e delicatezza del risultato finale.
       </p>
-      <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <a
-          href="/contacts"
-          class="inline-block rounded-lg bg-white px-8 py-3 font-semibold text-blue-600 transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
-        >
-          Записаться на консультацию
-        </a>
-        <a
-          href="/services"
-          class="inline-block rounded-lg border-2 border-white px-8 py-3 font-semibold text-white transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
-        >
-          Посмотреть услуги
-        </a>
-      </div>
     </div>
   </section>
+
+  <section class="px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      {items.length > 0 ? (
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item: any) => <BeforeAfterCard item={item} />)}
+        </div>
+      ) : (
+        <div class="editorial-panel rounded-[2rem] p-8 text-center text-muted-foreground">
+          Il portfolio e momentaneamente vuoto.
+        </div>
+      )}
+    </div>
+  </section>
+
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
 </Layout>
-
-<style>
-  /* Стили для кнопок фильтрации */
-  .filter-btn {
-    background-color: #f3f4f6;
-    color: #4b5563;
-  }
-
-  .filter-btn:hover {
-    background-color: #e5e7eb;
-  }
-
-  .filter-btn.active {
-    background-color: #2563eb;
-    color: white;
-  }
-
-  /* Скрытие элементов при фильтрации */
-  .gallery-item.hidden {
-    display: none;
-  }
-</style>
-
-<script>
-  // Клиентский скрипт для фильтрации галереи
-  document.addEventListener('DOMContentLoaded', () => {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-
-    filterButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const filter = button.getAttribute('data-filter');
-
-        // Обновление активной кнопки
-        filterButtons.forEach((btn) => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        // Фильтрация элементов
-        galleryItems.forEach((item) => {
-          const category = item.getAttribute('data-category');
-          
-          if (filter === 'all' || category === filter) {
-            item.classList.remove('hidden');
-          } else {
-            item.classList.add('hidden');
-          }
-        });
-      });
-    });
-  });
-</script>

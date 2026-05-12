@@ -29,8 +29,9 @@ export function MastersList({ masters }: MastersListProps) {
 
   return (
     <section id="masters" data-section-cinema className="section-shell relative overflow-hidden bg-secondary/45 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-      <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 bg-[radial-gradient(circle,rgba(182,106,89,0.16),transparent_66%)] blur-[40px]" aria-hidden="true" />
-      <div className="pointer-events-none absolute left-0 bottom-0 h-64 w-64 bg-[radial-gradient(circle,rgba(217,189,147,0.18),transparent_66%)] blur-[44px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 bg-[radial-gradient(circle,rgba(193,95,100,0.18),transparent_66%)] blur-[40px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute left-0 bottom-0 h-64 w-64 bg-[radial-gradient(circle,rgba(147,182,154,0.18),transparent_66%)] blur-[44px]" aria-hidden="true" />
+      <div className="kinetic-lines opacity-35" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">
         <div
           ref={headerRef}
@@ -42,13 +43,13 @@ export function MastersList({ masters }: MastersListProps) {
           }}
         >
           <div>
-            <span className="section-label">Echipa</span>
+            <span className="section-label">Team</span>
             <h2 className="mt-4 font-serif text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Specialiste care lucreaza cu precizie, atentie si bun gust.
+              Specialiste che lavorano con precisione, attenzione e buon gusto.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
-            O echipa selectata care imbina tehnica, viziunea estetica si un mod de lucru atent si discret.
+            Un team selezionato che unisce tecnica, visione estetica e un modo di lavorare attento e discreto.
           </p>
         </div>
 

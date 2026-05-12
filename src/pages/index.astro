@@ -162,29 +162,29 @@ const socialFeed: SocialFeedItem[] = socialFeedRaw
   }));
 
 const stats = [
-  { value: '500+', label: 'Cliente multumite' },
-  { value: '8+', label: 'Ani de experienta' },
-  { value: '100%', label: 'Standarde de igiena' },
-  { value: '24/7', label: 'Prezenta social media' },
+  { value: '500+', label: 'Clienti soddisfatte' },
+  { value: '8+', label: 'Anni di esperienza' },
+  { value: '100%', label: 'Standard di igiene' },
+  { value: '24/7', label: 'Presenza social' },
 ];
 
 const pageTitle = 'Brow & Lip Studio';
-const pageDescription = 'Machiaj permanent pentru sprancene si buze in Italia: consultatie personalizata, tehnica rafinata si rezultat elegant.';
+const pageDescription = 'Trucco permanente per sopracciglia e labbra in Italia: consulenza personalizzata, tecnica raffinata e risultato elegante.';
 
-const heroTitle = 'Frumusete permanenta cu eleganta naturala';
-const heroDescription = 'Machiaj permanent pentru sprancene si buze gandit pentru a pune in valoare chipul cu echilibru, delicatete si rafinament.';
+const heroTitle = 'Bellezza permanente con eleganza naturale';
+const heroDescription = 'Trucco permanente per sopracciglia e labbra pensato per valorizzare il viso con equilibrio, delicatezza e raffinatezza.';
 
-const aboutTitle = 'Un studio gandit pentru cine cauta precizie, gust si discretie';
+const aboutTitle = 'Uno studio pensato per chi cerca precisione, gusto e discrezione';
 const aboutDescription = [
-  'Brow & Lip Studio este un spatiu dedicat machiajului permanent pentru sprancene si buze, unde tehnica si sensibilitatea estetica lucreaza impreuna pentru rezultate armonioase.',
-  'Fiecare tratament incepe cu o discutie atenta: analizam trasaturile, proportiile si dorintele clientei pentru un look natural si sofisticat in timp.',
+  'Brow & Lip Studio e uno spazio dedicato al trucco permanente per sopracciglia e labbra, dove tecnica e sensibilita estetica lavorano insieme per risultati armoniosi.',
+  'Ogni trattamento inizia con un confronto attento: analizziamo lineamenti, proporzioni e desideri della cliente per un look naturale e sofisticato nel tempo.',
 ];
 
 const isDev = import.meta.env.DEV;
 const contactLinks = getPublicContactLinks();
 ---
 
-<Layout title={pageTitle} description={pageDescription} lang="ro">
+<Layout title={pageTitle} description={pageDescription} preloadImage="/images/hero.webp" lang="ro">
   {isDev && (
     <div class="fixed bottom-4 right-4 z-50">
       <a
@@ -207,11 +207,11 @@ const contactLinks = getPublicContactLinks();
     title={heroTitle}
     description={heroDescription}
     backgroundImage="/images/hero.jpg"
-    ctaText="Rezerva o consultatie"
+    ctaText="Prenota una consulenza"
     bookingUrl={contactLinks.bookingUrl}
     telegramUrl={contactLinks.telegramUrl}
     secondaryCTA={{
-      text: 'Descopera serviciile',
+      text: 'Scopri i servizi',
       href: '#services',
     }}
   />
@@ -253,13 +253,13 @@ const contactLinks = getPublicContactLinks();
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mx-auto grid max-w-5xl gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end" data-reveal>
         <div>
-          <span class="section-label">Prezenta sociala</span>
+          <span class="section-label">Presenza social</span>
           <h2 class="mt-5 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Urmareste studioul prin lucrari, video si momente reale.
+            Segui lo studio attraverso lavori, video e momenti reali.
           </h2>
         </div>
         <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          O selectie de continuturi care arata rezultatele, atmosfera si detaliile modului nostru de lucru.
+          Una selezione di contenuti che racconta risultati, atmosfera e dettagli del nostro modo di lavorare.
         </p>
       </div>
 
@@ -335,9 +335,9 @@ const contactLinks = getPublicContactLinks();
 
               {(post.caption || post.postUrl) && (
                 <div class="flex items-center justify-between gap-2 border-t border-border/60 px-4 py-2.5">
-                  <p class="line-clamp-1 text-xs text-muted-foreground">{post.caption || 'Continut din studio'}</p>
+                  <p class="line-clamp-1 text-xs text-muted-foreground">{post.caption || 'Contenuto dallo studio'}</p>
                   <a href={post.postUrl} target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs font-semibold text-primary transition-colors hover:text-primary/70">
-                    Apri ?
+                    Apri
                   </a>
                 </div>
               )}
@@ -348,7 +348,7 @@ const contactLinks = getPublicContactLinks();
 
       <div class="mt-6 text-center" data-reveal data-delay="200">
         <a href="/social" class="btn-shimmer inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-semibold text-background transition-all duration-300 hover:opacity-90">
-          Toate materialele
+          Tutti i contenuti
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
@@ -361,12 +361,12 @@ const contactLinks = getPublicContactLinks();
   <section data-section-cinema class="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
     <div class="mx-auto max-w-7xl">
       <div class="cinematic-card editorial-panel glass-sheen shine-border rounded-[2rem] p-6 text-center shadow-[0_24px_70px_-50px_rgba(73,45,28,0.4)] sm:p-8 lg:p-10">
-        <p class="text-sm uppercase tracking-[0.22em] text-muted-foreground">Rezervare</p>
+        <p class="text-sm uppercase tracking-[0.22em] text-muted-foreground">Prenotazione</p>
         <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-          Alege modul in care vrei sa rezervi
+          Scegli come preferisci prenotare
         </h2>
         <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Daca stii deja serviciul dorit, deschide direct calendarul. Daca vrei sa ne scrii intai, foloseste Telegram si alegem impreuna varianta potrivita.
+          Se sai gia quale servizio desideri, apri direttamente il calendario. Se preferisci scriverci prima, usa Telegram e scegliamo insieme la soluzione piu adatta.
         </p>
         <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           {contactLinks.bookingUrl && (
@@ -376,7 +376,7 @@ const contactLinks = getPublicContactLinks();
               rel="noopener noreferrer"
               class="btn-shimmer inline-flex items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all duration-300 hover:opacity-92"
             >
-              Rezerva prin calendar
+              Prenota dal calendario
             </a>
           )}
           {contactLinks.telegramUrl && (
@@ -389,7 +389,7 @@ const contactLinks = getPublicContactLinks();
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.328-.373-.115l-6.869 4.332-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.54-.203 1.01.122.84 1.125z" />
               </svg>
-              Scrie-ne pe Telegram
+              Scrivici su Telegram
             </a>
           )}
         </div>
@@ -397,7 +397,7 @@ const contactLinks = getPublicContactLinks();
     </div>
   </section>
 
-  <SiteFooter client:load telegramUrl={contactLinks.telegramUrl} />
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} />
 
   <script>
     function initEmbedSkeletons() {

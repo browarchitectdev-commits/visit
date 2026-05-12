@@ -31,7 +31,7 @@ export function ServiceCard({
 
   return (
     <article
-      className={`cinematic-card group editorial-panel glass-sheen shine-border relative flex h-full flex-col overflow-hidden rounded-[2rem] ${
+      className={`cinematic-card group editorial-panel chromatic-frame glass-sheen shine-border relative flex h-full flex-col overflow-hidden rounded-[2rem] ${
         featured ? 'sm:col-span-2 lg:col-span-2 lg:grid lg:grid-cols-[1.15fr_0.85fr]' : ''
       }`}
     >
@@ -42,12 +42,17 @@ export function ServiceCard({
           className="cinematic-media h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,10,8,0.02)_0%,rgba(14,10,8,0.55)_100%)]" />
+        <div className="motion-ribbon-field opacity-60" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <div className="absolute left-4 top-4 flex items-center gap-2">
           <span className="rounded-full border border-white/15 bg-white/12 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-white backdrop-blur-sm">
-            Serviciu
+            Servizio
           </span>
           {badge && (
-            <span className="rounded-full bg-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary-foreground shadow-sm">
+            <span className="rounded-full bg-[linear-gradient(135deg,var(--primary),var(--coral),var(--champagne))] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary-foreground shadow-sm">
               {badge}
             </span>
           )}
@@ -55,7 +60,7 @@ export function ServiceCard({
         {featured && (
           <div className="absolute bottom-4 left-4 right-4 rounded-[1.35rem] border border-white/14 bg-black/20 px-4 py-3 backdrop-blur-md">
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Best for</p>
-            <p className="mt-1 text-sm font-medium text-white">Pentru cine isi doreste un contur definit, dar mereu natural.</p>
+            <p className="mt-1 text-sm font-medium text-white">Per chi desidera un contorno definito, ma sempre naturale.</p>
           </div>
         )}
       </div>
@@ -74,11 +79,11 @@ export function ServiceCard({
           </span>
         </div>
 
-        <div className="cinematic-panel mt-auto rounded-[1.4rem] border border-border/70 bg-white/45 p-4">
+        <div className="cinematic-panel color-sweep mt-auto rounded-[1.4rem] border border-border/70 bg-white/48 p-4">
           {items.map((item) => (
             <div key={item.name} className="flex items-center justify-between gap-4 py-1.5">
               <span className="text-sm text-card-foreground">{item.name}</span>
-              <span className="font-serif text-2xl font-semibold text-primary">{formatPrice(item.price)}</span>
+              <span className="text-gradient font-serif text-2xl font-semibold">{formatPrice(item.price)}</span>
             </div>
           ))}
         </div>
@@ -86,7 +91,7 @@ export function ServiceCard({
         {featured && (
           <div className="cinematic-copy flex items-center justify-start">
             <span className="inline-flex items-center justify-center rounded-full border border-border/70 bg-white/55 px-4 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground sm:w-auto">
-              Alegere editoriale
+              Scelta editoriale
             </span>
           </div>
         )}

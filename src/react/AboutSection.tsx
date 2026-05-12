@@ -1,19 +1,20 @@
 ﻿'use client';
 
+import { ProgressiveImage } from './ProgressiveImage';
 import { useInViewOnce } from './hooks/useInViewOnce';
 
 const features = [
   {
     title: 'Specialiste certificate',
-    description: 'Formare continua, ochi estetic si atentie deplina la naturaletea rezultatului.',
+    description: 'Formazione continua, occhio estetico e attenzione piena alla naturalezza del risultato.',
   },
   {
-    title: 'Pigmenti selectati',
-    description: 'Texturi stabile si nuante gandite pentru a pune in valoare tenul, buzele si sprancenele.',
+    title: 'Pigmenti selezionati',
+    description: 'Texture stabili e tonalita pensate per valorizzare incarnato, labbra e sopracciglia.',
   },
   {
-    title: 'Igiena riguroasa',
-    description: 'Materiale de unica folosinta, proceduri controlate si un cadru privat pentru o experienta impecabila.',
+    title: 'Igiene rigorosa',
+    description: 'Materiali monouso, procedure controllate e un ambiente privato per un’esperienza impeccabile.',
   },
 ];
 
@@ -39,18 +40,23 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
             }}
           >
             <div className="absolute -left-3 top-8 h-[68%] w-[88%] rounded-[2.25rem] border border-primary/18" />
-            <div className="editorial-panel relative overflow-hidden rounded-[2.25rem] p-3">
+            <div className="editorial-panel chromatic-frame relative overflow-hidden rounded-[2.25rem] p-3">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-muted">
-                <img src={image} alt="Studioul Brow & Lip" className="h-full w-full object-cover" />
+                <ProgressiveImage
+                  src={image}
+                  alt="Studio Brow & Lip"
+                  className="cinematic-media h-full w-full object-cover"
+                />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(19,12,9,0.06)_0%,rgba(19,12,9,0.38)_100%)]" />
+                <div className="kinetic-lines opacity-45" aria-hidden="true" />
               </div>
             </div>
 
-            <div className="editorial-panel absolute -bottom-5 right-0 max-w-[15rem] rounded-[1.6rem] px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Abordare personalizata</p>
-              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">8+ ani</p>
+            <div className="editorial-panel color-sweep absolute -bottom-5 right-0 max-w-[15rem] rounded-[1.6rem] px-4 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Approccio personalizzato</p>
+              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">8+ anni</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                de experienta in evidentierea trasaturilor, formei si culorii cu delicatete.
+                di esperienza nel valorizzare lineamenti, forma e colore con delicatezza.
               </p>
             </div>
           </div>
@@ -62,7 +68,7 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
               transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.18s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.18s',
             }}
           >
-            <span className="section-label">Studioul</span>
+            <span className="section-label">Lo studio</span>
             <h2 className="mt-4 max-w-xl font-serif text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
               {title}
             </h2>
@@ -78,14 +84,14 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
               {features.map((feature, fi) => (
                 <div
                   key={feature.title}
-                  className="editorial-panel rounded-[1.5rem] p-4"
+                  className="editorial-panel color-sweep rounded-[1.5rem] p-4"
                   style={{
                     opacity: visible ? 1 : 0,
                     transform: visible ? 'translateY(0)' : 'translateY(16px)',
                     transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${0.34 + fi * 0.1}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${0.34 + fi * 0.1}s`,
                   }}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(193,95,100,0.13),rgba(243,208,140,0.2),rgba(147,182,154,0.14))] text-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>

@@ -1,8 +1,8 @@
 {
-  "name": "Перманентный макияж бровей",
+  "name": "Trucco permanente sopracciglia",
   "price": 5000,
   "duration": 120,
-  "description": "Профессиональное оформление бровей с использованием техники волоскового перманентного макияжа. Натуральный эффект, который держится до 2 лет. Используются только сертифицированные европейские пигменты. ",
+  "description": "Definizione professionale delle sopracciglia con tecnica delicata e pigmenti selezionati. L’obiettivo e un effetto naturale, armonioso e stabile nel tempo.",
   "image": "/uploads/images.jpg",
   "order": 1,
   "isActive": true

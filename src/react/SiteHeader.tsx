@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { TelegramIcon } from './TelegramIcon';
 
 const navLinks = [
-  { label: 'Servicii', href: '#services' },
+  { label: 'Servizi', href: '#services' },
   { label: 'Studio', href: '#about' },
-  { label: 'Portofoliu', href: '#gallery' },
-  { label: 'Echipa', href: '#masters' },
+  { label: 'Portfolio', href: '#gallery' },
+  { label: 'Team', href: '#masters' },
   { label: 'Social', href: '#social' },
 ];
 
@@ -73,7 +73,7 @@ export function SiteHeader({
               Brow & Lip
             </span>
             <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 ${headerTextClass}`}>
-              Studio de frumusete permanenta
+              Studio di bellezza permanente
             </span>
           </div>
         </a>
@@ -169,7 +169,7 @@ export function SiteHeader({
                   : 'border border-white/15 bg-white/12 text-white'
               }`}
             >
-              Rezerva o consultatie
+              Prenota una consulenza
             </a>
           )}
           {telegramUrl && (
@@ -181,7 +181,7 @@ export function SiteHeader({
               className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#229ED9] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1c8fc4]"
             >
               <TelegramIcon className="h-4 w-4" />
-              Scrie-ne pe Telegram
+              Scrivici su Telegram
             </a>
           )}
         </nav>

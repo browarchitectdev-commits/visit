@@ -80,18 +80,18 @@ type CalBookingPayload = {
 
 const STATUS_LABELS: Record<string, string> = {
   ACCEPTED: 'Confirmata',
-  PENDING: 'In asteptare',
-  CANCELLED: 'Anulata',
-  REJECTED: 'Respinsa',
+  PENDING: 'In attesa',
+  CANCELLED: 'Annullata',
+  REJECTED: 'Rifiutata',
 };
 
 const TRIGGER_LABELS: Record<string, string> = {
-  BOOKING_CREATED: 'Rezervare noua',
-  BOOKING_REJECTED: 'Rezervare respinsa',
-  BOOKING_CANCELLED: 'Rezervare anulata',
-  BOOKING_RESCHEDULED: 'Rezervare reprogramata',
-  BOOKING_PAYMENT_INITIATED: 'Plata initiata',
-  BOOKING_PAID: 'Rezervare platita',
+  BOOKING_CREATED: 'Nuova prenotazione',
+  BOOKING_REJECTED: 'Prenotazione rifiutata',
+  BOOKING_CANCELLED: 'Prenotazione annullata',
+  BOOKING_RESCHEDULED: 'Prenotazione riprogrammata',
+  BOOKING_PAYMENT_INITIATED: 'Pagamento avviato',
+  BOOKING_PAID: 'Prenotazione pagata',
 };
 
 const CAL_UPCOMING_BOOKINGS_URL = 'https://app.cal.eu/bookings/upcoming';
@@ -154,17 +154,17 @@ const getValueFromResponses = (responses: BookingResponses | undefined, keys: st
 const normalizePayload = (payload: CalBookingPayload) => payload.payload ?? payload.booking ?? payload;
 
 const formatDateTime = (value: string | undefined, timeZone: string | undefined) => {
-  if (!value) return 'Nu este indicat';
+  if (!value) return 'Non indicato';
 
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) {
     return value;
   }
 
-  return new Intl.DateTimeFormat('ro-RO', {
+  return new Intl.DateTimeFormat('it-IT', {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: timeZone ?? 'Europe/Chisinau',
+    timeZone: timeZone ?? 'Europe/Rome',
   }).format(parsed);
 };
 
@@ -213,24 +213,24 @@ export const POST: APIRoute = async ({ request }) => {
   const booking = normalizePayload(payload);
   const responses = booking.responses;
   const attendee = booking.attendees?.[0];
-  const timeZone = attendee?.timeZone ?? booking.organizer?.timeZone ?? 'Europe/Chisinau';
+  const timeZone = attendee?.timeZone ?? booking.organizer?.timeZone ?? 'Europe/Rome';
 
   const service =
     booking.eventTitle ??
     booking.type ??
     booking.title ??
     getValueFromResponses(responses, ['title', 'what_is_this_meeting_about']) ??
-    'Nu este indicat';
+    'Non indicato';
   const startTime = formatDateTime(booking.startTime ?? booking.start, timeZone);
   const endTime = formatDateTime(booking.endTime, timeZone);
   const attendeeFullName = [attendee?.firstName, attendee?.lastName].filter(Boolean).join(' ');
-  const clientName = attendee?.name || attendeeFullName || getValueFromResponses(responses, ['name', 'your_name']) || 'Nu este indicat';
+  const clientName = attendee?.name || attendeeFullName || getValueFromResponses(responses, ['name', 'your_name']) || 'Non indicato';
   const email =
-    attendee?.email ?? getValueFromResponses(responses, ['email', 'email_address']) ?? 'Nu este indicat';
+    attendee?.email ?? getValueFromResponses(responses, ['email', 'email_address']) ?? 'Non indicato';
   const phone =
     attendee?.phoneNumber ??
     getValueFromResponses(responses, ['phone', 'phoneNumber', 'telefon', 'tel', 'attendeePhoneNumber', 'phone_number']) ??
-    'Nu este indicat';
+    'Non indicato';
   const notes =
     booking.additionalNotes ||
     getValueFromResponses(responses, ['notes', 'additional_notes']) ||
@@ -238,14 +238,14 @@ export const POST: APIRoute = async ({ request }) => {
     booking.description;
   const location =
     getValueFromResponses(responses, ['location']) ?? booking.videoCallData?.url ?? booking.location ?? undefined;
-  const organizerName = booking.organizer?.name ?? 'Nu este indicat';
+  const organizerName = booking.organizer?.name ?? 'Non indicato';
   const organizerEmail = booking.organizer?.email ?? undefined;
   const status = booking.status ? STATUS_LABELS[booking.status] ?? booking.status : undefined;
   const destinationCalendar = booking.destinationCalendar?.[0];
   const calendarSummary = destinationCalendar
     ? [destinationCalendar.integration, destinationCalendar.primaryEmail].filter(Boolean).join(' - ')
     : undefined;
-  const triggerLabel = payload.triggerEvent ? TRIGGER_LABELS[payload.triggerEvent] ?? payload.triggerEvent : 'Actualizare rezervare';
+  const triggerLabel = payload.triggerEvent ? TRIGGER_LABELS[payload.triggerEvent] ?? payload.triggerEvent : 'Aggiornamento prenotazione';
   const googleCalendarUrl = getGoogleCalendarUrl(destinationCalendar);
 
   const botToken = import.meta.env.TELEGRAM_BOT_TOKEN;
@@ -271,26 +271,26 @@ export const POST: APIRoute = async ({ request }) => {
 
   const message = [
     `<b>${escapeHtml(triggerLabel)}</b>`,
-    booking.bookingId ? `ID rezervare: <code>${booking.bookingId}</code>` : '',
+    booking.bookingId ? `ID prenotazione: <code>${booking.bookingId}</code>` : '',
     status ? `Status: <b>${escapeHtml(status)}</b>` : '',
-    `Serviciu: <b>${escapeHtml(service)}</b>`,
+    `Servizio: <b>${escapeHtml(service)}</b>`,
     booking.length ? `Durata: ${booking.length} min` : '',
     `Data: ${escapeHtml(startTime)}`,
     booking.endTime ? `Final: ${escapeHtml(endTime)}` : '',
-    `Fus orar: ${escapeHtml(timeZone)}`,
+    `Fuso orario: ${escapeHtml(timeZone)}`,
     `Client: <b>${escapeHtml(clientName)}</b>`,
     `Telefon: <code>${escapeHtml(phone)}</code>`,
     `Email: <code>${escapeHtml(email)}</code>`,
-    booking.requiresConfirmation ? 'Necesita confirmare: Da' : '',
+    booking.requiresConfirmation ? 'Richiede conferma: Si' : '',
     notes ? `Detalii: ${escapeHtml(notes)}` : '',
-    location ? `Locatie / video: ${escapeHtml(location)}` : '',
-    `Organizator: ${escapeHtml(organizerName)}`,
-    organizerEmail ? `Email organizator: <code>${escapeHtml(organizerEmail)}</code>` : '',
+    location ? `Luogo / video: ${escapeHtml(location)}` : '',
+    `Organizzatore: ${escapeHtml(organizerName)}`,
+    organizerEmail ? `Email organizzatore: <code>${escapeHtml(organizerEmail)}</code>` : '',
     calendarSummary ? `Calendar: ${escapeHtml(calendarSummary)}` : '',
     booking.uid ? `UID: <code>${escapeHtml(booking.uid)}</code>` : '',
     '',
-    `<a href="${CAL_UPCOMING_BOOKINGS_URL}">Deschide rezervarile in Cal.com</a>`,
-    googleCalendarUrl ? `<a href="${googleCalendarUrl}">Deschide Google Calendar</a>` : '',
+    `<a href="${CAL_UPCOMING_BOOKINGS_URL}">Apri le prenotazioni in Cal.com</a>`,
+    googleCalendarUrl ? `<a href="${googleCalendarUrl}">Apri Google Calendar</a>` : '',
   ]
     .filter(Boolean)
     .join('\n');
