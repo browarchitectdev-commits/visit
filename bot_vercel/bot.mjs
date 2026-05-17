@@ -761,7 +761,14 @@ async function handleConversation(message, conversation) {
     });
 
     await clearConversation(message.from.id);
-    await notifyAdminsAboutBooking(booking);
+    try {
+      await notifyAdminsAboutBooking(booking);
+    } catch (error) {
+      console.error('[telegram-bot] Failed to notify admins about booking', {
+        bookingId: booking.id,
+        error: error instanceof Error ? error.message : error,
+      });
+    }
     await sendMessage(
       message.chat.id,
       `Заявка #${booking.id} создана. Мы отправили её администраторам и сообщим вам после подтверждения.`,
