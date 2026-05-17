@@ -445,16 +445,7 @@ async function renderTimePicker({ chatId, messageId, dateKey }) {
       '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043e\u0439 \u0434\u0435\u043d\u044c.',
     ].join('\n');
 
-    if (messageId) {
-      try {
-        await editMessage(chatId, messageId, text, { reply_markup: buildNoSlotsKeyboard() });
-      } catch (error) {
-        console.error('[telegram-bot] Failed to edit no-slots picker, sending a new message', error);
-        await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
-      }
-    } else {
-      await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
-    }
+    await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
 
     return false;
   }
@@ -465,16 +456,7 @@ async function renderTimePicker({ chatId, messageId, dateKey }) {
     '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u043d\u044b\u0439 \u0441\u043b\u043e\u0442.',
   ].join('\n');
 
-  if (messageId) {
-    try {
-      await editMessage(chatId, messageId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
-    } catch (error) {
-      console.error('[telegram-bot] Failed to edit time picker, sending a new message', error);
-      await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
-    }
-  } else {
-    await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
-  }
+  await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
 
   return true;
 }
@@ -860,6 +842,11 @@ async function handleBookingPickerCallback(callbackQuery) {
 
   if (!conversation || conversation.type !== 'booking') {
     await answerCallbackQuery(callbackQuery.id, '\u0421\u0435\u0441\u0441\u0438\u044f \u0437\u0430\u043f\u0438\u0441\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430');
+    await sendMessage(
+      message.chat.id,
+      '\u0421\u0435\u0441\u0441\u0438\u044f \u0437\u0430\u043f\u0438\u0441\u0438 \u0443\u0441\u0442\u0430\u0440\u0435\u043b\u0430. \u041d\u0430\u0436\u043c\u0438\u0442\u0435 «\u0417\u0430\u043f\u0438\u0441\u0430\u0442\u044c\u0441\u044f» \u0438 \u043d\u0430\u0447\u043d\u0438\u0442\u0435 \u0437\u0430\u043d\u043e\u0432\u043e.',
+      { reply_markup: getMenuForUser(actorId) },
+    );
     return true;
   }
 
@@ -897,6 +884,12 @@ async function handleBookingPickerCallback(callbackQuery) {
 
   if (data.startsWith('pick_date:')) {
     const dateKey = data.slice('pick_date:'.length);
+    console.info('[telegram-bot] Date selected', {
+      actorId,
+      chatId: message.chat.id,
+      dateKey,
+      conversationStep: conversation.step,
+    });
     const nextConversation = {
       ...conversation,
       step: 'time',
