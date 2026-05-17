@@ -99,8 +99,8 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Contatti</h4>
             <div className="mt-5 flex flex-col gap-3 text-sm text-white/68">
-              <a href="tel:+390000000000" className="transition-colors hover:text-white">
-                +39 000 000 0000
+              <a href="tel:+3513149394" className="transition-colors hover:text-white">
+                +35 1314 9394
               </a>
               <a href="mailto:ciao@browlip.it" className="transition-colors hover:text-white">
                 ciao@browlip.it

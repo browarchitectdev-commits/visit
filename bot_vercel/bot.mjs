@@ -446,7 +446,12 @@ async function renderTimePicker({ chatId, messageId, dateKey }) {
     ].join('\n');
 
     if (messageId) {
-      await editMessage(chatId, messageId, text, { reply_markup: buildNoSlotsKeyboard() });
+      try {
+        await editMessage(chatId, messageId, text, { reply_markup: buildNoSlotsKeyboard() });
+      } catch (error) {
+        console.error('[telegram-bot] Failed to edit no-slots picker, sending a new message', error);
+        await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
+      }
     } else {
       await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
     }
@@ -461,7 +466,12 @@ async function renderTimePicker({ chatId, messageId, dateKey }) {
   ].join('\n');
 
   if (messageId) {
-    await editMessage(chatId, messageId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
+    try {
+      await editMessage(chatId, messageId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
+    } catch (error) {
+      console.error('[telegram-bot] Failed to edit time picker, sending a new message', error);
+      await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
+    }
   } else {
     await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
   }
@@ -898,17 +908,16 @@ async function handleBookingPickerCallback(callbackQuery) {
     };
 
     await setConversation(actorId, nextConversation);
+    await answerCallbackQuery(callbackQuery.id, '\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044e \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f...');
 
     try {
-      const hasSlots = await renderTimePicker({
+      await renderTimePicker({
         chatId: message.chat.id,
         messageId: message.message_id,
         dateKey,
       });
-      await answerCallbackQuery(callbackQuery.id, hasSlots ? '\u0414\u0430\u0442\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u0430' : '\u0412\u0441\u0435 \u0441\u043b\u043e\u0442\u044b \u0437\u0430\u043d\u044f\u0442\u044b');
     } catch (error) {
       console.error('[telegram-bot] Failed to fetch Google Calendar slots', error);
-      await answerCallbackQuery(callbackQuery.id, '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0441\u043b\u043e\u0442\u044b');
       await sendMessage(
         message.chat.id,
         '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f \u0438\u0437 Google Calendar. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437 \u0447\u0443\u0442\u044c \u043f\u043e\u0437\u0436\u0435.',
