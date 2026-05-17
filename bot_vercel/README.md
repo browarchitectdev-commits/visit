@@ -26,6 +26,8 @@ TELEGRAM_ADMIN_CHAT_ID=
 TELEGRAM_ADMIN_IDS=
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
+GOOGLE_CALENDAR_ID=
+GOOGLE_SERVICE_ACCOUNT_JSON=
 BOT_WEBHOOK_SECRET=
 BOT_WEBHOOK_URL=https://your-domain.com/api/telegram/webhook
 ```
@@ -40,11 +42,17 @@ BOT_WORKING_HOURS_START=9
 BOT_WORKING_HOURS_END=19
 BOT_SLOT_INTERVAL_MINUTES=30
 BOT_BOOKING_DAYS_AHEAD=14
-GOOGLE_CALENDAR_ID=
-GOOGLE_SERVICE_ACCOUNT_JSON=
 ```
 
 For local development this implementation also reads the existing `bot/.env` file as a fallback, so you do not need to duplicate Telegram token values immediately.
+
+For Vercel deployments, copy the Google Calendar values from `bot/.env` into the Vercel project environment variables. The deployed function cannot read your local `bot/.env` file.
+
+The webhook health endpoint shows whether the deployed calendar is configured:
+
+```bash
+curl https://your-domain.com/api/telegram/webhook
+```
 
 ## Supabase setup
 

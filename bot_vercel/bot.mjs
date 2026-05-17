@@ -661,11 +661,22 @@ async function handlePendingBookings(message) {
 }
 
 async function beginBookingFlow(message) {
-  await setConversation(message.from.id, {
+  const conversation = {
     type: 'booking',
-    step: 'service',
+    step: isCalendarBookingEnabled() ? 'date' : 'service',
     draft: {},
-  });
+  };
+
+  await setConversation(message.from.id, conversation);
+
+  if (isCalendarBookingEnabled()) {
+    await renderDatePicker({
+      chatId: message.chat.id,
+      conversation,
+      promptText: 'Выберите дату записи.',
+    });
+    return;
+  }
 
   await sendMessage(message.chat.id, 'Напишите, пожалуйста, услугу, которая вас интересует.', {
     reply_markup: getMenuForUser(message.from.id),
@@ -713,6 +724,20 @@ async function handleConversation(message, conversation) {
       step: 'preferredDateTimeText',
     });
     await sendMessage(message.chat.id, 'Укажите желаемую дату и время в формате YYYY-MM-DD HH:mm. Например: 2026-03-25 14:30');
+    return true;
+  }
+
+  if (conversation.type === 'booking' && conversation.step === 'serviceAfterTime') {
+    await setConversation(message.from.id, {
+      ...conversation,
+      step: 'notes',
+      draft: {
+        ...conversation.draft,
+        service: message.text.trim(),
+      },
+    });
+
+    await sendMessage(message.chat.id, 'Добавьте комментарий или отправьте "-" если комментария нет.');
     return true;
   }
 
@@ -905,7 +930,7 @@ async function handleBookingPickerCallback(callbackQuery) {
 
     await setConversation(actorId, {
       ...conversation,
-      step: 'notes',
+      step: conversation.draft?.service ? 'notes' : 'serviceAfterTime',
       calendarMonth: getMonthKey(dateKey),
       draft: {
         ...conversation.draft,
@@ -915,6 +940,13 @@ async function handleBookingPickerCallback(callbackQuery) {
     });
 
     await answerCallbackQuery(callbackQuery.id, '\u0412\u0440\u0435\u043c\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043e');
+    if (!conversation.draft?.service) {
+      await sendMessage(message.chat.id, 'Напишите, пожалуйста, услугу, которая вас интересует.', {
+        reply_markup: getMenuForUser(actorId),
+      });
+      return true;
+    }
+
     await sendMessage(
       message.chat.id,
       `\u0412\u044b \u0432\u044b\u0431\u0440\u0430\u043b\u0438 ${escapeHtml(`${dateKey} ${timeKey}`)}. \u0414\u043e\u0431\u0430\u0432\u044c\u0442\u0435 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0438\u043b\u0438 \u043e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 "-" \u0435\u0441\u043b\u0438 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0435\u0442.`,
@@ -1084,6 +1116,20 @@ async function handleCallbackQuery(callbackQuery) {
 
 async function handleMessage(message) {
   if (!message?.from || !message?.text) {
+    return;
+  }
+
+  const text = message.text.trim();
+  const resetsConversation =
+    text === '/start' ||
+    text === '/menu' ||
+    text === 'Записаться' ||
+    text === 'Мои заявки' ||
+    text === 'Связаться с администратором' ||
+    text === 'Новые заявки';
+
+  if (resetsConversation) {
+    await handleClientCommand(message);
     return;
   }
 

@@ -1,6 +1,25 @@
-import { processWebhookUpdate } from '../../../../bot_vercel/bot.mjs';
-
 export const prerender = false;
+
+const BOT_ENV_KEYS = [
+  'TELEGRAM_BOT_TOKEN',
+  'TELEGRAM_ADMIN_CHAT_ID',
+  'TELEGRAM_ADMIN_IDS',
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'GOOGLE_CALENDAR_ID',
+  'GOOGLE_SERVICE_ACCOUNT_JSON',
+];
+
+const syncAstroEnvToProcess = () => {
+  for (const [key, value] of Object.entries(import.meta.env ?? {})) {
+    if (process.env[key] === undefined && typeof value === 'string') {
+      process.env[key] = value;
+    }
+  }
+};
+
+const getEnvPresence = (keys) =>
+  Object.fromEntries(keys.map((key) => [key, Boolean(process.env[key])]));
 
 const json = (body, init = {}) =>
   new Response(JSON.stringify(body), {
@@ -12,6 +31,8 @@ const json = (body, init = {}) =>
   });
 
 const isAuthorizedTelegramRequest = (request) => {
+  syncAstroEnvToProcess();
+
   const secret = process.env.BOT_WEBHOOK_SECRET;
 
   if (!secret) {
@@ -22,10 +43,27 @@ const isAuthorizedTelegramRequest = (request) => {
 };
 
 export async function GET() {
+  syncAstroEnvToProcess();
+
+  const env = getEnvPresence(BOT_ENV_KEYS);
+  const missingRequired = [
+    'TELEGRAM_BOT_TOKEN',
+    'TELEGRAM_ADMIN_CHAT_ID',
+    'SUPABASE_URL',
+    'SUPABASE_SERVICE_ROLE_KEY',
+  ].filter((key) => !env[key]);
+  const missingCalendar = ['GOOGLE_CALENDAR_ID', 'GOOGLE_SERVICE_ACCOUNT_JSON'].filter((key) => !env[key]);
+
   return json({
     ok: true,
     name: 'bot_vercel',
     mode: 'telegram-webhook',
+    env,
+    missingRequired,
+    calendar: {
+      configured: missingCalendar.length === 0,
+      missing: missingCalendar,
+    },
   });
 }
 
@@ -43,6 +81,8 @@ export async function POST({ request }) {
   }
 
   try {
+    syncAstroEnvToProcess();
+    const { processWebhookUpdate } = await import('../../../../bot_vercel/bot.mjs');
     const result = await processWebhookUpdate(update);
     return json({ ok: true, ...result });
   } catch (error) {
