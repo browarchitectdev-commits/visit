@@ -6,7 +6,7 @@ import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://your-beauty-salon.com', // Замените на реальный домен
+  site: 'https://visit-weld.vercel.app',
   output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true }, // Это заставит Vercel использовать актуальную конфигурацию

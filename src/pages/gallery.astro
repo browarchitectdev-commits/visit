@@ -11,8 +11,8 @@ const items = (await getCollection('gallery'))
   .filter((item: any) => item.data.isActive)
   .sort((a: any, b: any) => (a.data.order ?? 999) - (b.data.order ?? 999));
 
-const pageTitle = 'Portfolio';
-const pageDescription = 'Portfolio dei lavori Brow & Lip Studio: sopracciglia, labbra e trasformazioni delicate.';
+const pageTitle = 'Portfolio trucco permanente';
+const pageDescription = 'Guarda il portfolio Brow & Lip Studio: lavori reali di sopracciglia, labbra ed eyeliner con risultati delicati e naturali.';
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="it">

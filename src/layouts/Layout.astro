@@ -10,6 +10,8 @@ interface Props {
   image?: string;
   preloadImage?: string;
   canonicalURL?: string;
+  keywords?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   noIndex?: boolean;
   lang?: string;
 }
@@ -19,14 +21,61 @@ const {
   description,
   image = '/og-default.jpg',
   preloadImage,
-  canonicalURL = Astro.url.href,
+  canonicalURL,
+  keywords = 'trucco permanente, permanent makeup, sopracciglia, labbra, brow studio, lip blush',
+  jsonLd,
   noIndex = false,
   lang = 'it',
 } = Astro.props;
 
 const siteName = 'Brow & Lip Studio';
-const fullTitle = `${title} | ${siteName}`;
-const ogImageURL = new URL(image, Astro.site);
+const fullTitle = title === siteName ? `${siteName} | Trucco permanente sopracciglia e labbra` : `${title} | ${siteName}`;
+const siteURL = Astro.site ?? new URL('https://visit-weld.vercel.app');
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const normalizedCanonicalURL = canonicalURL ?? new URL(currentPath, siteURL).href;
+const ogImageURL = new URL(image, siteURL);
+const breadcrumbName = currentPath === '/' ? 'Home' : title;
+const baseJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BeautySalon',
+    '@id': new URL('/#studio', siteURL).href,
+    name: siteName,
+    url: new URL('/', siteURL).href,
+    image: ogImageURL.href,
+    description,
+    priceRange: '$$',
+    areaServed: 'Italy',
+    sameAs: [
+      'https://www.instagram.com/browarchitect.studio/',
+      'https://www.tiktok.com/@browarchitect.stu',
+      'https://t.me/pilotix_bot',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: new URL('/', siteURL).href,
+      },
+      ...(currentPath === '/'
+        ? []
+        : [
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: breadcrumbName,
+              item: normalizedCanonicalURL,
+            },
+          ]),
+    ],
+  },
+];
+const structuredData = [...baseJsonLd, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
 ---
 
 <!DOCTYPE html>
@@ -37,25 +86,30 @@ const ogImageURL = new URL(image, Astro.site);
     <ClientRouter />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="canonical" href={canonicalURL} />
+    <meta name="theme-color" content="#f8efe7" />
+    <link rel="canonical" href={normalizedCanonicalURL} />
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="keywords" content={keywords} />
+    <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:url" content={normalizedCanonicalURL} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image" content={ogImageURL.href} />
+    <meta property="og:image:alt" content={`${siteName} - ${title}`} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:locale" content="it_IT" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:url" content={normalizedCanonicalURL} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image" content={ogImageURL.href} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

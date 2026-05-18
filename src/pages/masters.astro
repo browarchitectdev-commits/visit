@@ -11,8 +11,8 @@ const masters = (await getCollection('masters'))
   .filter((master: any) => master.data.isActive)
   .sort((a: any, b: any) => (a.data.order ?? 999) - (b.data.order ?? 999));
 
-const pageTitle = 'Team';
-const pageDescription = 'Conosci le specialiste di Brow & Lip Studio: esperienza, precisione e gusto estetico.';
+const pageTitle = 'Specialiste trucco permanente';
+const pageDescription = 'Conosci il team di Brow & Lip Studio: specialiste in trucco permanente con esperienza, precisione e gusto estetico naturale.';
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="it">
