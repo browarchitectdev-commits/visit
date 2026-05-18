@@ -3,6 +3,8 @@ import Layout from '@/layouts/Layout.astro';
 import { SiteHeader } from '@/react/SiteHeader';
 import { SiteFooter } from '@/react/SiteFooter';
 import MasterCard from '@/components/MasterCard.astro';
+import PageHero from '@/components/PageHero.astro';
+import EditorialCta from '@/components/EditorialCta.astro';
 import { getCollection } from 'astro:content';
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
@@ -18,17 +20,11 @@ const pageDescription = 'Conosci il team di Brow & Lip Studio: specialiste in tr
 <Layout title={pageTitle} description={pageDescription} lang="it">
   <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
-  <section class="section-shell relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-5xl text-center" data-reveal>
-      <span class="section-label">Team</span>
-      <h1 class="mt-5 font-serif text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
-        Mani esperte, visione delicata.
-      </h1>
-      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-        Ogni trattamento viene eseguito con ascolto, precisione e rispetto dell’armonia naturale del viso.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Team"
+    title="Mani esperte, visione delicata."
+    description="Ogni trattamento viene eseguito con ascolto, precisione e rispetto dell'armonia naturale del viso."
+  />
 
   <section class="px-4 py-10 sm:px-6 lg:px-8">
     <div class="mx-auto max-w-7xl">
@@ -44,5 +40,14 @@ const pageDescription = 'Conosci il team di Brow & Lip Studio: specialiste in tr
     </div>
   </section>
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <EditorialCta
+    title="Prenota una consulenza con il team"
+    description="Raccontaci che risultato desideri: ti aiutiamo a scegliere trattamento, intensita e tempi corretti."
+    primaryHref={contactLinks.telegramUrl || '/contacts'}
+    primaryText="Scrivici su Telegram"
+    secondaryHref="/gallery"
+    secondaryText="Guarda il portfolio"
+  />
+
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} homeNavigation />
 </Layout>

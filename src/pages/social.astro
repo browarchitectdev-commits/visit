@@ -2,6 +2,8 @@
 import Layout from '@/layouts/Layout.astro';
 import { SiteHeader } from '@/react/SiteHeader';
 import { SiteFooter } from '@/react/SiteFooter';
+import PageHero from '@/components/PageHero.astro';
+import EditorialCta from '@/components/EditorialCta.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { getPublicContactLinks } from '@/lib/publicLinks';
@@ -76,7 +78,8 @@ const posts = socialCollection
       embedId,
     };
   })
-  .filter((post) => !!post.embedId);
+  .filter((post) => !!post.embedId)
+  .map((post) => ({ ...post, embedId: post.embedId as string }));
 
 const pageTitle = 'Social e risultati';
 const pageDescription = 'Segui Brow & Lip Studio su Instagram, TikTok e Facebook: video, lavori reali e risultati di trucco permanente.';
@@ -85,18 +88,11 @@ const pageDescription = 'Segui Brow & Lip Studio su Instagram, TikTok e Facebook
 <Layout title={pageTitle} description={pageDescription} lang="it">
   <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
-  <section class="section-shell relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 lg:px-8">
-    <div class="kinetic-lines opacity-35" aria-hidden="true"></div>
-    <div class="mx-auto max-w-5xl text-center" data-reveal>
-      <span class="section-label">Social</span>
-      <h1 class="mt-5 font-serif text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
-        Lavori, video e dettagli dallo studio.
-      </h1>
-      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-        Una raccolta aggiornata di contenuti social per vedere atmosfera, risultati e piccoli momenti reali.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Social"
+    title="Lavori, video e dettagli dallo studio."
+    description="Una raccolta aggiornata di contenuti social per vedere atmosfera, risultati e piccoli momenti reali."
+  />
 
   <section class="px-4 py-8 sm:px-6 lg:px-8">
     <div class="mx-auto grid max-w-5xl gap-4 sm:grid-cols-3">
@@ -137,5 +133,14 @@ const pageDescription = 'Segui Brow & Lip Studio su Instagram, TikTok e Facebook
     </div>
   </section>
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <EditorialCta
+    title="Hai visto un risultato che ti piace?"
+    description="Mandaci il riferimento in Telegram: capiamo insieme se e adatto ai tuoi lineamenti e al tuo colore naturale."
+    primaryHref={contactLinks.telegramUrl || '/contacts'}
+    primaryText="Scrivici su Telegram"
+    secondaryHref="/gallery"
+    secondaryText="Portfolio"
+  />
+
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} homeNavigation />
 </Layout>

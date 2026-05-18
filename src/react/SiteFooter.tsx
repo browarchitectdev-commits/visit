@@ -2,84 +2,75 @@
 
 import { TelegramIcon } from './TelegramIcon';
 
-const footerLinks = [
-  { label: 'Servizi', href: '#services' },
-  { label: 'Studio', href: '#about' },
-  { label: 'Portfolio', href: '#gallery' },
-  { label: 'Team', href: '#masters' },
-  { label: 'Social', href: '#social' },
+const navigationLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'Servizi', href: '/services' },
+  { label: 'Portfolio', href: '/gallery' },
+  { label: 'Team', href: '/masters' },
+  { label: 'Social', href: '/social' },
+  { label: 'Contatti', href: '/contacts' },
+];
+
+const studioDetails = [
+  { label: 'Studio', value: 'Solo su appuntamento' },
+  { label: 'Lun - Ven', value: '10:00 - 21:00' },
+  { label: 'Sab - Dom', value: '11:00 - 20:00' },
 ];
 
 interface SiteFooterProps {
   telegramUrl?: string;
+  bookingUrl?: string;
   homeNavigation?: boolean;
 }
 
-export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterProps) {
+export function SiteFooter({ telegramUrl, bookingUrl }: SiteFooterProps) {
   const currentYear = new Date().getFullYear();
-  const resolvedFooterLinks = footerLinks.map((link) => ({
-    ...link,
-    href: homeNavigation && link.href.startsWith('#') ? `/${link.href}` : link.href,
-  }));
+  const ctaUrl = bookingUrl || telegramUrl || '/contacts';
 
   return (
-    <footer className="relative overflow-hidden border-t border-border/80 bg-[#201713] text-white">
-      <div className="pointer-events-none absolute left-0 top-0 h-48 w-48 bg-[radial-gradient(circle,rgba(224,188,145,0.18),transparent_66%)] blur-[40px]" aria-hidden="true" />
+    <footer className="relative overflow-hidden border-t border-border/80 bg-[#201713] pb-20 text-white sm:pb-0">
+      <div className="pointer-events-none absolute left-0 top-0 h-56 w-56 bg-[radial-gradient(circle,rgba(224,188,145,0.18),transparent_66%)] blur-[44px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 bg-[radial-gradient(circle,rgba(193,95,100,0.16),transparent_70%)] blur-[54px]" aria-hidden="true" />
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#e0bc91]/70 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-[1.2fr_0.7fr_0.7fr]">
+      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.9fr]">
           <div>
-            <a href="#" className="inline-flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_18px_32px_-18px_rgba(182,106,89,0.8)]">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-4"
-                  aria-hidden="true"
-                >
-                  <path d="M12 19c-4 0-7-2-7-5s3-5 7-5 7 2 7 5-3 5-7 5z" />
-                  <path d="M5 14c-1.5-1-2-3-1-5 1.5-3 5.5-5 9-4" />
-                  <path d="M19 14c1.5-1 2-3 1-5-1.5-3-5.5-5-9-4" />
-                </svg>
+            <a href="/" className="inline-flex items-center gap-3">
+              <div className="relative flex size-12 overflow-hidden rounded-full border border-white/15 shadow-[0_20px_34px_-20px_rgba(0,0,0,0.65)]">
+                <img src="/images/about.jpg" alt="Brow & Lip Studio" className="h-full w-full object-cover" />
+                <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,12,10,0.04),rgba(18,12,10,0.38))]" />
               </div>
               <div>
                 <span className="block font-serif text-2xl font-semibold text-white">Brow & Lip Studio</span>
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-white/42">
-                  Bellezza permanente in Italia
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-white/45">
+                  Trucco permanente
                 </span>
               </div>
             </a>
 
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/62">
-              Studio di trucco permanente per sopracciglia e labbra: atmosfera riservata, tecniche delicate e risultati eleganti su misura.
+              Studio di trucco permanente per sopracciglia e labbra: consulenza attenta, atmosfera riservata e risultati naturali nel tempo.
             </p>
 
-            <div className="mt-5 flex gap-2.5">
+            <div className="mt-6 flex flex-wrap gap-2.5">
               <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-white/72 transition-all hover:border-[#e0bc91]/40 hover:bg-white/12 hover:text-white"
-                aria-label="Instagram"
+                href={ctaUrl}
+                target={ctaUrl.startsWith('http') || ctaUrl.startsWith('tg:') ? '_blank' : undefined}
+                rel={ctaUrl.startsWith('http') || ctaUrl.startsWith('tg:') ? 'noopener noreferrer' : undefined}
+                className="btn-shimmer inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#201713] transition-transform hover:-translate-y-0.5"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
+                Prenota ora
               </a>
               {telegramUrl && (
                 <a
                   href={telegramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-white/72 transition-all hover:border-[#e0bc91]/40 hover:bg-white/12 hover:text-white"
-                  aria-label="Telegram"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#229ED9] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1c8fc4]"
                 >
-                  <TelegramIcon />
+                  <TelegramIcon className="h-4 w-4" />
+                  Telegram
                 </a>
               )}
             </div>
@@ -87,8 +78,8 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
 
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Navigazione</h4>
-            <nav className="mt-5 flex flex-col gap-3">
-              {resolvedFooterLinks.map((link) => (
+            <nav className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-1" aria-label="Footer navigation">
+              {navigationLinks.map((link) => (
                 <a key={link.href} href={link.href} className="text-sm text-white/68 transition-colors hover:text-white">
                   {link.label}
                 </a>
@@ -105,18 +96,37 @@ export function SiteFooter({ telegramUrl, homeNavigation = false }: SiteFooterPr
               <a href="mailto:ciao@browlip.it" className="transition-colors hover:text-white">
                 ciao@browlip.it
               </a>
-              <p>Italia, solo su appuntamento</p>
+              <a href="https://www.instagram.com/browarchitect.studio/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
+                Instagram
+              </a>
+              {telegramUrl && (
+                <a href={telegramUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
+                  Telegram
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/42">Orari</h4>
+            <div className="mt-5 space-y-2.5">
+              {studioDetails.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3">
+                  <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/36">{item.label}</span>
+                  <span className="mt-1 block text-sm font-semibold text-white/78">{item.value}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="my-6 border-t border-white/10" />
+        <div className="my-7 border-t border-white/10" />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-white/42">
             &copy; {currentYear} Brow & Lip Studio. Tutti i diritti riservati.
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
             <a href="/privacy" className="text-xs text-white/42 transition-colors hover:text-white">
               Privacy Policy
             </a>

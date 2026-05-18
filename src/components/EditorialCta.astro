@@ -1,0 +1,45 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  primaryHref: string;
+  primaryText: string;
+  secondaryHref?: string;
+  secondaryText?: string;
+}
+
+const {
+  eyebrow = 'Prenotazione',
+  title,
+  description,
+  primaryHref,
+  primaryText,
+  secondaryHref,
+  secondaryText,
+} = Astro.props;
+---
+
+<section data-section-cinema class="section-shell relative px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+  <div class="mx-auto max-w-6xl">
+    <div class="cinematic-card editorial-panel glass-sheen shine-border rounded-[2rem] p-7 text-center sm:p-9 lg:p-11">
+      <p class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{eyebrow}</p>
+      <h2 class="mx-auto mt-3 max-w-3xl font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+        {title}
+      </h2>
+      <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+        {description}
+      </p>
+      <div class="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+        <a href={primaryHref} class="btn-shimmer inline-flex items-center justify-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-all duration-300 hover:opacity-90">
+          {primaryText}
+        </a>
+        {secondaryHref && secondaryText && (
+          <a href={secondaryHref} class="inline-flex items-center justify-center rounded-full border border-border bg-white/45 px-7 py-3 text-sm font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/70">
+            {secondaryText}
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

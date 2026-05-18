@@ -3,6 +3,7 @@
  * Base layout for the editorial landing page.
  */
 import { ClientRouter } from 'astro:transitions';
+import StickyBookingCta from '@/components/StickyBookingCta.astro';
 
 interface Props {
   title: string;
@@ -895,6 +896,8 @@ const structuredData = [...baseJsonLd, ...(Array.isArray(jsonLd) ? jsonLd : json
     <main id="main-content" class="flex-grow">
       <slot />
     </main>
+
+    <StickyBookingCta />
 
     <script>
       (function () {

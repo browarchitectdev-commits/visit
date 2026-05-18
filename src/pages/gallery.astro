@@ -3,6 +3,8 @@ import Layout from '@/layouts/Layout.astro';
 import { SiteHeader } from '@/react/SiteHeader';
 import { SiteFooter } from '@/react/SiteFooter';
 import BeforeAfterCard from '@/components/BeforeAfterCard.astro';
+import PageHero from '@/components/PageHero.astro';
+import EditorialCta from '@/components/EditorialCta.astro';
 import { getCollection } from 'astro:content';
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
@@ -18,18 +20,11 @@ const pageDescription = 'Guarda il portfolio Brow & Lip Studio: lavori reali di 
 <Layout title={pageTitle} description={pageDescription} lang="it">
   <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
-  <section class="section-shell relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 lg:px-8">
-    <div class="kinetic-lines opacity-35" aria-hidden="true"></div>
-    <div class="mx-auto max-w-5xl text-center" data-reveal>
-      <span class="section-label">Portfolio</span>
-      <h1 class="mt-5 font-serif text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
-        Risultati reali, dettagli delicati.
-      </h1>
-      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-        Una selezione di lavori per osservare forma, colore e delicatezza del risultato finale.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Portfolio"
+    title="Risultati reali, dettagli delicati."
+    description="Una selezione di lavori per osservare forma, colore e delicatezza del risultato finale."
+  />
 
   <section class="px-4 py-10 sm:px-6 lg:px-8">
     <div class="mx-auto max-w-7xl">
@@ -45,5 +40,14 @@ const pageDescription = 'Guarda il portfolio Brow & Lip Studio: lavori reali di 
     </div>
   </section>
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <EditorialCta
+    title="Vuoi capire quale risultato e adatto al tuo viso?"
+    description="Scrivici in Telegram: guardiamo insieme forma, colore e tempistiche prima di fissare l'appuntamento."
+    primaryHref={contactLinks.telegramUrl || '/contacts'}
+    primaryText="Scrivici su Telegram"
+    secondaryHref="/services"
+    secondaryText="Vedi i servizi"
+  />
+
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} homeNavigation />
 </Layout>
