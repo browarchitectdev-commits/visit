@@ -1,8 +1,8 @@
 import { defineConfig, TinaMediaStore } from 'tinacms';
 import type { MediaUploadOptions, TinaCMS } from 'tinacms';
 
-// Конфигурация TinaCMS
-// Все коллекции синхронизированы с src/content/config.ts
+// Configurazione TinaCMS
+// Tutte le collezioni sono sincronizzate con src/content/config.ts
 
 const argv = typeof process !== 'undefined' && Array.isArray(process.argv) ? process.argv : [];
 const isTinaDevCommand = argv.includes('dev');
@@ -44,12 +44,12 @@ class UniqueFilenameMediaStore extends TinaMediaStore {
 }
 
 export default defineConfig({
-  // Git-based хранилище
-  branch: 'main', // основная ветка
-  clientId: tinaClientId, // GitHub OAuth Client ID (опционально)
-  token: tinaToken, // GitHub Token (опционально)
+  // Archivio Git-based
+  branch: 'main',
+  clientId: tinaClientId,
+  token: tinaToken,
   
-  // Конфигурация сборки
+  // Configurazione build
   build: {
     outputFolder: 'admin',
     publicFolder: 'public',
@@ -59,7 +59,7 @@ export default defineConfig({
     return cms;
   },
 
-  // Конфигурация CMSMedia
+  // Configurazione media
   media: {
     tina: {
       mediaRoot: 'uploads',
@@ -67,175 +67,175 @@ export default defineConfig({
     },
   },
 
-  // Схемы коллекций контента
+  // Schemi delle collezioni
   schema: {
     collections: [
       /**
-       * Коллекция "Services" (Услуги)
-       * Синхронизирована с src/content/services/
+       * Collezione "Servizi"
+       * Sincronizzata con src/content/services/
        */
       {
-        label: 'Услуги',
+        label: 'Servizi',
         name: 'services',
         path: 'src/content/services',
         format: 'json',
         fields: [
           {
             type: 'string',
-            label: 'Название услуги',
+            label: 'Nome del servizio',
             name: 'name',
-            description: 'Например: Перманентный макияж бровей',
+            description: 'Esempio: Trucco permanente sopracciglia',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value || value.length < 3) {
-                  return 'Название должно содержать минимум 3 символа';
+                  return 'Il nome deve contenere almeno 3 caratteri';
                 }
                 if (value.length > 100) {
-                  return 'Название слишком длинное (максимум 100 символов)';
+                  return 'Il nome è troppo lungo (massimo 100 caratteri)';
                 }
               },
             },
           },
           {
             type: 'number',
-            label: 'Цена (₽)',
+            label: 'Prezzo (EUR)',
             name: 'price',
-            description: 'Цена услуги в рублях',
+            description: 'Prezzo del servizio in euro',
             required: true,
           },
           {
             type: 'number',
-            label: 'Длительность (мин)',
+            label: 'Durata (min)',
             name: 'duration',
-            description: 'Сколько минут длится процедура',
+            description: 'Durata della procedura in minuti',
             required: true,
           },
           {
             type: 'string',
-            label: 'Описание',
+            label: 'Descrizione',
             name: 'description',
-            description: 'Подробное описание услуги',
+            description: 'Descrizione dettagliata del servizio',
             required: true,
             ui: {
               component: 'textarea',
               validate: (value: any) => {
                 if (!value || value.length < 20) {
-                  return 'Описание должно быть минимум 20 символов';
+                  return 'La descrizione deve contenere almeno 20 caratteri';
                 }
                 if (value.length > 1000) {
-                  return 'Описание слишком длинное (максимум 1000 символов)';
+                  return 'La descrizione è troppo lunga (massimo 1000 caratteri)';
                 }
               },
             },
           },
           {
             type: 'image',
-            label: 'Изображение услуги',
+            label: 'Immagine del servizio',
             name: 'image',
-            description: 'JPG или PNG, минимум 400x300px',
+            description: 'JPG o PNG, minimo 400x300px',
             required: true,
           },
           {
             type: 'number',
-            label: 'Порядок отображения',
+            label: 'Ordine di visualizzazione',
             name: 'order',
-            description: 'Услуги сортируются по этому значению (по возрастанию)',
+            description: 'I servizi vengono ordinati in base a questo valore',
           },
           {
             type: 'boolean',
-            label: 'Активна',
+            label: 'Attivo',
             name: 'isActive',
-            description: 'Показывать ли эту услугу на сайте',
+            description: 'Mostrare questo servizio sul sito',
             ui: { defaultValue: true },
           },
         ],
       },
 
       /**
-       * Коллекция "Masters" (Мастера)
-       * Синхронизирована с src/content/masters/
+       * Collezione "Team"
+       * Sincronizzata con src/content/masters/
        */
       {
-        label: 'Мастера',
+        label: 'Team',
         name: 'masters',
         path: 'src/content/masters',
         format: 'json',
         fields: [
           {
             type: 'string',
-            label: 'Полное имя',
+            label: 'Nome completo',
             name: 'name',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value || value.length < 2) {
-                  return 'Имя слишком короткое';
+                  return 'Il nome è troppo corto';
                 }
                 if (value.length > 100) {
-                  return 'Имя слишком длинное';
+                  return 'Il nome è troppo lungo';
                 }
               },
             },
           },
           {
             type: 'string',
-            label: 'Должность',
+            label: 'Ruolo',
             name: 'position',
-            description: 'Например: Мастер перманентного макияжа',
+            description: 'Esempio: Specialista in trucco permanente',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value || value.length < 3) {
-                  return 'Должность должна быть указана';
+                  return 'Indica il ruolo';
                 }
                 if (value.length > 150) {
-                  return 'Должность слишком длинная';
+                  return 'Il ruolo è troppo lungo';
                 }
               },
             },
           },
           {
             type: 'number',
-            label: 'Опыт (лет)',
+            label: 'Esperienza (anni)',
             name: 'experience',
-            description: 'Количество лет работы',
+            description: 'Numero di anni di esperienza',
             required: true,
           },
           {
             type: 'string',
-            label: 'Биография',
+            label: 'Biografia',
             name: 'bio',
-            description: 'Полное описание мастера, достижения, сертификаты',
+            description: 'Descrizione completa, risultati e certificazioni',
             required: true,
             ui: {
               component: 'textarea',
               validate: (value: any) => {
                 if (!value || value.length < 50) {
-                  return 'Биография должна быть подробной (минимум 50 символов)';
+                  return 'La biografia deve essere dettagliata (minimo 50 caratteri)';
                 }
                 if (value.length > 2000) {
-                  return 'Биография слишком длинная (максимум 2000 символов)';
+                  return 'La biografia è troppo lunga (massimo 2000 caratteri)';
                 }
               },
             },
           },
           {
             type: 'image',
-            label: 'Фотография',
+            label: 'Fotografia',
             name: 'photo',
-            description: 'Портретная фото мастера, минимум 300x300px',
+            description: 'Foto ritratto, minimo 300x300px',
             required: true,
           },
           {
             type: 'string',
             label: 'Instagram',
             name: 'instagram',
-            description: 'Полная ссылка на профиль (опционально)',
+            description: 'Link completo al profilo (opzionale)',
             ui: {
               validate: (value: any) => {
                 if (value && !value.startsWith('http')) {
-                  return 'Введите полную ссылку (https://...)';
+                  return 'Inserisci un link completo (https://...)';
                 }
               },
             },
@@ -244,68 +244,68 @@ export default defineConfig({
             type: 'string',
             label: 'Telegram',
             name: 'telegram',
-            description: 'Полная ссылка на профиль (опционально)',
+            description: 'Link completo al profilo (opzionale)',
             ui: {
               validate: (value: any) => {
                 if (value && !value.startsWith('http')) {
-                  return 'Введите полную ссылку (https://...)';
+                  return 'Inserisci un link completo (https://...)';
                 }
               },
             },
           },
           {
             type: 'number',
-            label: 'Порядок отображения',
+            label: 'Ordine di visualizzazione',
             name: 'order',
-            description: 'Мастера сортируются по этому значению (по возрастанию)',
+            description: 'I profili vengono ordinati in base a questo valore',
           },
           {
             type: 'boolean',
-            label: 'Активен',
+            label: 'Attivo',
             name: 'isActive',
-            description: 'Показывать ли этого мастера на сайте',
+            description: 'Mostrare questo profilo sul sito',
             ui: { defaultValue: true },
           },
         ],
       },
 
       /**
-       * Коллекция "Gallery" (Галерея)
-       * Синхронизирована с src/content/gallery/
+       * Collezione "Portfolio"
+       * Sincronizzata con src/content/gallery/
        */
       {
-        label: 'Галерея',
+        label: 'Portfolio',
         name: 'gallery',
         path: 'src/content/gallery',
         format: 'json',
         fields: [
           {
             type: 'string',
-            label: 'Название работы',
+            label: 'Titolo del lavoro',
             name: 'title',
-            description: 'Например: Перманентный макияж бровей',
+            description: 'Esempio: Trucco permanente sopracciglia',
             required: true,
           },
           {
             type: 'string',
-            label: 'Категория',
+            label: 'Categoria',
             name: 'category',
-            description: 'Тип услуги',
+            description: 'Tipo di servizio',
             required: true,
             options: [
-              { label: 'Брови', value: 'brouws' },
-              { label: 'Губы', value: 'lips' },
-              { label: 'Межресничка', value: 'eyeliner' },
-              { label: 'Ногти', value: 'nails' },
-              { label: 'Уход за лицом', value: 'face' },
-              { label: 'Другое', value: 'other' },
+              { label: 'Sopracciglia', value: 'brouws' },
+              { label: 'Labbra', value: 'lips' },
+              { label: 'Eyeliner infracigliare', value: 'eyeliner' },
+              { label: 'Unghie', value: 'nails' },
+              { label: 'Viso', value: 'face' },
+              { label: 'Altro', value: 'other' },
             ],
           },
           {
             type: 'string',
-            label: 'Описание',
+            label: 'Descrizione',
             name: 'description',
-            description: 'Описание выполненной работы',
+            description: 'Descrizione del lavoro eseguito',
             required: true,
             ui: {
               component: 'textarea',
@@ -313,51 +313,51 @@ export default defineConfig({
           },
           {
             type: 'image',
-            label: 'Фото "До"',
+            label: 'Foto "prima"',
             name: 'imageBefore',
-            description: 'Фотография до процедуры',
+            description: 'Fotografia prima della procedura',
             required: true,
           },
           {
             type: 'image',
-            label: 'Фото "После"',
+            label: 'Foto "dopo"',
             name: 'imageAfter',
-            description: 'Фотография после процедуры',
+            description: 'Fotografia dopo la procedura',
             required: true,
           },
           {
             type: 'string',
-            label: 'Имя мастера',
+            label: 'Nome specialista',
             name: 'masterName',
-            description: 'Кто выполнил работу (опционально)',
+            description: 'Chi ha eseguito il lavoro (opzionale)',
           },
           {
             type: 'datetime',
-            label: 'Дата выполнения',
+            label: 'Data del lavoro',
             name: 'date',
-            description: 'Когда была выполнена работа (опционально)',
+            description: 'Quando è stato eseguito il lavoro (opzionale)',
           },
           {
             type: 'number',
-            label: 'Порядок отображения',
+            label: 'Ordine di visualizzazione',
             name: 'order',
-            description: 'Работы сортируются по этому значению (по возрастанию)',
+            description: 'I lavori vengono ordinati in base a questo valore',
           },
           {
             type: 'boolean',
-            label: 'Активна',
+            label: 'Attivo',
             name: 'isActive',
-            description: 'Показывать ли эту работу на сайте',
+            description: 'Mostrare questo lavoro sul sito',
             ui: { defaultValue: true },
           },
         ],
       },
       /**
-       * Коллекция "Social" (Соцсети)
-       * Синхронизирована с src/content/social/
+       * Collezione "Social"
+       * Sincronizzata con src/content/social/
        */
       {
-        label: 'Соцсети',
+        label: 'Social',
         name: 'social',
         path: 'src/content/social',
         format: 'json',
@@ -366,7 +366,7 @@ export default defineConfig({
             create: true,
             delete: true,
           },
-          // Формируем имя файла автоматически из ссылки на пост.
+          // Genera automaticamente il nome del file dal link del post.
           filename: {
             slugify: (values: any) => {
               const platform = String(values?.platform ?? 'instagram').toLowerCase();
@@ -395,9 +395,9 @@ export default defineConfig({
         fields: [
           {
             type: 'string',
-            label: 'Платформа',
+            label: 'Piattaforma',
             name: 'platform',
-            description: 'Выберите платформу для отображения карточки',
+            description: 'Scegli la piattaforma da mostrare nella scheda',
             required: true,
             options: [
               { label: 'Instagram', value: 'instagram' },
@@ -407,72 +407,72 @@ export default defineConfig({
           },
           {
             type: 'string',
-            label: 'Ссылка на пост',
+            label: 'Link al post',
             name: 'postUrl',
             description:
-              'Сначала выберите платформу, затем вставьте ссылку на пост/видео. На сайте ID извлекается автоматически.',
+              'Scegli prima la piattaforma, poi incolla il link al post o video. Il sito estrae automaticamente l\'ID.',
             required: true,
             ui: {
               validate: (value: any, values: any) => {
                 if (!value) {
-                  return 'Ссылка обязательна';
+                  return 'Il link è obbligatorio';
                 }
                 if (!/^https?:\/\//i.test(value)) {
-                  return 'Введите полную ссылку (https://...)';
+                  return 'Inserisci un link completo (https://...)';
                 }
 
                 const platform = String(values?.platform ?? 'instagram').toLowerCase();
 
                 if (platform === 'instagram' && !/instagram\.com\/(p|reel|tv)\//i.test(value)) {
-                  return 'Для Instagram укажите ссылку вида https://www.instagram.com/p/... или /reel/...';
+                  return 'Per Instagram usa un link del tipo https://www.instagram.com/p/... oppure /reel/...';
                 }
 
                 if (platform === 'tiktok' && !/tiktok\.com\/@[^/]+\/video\/\d+/i.test(value)) {
-                  return 'Для TikTok укажите ссылку вида https://www.tiktok.com/@username/video/123456789';
+                  return 'Per TikTok usa un link del tipo https://www.tiktok.com/@username/video/123456789';
                 }
 
                 if (platform === 'facebook' && !/facebook\.com\//i.test(value)) {
-                  return 'Для Facebook укажите ссылку вида https://www.facebook.com/...';
+                  return 'Per Facebook usa un link del tipo https://www.facebook.com/...';
                 }
               },
             },
           },
           {
             type: 'string',
-            label: 'Заголовок',
+            label: 'Titolo',
             name: 'title',
-            description: 'Краткое имя карточки (опционально)',
+            description: 'Nome breve della scheda (opzionale)',
           },
           {
             type: 'string',
-            label: 'Подпись',
+            label: 'Didascalia',
             name: 'caption',
-            description: 'Короткая подпись карточки (опционально)',
+            description: 'Breve didascalia della scheda (opzionale)',
             ui: {
               component: 'textarea',
             },
           },
           {
             type: 'number',
-            label: 'Порядок отображения',
+            label: 'Ordine di visualizzazione',
             name: 'order',
-            description: 'Сортировка по возрастанию',
+            description: 'Ordinamento crescente',
           },
           {
             type: 'boolean',
-            label: 'Активно',
+            label: 'Attivo',
             name: 'isActive',
-            description: 'Показывать ли пост на странице',
+            description: 'Mostrare il post sulla pagina',
             ui: { defaultValue: true },
           },
         ],
       },
       /**
-       * Коллекция "Настройки соцсетей"
-       * Синхронизирована с src/content/settings/
+       * Collezione "Impostazioni social"
+       * Sincronizzata con src/content/settings/
        */
       {
-        label: 'Настройки соцсетей',
+        label: 'Impostazioni social',
         name: 'settings',
         path: 'src/content/settings',
         format: 'json',
@@ -489,20 +489,20 @@ export default defineConfig({
         fields: [
           {
             type: 'string',
-            label: 'Instagram профиль URL',
+            label: 'URL profilo Instagram',
             name: 'instagramProfileUrl',
-            description: 'Например: https://www.instagram.com/browarchitect.studio/',
+            description: 'Esempio: https://www.instagram.com/browarchitect.studio/',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value) {
-                  return 'Ссылка обязательна';
+                  return 'Il link è obbligatorio';
                 }
                 if (!/^https?:\/\//i.test(value)) {
-                  return 'Введите полную ссылку (https://...)';
+                  return 'Inserisci un link completo (https://...)';
                 }
                 if (!/instagram\.com\//i.test(value)) {
-                  return 'Ссылка должна вести на Instagram';
+                  return 'Il link deve portare a Instagram';
                 }
               },
             },
@@ -511,35 +511,35 @@ export default defineConfig({
             type: 'string',
             label: 'Instagram username',
             name: 'instagramUsername',
-            description: 'Без символа @ (например: browarchitect.studio)',
+            description: 'Senza il simbolo @ (esempio: browarchitect.studio)',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value) {
-                  return 'Username обязателен';
+                  return 'Lo username è obbligatorio';
                 }
                 if (String(value).startsWith('@')) {
-                  return 'Введите username без @';
+                  return 'Inserisci lo username senza @';
                 }
               },
             },
           },
           {
             type: 'string',
-            label: 'TikTok профиль URL',
+            label: 'URL profilo TikTok',
             name: 'tiktokProfileUrl',
-            description: 'Например: https://www.tiktok.com/@your_username',
+            description: 'Esempio: https://www.tiktok.com/@your_username',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value) {
-                  return 'Ссылка обязательна';
+                  return 'Il link è obbligatorio';
                 }
                 if (!/^https?:\/\//i.test(value)) {
-                  return 'Введите полную ссылку (https://...)';
+                  return 'Inserisci un link completo (https://...)';
                 }
                 if (!/tiktok\.com\//i.test(value)) {
-                  return 'Ссылка должна вести на TikTok';
+                  return 'Il link deve portare a TikTok';
                 }
               },
             },
@@ -548,46 +548,46 @@ export default defineConfig({
             type: 'string',
             label: 'TikTok username',
             name: 'tiktokUsername',
-            description: 'Без символа @ (например: browarchitect)',
+            description: 'Senza il simbolo @ (esempio: browarchitect)',
             required: true,
             ui: {
               validate: (value: any) => {
                 if (!value) {
-                  return 'Username обязателен';
+                  return 'Lo username è obbligatorio';
                 }
                 if (String(value).startsWith('@')) {
-                  return 'Введите username без @';
+                  return 'Inserisci lo username senza @';
                 }
               },
             },
           },
           {
             type: 'string',
-            label: 'Facebook страница URL',
+            label: 'URL pagina Facebook',
             name: 'facebookPageUrl',
-            description: 'Например: https://www.facebook.com/yourpage',
+            description: 'Esempio: https://www.facebook.com/yourpage',
             ui: {
               validate: (value: any) => {
                 if (value && !/^https?:\/\//i.test(value)) {
-                  return 'Введите полную ссылку (https://...)';
+                  return 'Inserisci un link completo (https://...)';
                 }
                 if (value && !/facebook\.com\//i.test(value)) {
-                  return 'Ссылка должна вести на Facebook';
+                  return 'Il link deve portare a Facebook';
                 }
               },
             },
           },
           {
             type: 'string',
-            label: 'Facebook название страницы',
+            label: 'Nome pagina Facebook',
             name: 'facebookPageName',
-            description: 'Например: Brow & Lip Studio',
+            description: 'Esempio: Brow & Lip Studio',
           },
           {
             type: 'boolean',
-            label: 'Показывать блок Facebook страницы',
+            label: 'Mostra blocco pagina Facebook',
             name: 'facebookShowPageEmbed',
-            description: 'Если выключено, на странице останутся только отдельные посты Facebook',
+            description: 'Se disattivato, nella pagina restano solo i singoli post Facebook',
             ui: { defaultValue: false },
           },
         ],

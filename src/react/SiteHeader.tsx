@@ -108,8 +108,8 @@ export function SiteHeader({
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-[#229ED9] px-3 py-2.5 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1c8fc4]"
-              aria-label="Deschide Telegram"
-              title="Deschide Telegram"
+              aria-label="Apri Telegram"
+              title="Apri Telegram"
             >
               <TelegramIcon className="h-4 w-4" />
             </a>

@@ -45,7 +45,7 @@ export function ServicesList({ services }: ServicesListProps) {
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Scegliamo forma, intensita e tonalita per un risultato sofisticato, equilibrato e personale.
+            Scegliamo forma, intensità e tonalità per un risultato sofisticato, equilibrato e personale.
           </p>
         </div>
 

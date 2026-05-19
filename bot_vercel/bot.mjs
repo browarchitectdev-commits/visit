@@ -983,22 +983,22 @@ async function handleClientCommand(message) {
     return;
   }
 
-  if (text === MENU_TEXT.book || text === 'Записаться') {
+  if (text === MENU_TEXT.book) {
     await beginBookingFlow(message);
     return;
   }
 
-  if (text === MENU_TEXT.myBookings || text === 'Мои заявки') {
+  if (text === MENU_TEXT.myBookings) {
     await handleBookingsList(message);
     return;
   }
 
-  if (text === MENU_TEXT.contactAdmin || text === 'Связаться с администратором') {
+  if (text === MENU_TEXT.contactAdmin) {
     await beginAdminContactFlow(message);
     return;
   }
 
-  if (text === MENU_TEXT.newBookings || text === 'Новые заявки') {
+  if (text === MENU_TEXT.newBookings) {
     await handlePendingBookings(message);
     return;
   }
@@ -1143,10 +1143,10 @@ async function handleMessage(message) {
     text === MENU_TEXT.myBookings ||
     text === MENU_TEXT.contactAdmin ||
     text === MENU_TEXT.newBookings ||
-    text === 'Записаться' ||
-    text === 'Мои заявки' ||
-    text === 'Связаться с администратором' ||
-    text === 'Новые заявки';
+    text === MENU_TEXT.book ||
+    text === MENU_TEXT.myBookings ||
+    text === MENU_TEXT.contactAdmin ||
+    text === MENU_TEXT.newBookings;
 
   if (resetsConversation) {
     await handleClientCommand(message);

@@ -10,7 +10,7 @@ const features = [
   },
   {
     title: 'Pigmenti selezionati',
-    description: 'Texture stabili e tonalita pensate per valorizzare incarnato, labbra e sopracciglia.',
+    description: 'Texture stabili e tonalità pensate per valorizzare incarnato, labbra e sopracciglia.',
   },
   {
     title: 'Igiene rigorosa',

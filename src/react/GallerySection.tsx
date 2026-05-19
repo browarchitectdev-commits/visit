@@ -32,7 +32,7 @@ export function GallerySection({ images }: GallerySectionProps) {
           <div>
             <span className="section-label">Portfolio</span>
             <h2 className="mt-4 font-serif text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Una selezione di dettagli, tonalita e trasformazioni delicate.
+              Una selezione di dettagli, tonalità e trasformazioni delicate.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">

@@ -1,185 +1,95 @@
-/**
- * Content Collections Configuration
- * 
- * Определяет схемы для всех коллекций контента.
- * TinaCMS будет редактировать эти файлы через Git.
- * Zod обеспечивает типобезопасность и валидацию.
- */
-
 import { defineCollection, z } from 'astro:content';
 
-/**
- * Коллекция "Услуги"
- * Хранит информацию об услугах салона красоты
- */
 const servicesCollection = defineCollection({
-  type: 'data', // JSON-файлы (можно также использовать 'content' для Markdown)
+  type: 'data',
   schema: z.object({
-    // Название услуги (например, "Перманентный макияж бровей")
     name: z.string()
-      .min(3, 'Название должно содержать минимум 3 символа')
-      .max(100, 'Название слишком длинное'),
-    
-    // Цена в рублях (число, не строка - для сортировки и фильтрации)
+      .min(3, 'Il nome deve contenere almeno 3 caratteri')
+      .max(100, 'Il nome è troppo lungo'),
     price: z.number()
-      .positive('Цена должна быть положительным числом')
-      .int('Цена должна быть целым числом'),
-    
-    // Длительность процедуры в минутах
+      .positive('Il prezzo deve essere un numero positivo')
+      .int('Il prezzo deve essere un numero intero'),
     duration: z.number()
-      .positive('Длительность должна быть положительной')
-      .int('Длительность должна быть целым числом'),
-    
-    // Подробное описание услуги (может содержать HTML для форматирования)
+      .positive('La durata deve essere positiva')
+      .int('La durata deve essere un numero intero'),
     description: z.string()
-      .min(20, 'Описание должно быть информативным')
-      .max(1000, 'Описание слишком длинное'),
-    
-    // Изображение услуги:
-    // - локальный файл в коллекции (оптимизируется через astro:assets)
-    // - либо строковый путь из public/uploads (из TinaCMS)
-    image: z.string().min(1, 'Укажите изображение'),
-    
-    // Порядок отображения на странице (опционально)
+      .min(20, 'La descrizione deve essere informativa')
+      .max(1000, 'La descrizione è troppo lunga'),
+    image: z.string().min(1, 'Inserisci un immagine'),
     order: z.number().int().optional(),
-    
-    // Активна ли услуга (для скрытия без удаления из CMS)
     isActive: z.boolean().default(true),
   }),
 });
 
-/**
- * Коллекция "Мастера"
- * Хранит информацию о специалистах салона
- */
 const mastersCollection = defineCollection({
   type: 'data',
   schema: z.object({
-    // Полное имя мастера
     name: z.string()
-      .min(2, 'Имя слишком короткое')
-      .max(100, 'Имя слишком длинное'),
-    
-    // Должность/специализация (например, "Мастер перманентного макияжа")
+      .min(2, 'Il nome è troppo corto')
+      .max(100, 'Il nome è troppo lungo'),
     position: z.string()
-      .min(3, 'Должность должна быть указана')
-      .max(150, 'Должность слишком длинная'),
-    
-    // Опыт работы в годах
+      .min(3, 'Indica il ruolo')
+      .max(150, 'Il ruolo è troppo lungo'),
     experience: z.number()
-      .nonnegative('Опыт не может быть отрицательным')
-      .int('Опыт должен быть целым числом'),
-    
-    // Биография/описание (история, достижения, сертификаты)
+      .nonnegative('L esperienza non può essere negativa')
+      .int('L esperienza deve essere un numero intero'),
     bio: z.string()
-      .min(50, 'Биография должна быть подробной')
-      .max(2000, 'Биография слишком длинная'),
-    
-    // Фотография мастера (локальный asset или строковый путь из public/uploads)
-    photo: z.string().min(1, 'Укажите фотографию'),
-    
-    // Социальные сети (опционально)
+      .min(50, 'La biografia deve essere più dettagliata')
+      .max(2000, 'La biografia è troppo lunga'),
+    photo: z.string().min(1, 'Inserisci una fotografia'),
     instagram: z.string().url().optional(),
     telegram: z.string().url().optional(),
-    
-    // Порядок отображения
     order: z.number().int().optional(),
-    
-    // Активен ли мастер (для временного скрытия)
     isActive: z.boolean().default(true),
   }),
 });
 
-/**
- * Коллекция "Галерея"
- * Хранит фотографии работ "до/после"
- */
 const galleryCollection = defineCollection({
   type: 'data',
   schema: z.object({
-    // Название работы (например, "Перманентный макияж бровей")
     title: z.string()
-      .min(3, 'Название должно содержать минимум 3 символа')
-      .max(150, 'Название слишком длинное'),
-    
-    // Категория/тип услуги
+      .min(3, 'Il titolo deve contenere almeno 3 caratteri')
+      .max(150, 'Il titolo è troppo lungo'),
     category: z.enum(['brouws', 'lips', 'eyeliner', 'nails', 'face', 'other'], {
-      errorMap: () => ({ message: 'Выберите категорию' }),
+      errorMap: () => ({ message: 'Scegli una categoria' }),
     }),
-    
-    // Описание работы
     description: z.string()
-      .min(10, 'Описание должно быть информативным')
-      .max(500, 'Описание слишком длинное'),
-    
-    // Фото "до" (локальный asset или строковый путь из public/uploads)
-    imageBefore: z.string().min(1, 'Укажите фото ДО'),
-    
-    // Фото "после" (локальный asset или строковый путь из public/uploads)
-    imageAfter: z.string().min(1, 'Укажите фото ПОСЛЕ'),
-    
-    // Имя мастера (опционально)
+      .min(10, 'La descrizione deve essere informativa')
+      .max(500, 'La descrizione è troppo lunga'),
+    imageBefore: z.string().min(1, 'Inserisci la foto prima'),
+    imageAfter: z.string().min(1, 'Inserisci la foto dopo'),
     masterName: z.string().optional(),
-    
-    // Дата выполнения работы (опционально)
     date: z.date().optional(),
-    
-    // Порядок отображения
     order: z.number().int().optional(),
-    
-    // Активна ли запись
     isActive: z.boolean().default(true),
   }),
 });
 
-/**
- * Коллекция "Социальные сети"
- * Хранит ссылки на посты для страницы /social
- */
 const socialCollection = defineCollection({
   type: 'data',
   schema: z.object({
-    // Поддерживаем Instagram, TikTok и Facebook
     platform: z.enum(['instagram', 'tiktok', 'facebook']).default('instagram'),
-
-    // Полная ссылка на пост (например: https://www.instagram.com/p/ABC123/)
-    postUrl: z.string().url('Введите корректную ссылку на пост'),
-
-    // Краткий заголовок для админки и a11y (опционально)
-    title: z.string().max(120, 'Слишком длинный заголовок').optional(),
-
-    // Подпись карточки (опционально)
-    caption: z.string().max(280, 'Слишком длинная подпись').optional(),
-
-    // Порядок отображения
+    postUrl: z.string().url('Inserisci un link valido al post'),
+    title: z.string().max(120, 'Titolo troppo lungo').optional(),
+    caption: z.string().max(280, 'Didascalia troppo lunga').optional(),
     order: z.number().int().optional(),
-
-    // Показывать ли запись на сайте
     isActive: z.boolean().default(true),
   }),
 });
 
-/**
- * Коллекция "Настройки"
- * Хранит глобальные настройки сайта (пока: соцсети)
- */
 const settingsCollection = defineCollection({
   type: 'data',
   schema: z.object({
-    instagramProfileUrl: z.string().url('Введите корректную ссылку на Instagram профиль'),
-    instagramUsername: z.string().min(1, 'Укажите username без @'),
-    tiktokProfileUrl: z.string().url('Введите корректную ссылку на TikTok профиль'),
-    tiktokUsername: z.string().min(1, 'Укажите username TikTok без @'),
-    facebookPageUrl: z.string().url('Введите корректную ссылку на Facebook страницу').optional(),
-    facebookPageName: z.string().min(1, 'Укажите название Facebook страницы').optional(),
+    instagramProfileUrl: z.string().url('Inserisci un link valido al profilo Instagram'),
+    instagramUsername: z.string().min(1, 'Inserisci lo username senza @'),
+    tiktokProfileUrl: z.string().url('Inserisci un link valido al profilo TikTok'),
+    tiktokUsername: z.string().min(1, 'Inserisci lo username TikTok senza @'),
+    facebookPageUrl: z.string().url('Inserisci un link valido alla pagina Facebook').optional(),
+    facebookPageName: z.string().min(1, 'Inserisci il nome della pagina Facebook').optional(),
     facebookShowPageEmbed: z.boolean().default(false),
   }),
 });
 
-/**
- * Экспорт коллекций
- * Astro автоматически сгенерирует типы TypeScript на их основе
- */
 export const collections = {
   services: servicesCollection,
   masters: mastersCollection,
