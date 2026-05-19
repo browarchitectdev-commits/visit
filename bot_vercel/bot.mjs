@@ -49,21 +49,28 @@ const storage = new SupabaseStorage({
 });
 const telegramBaseUrl = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
+const MENU_TEXT = {
+  book: 'Prenotare',
+  myBookings: 'Le mie richieste',
+  contactAdmin: 'Contattare amministratore',
+  newBookings: 'Nuove richieste',
+};
+
 const CLIENT_MENU = {
-  keyboard: [[{ text: 'Записаться' }], [{ text: 'Мои заявки' }], [{ text: 'Связаться с администратором' }]],
+  keyboard: [[{ text: MENU_TEXT.book }], [{ text: MENU_TEXT.myBookings }], [{ text: MENU_TEXT.contactAdmin }]],
   resize_keyboard: true,
 };
 
 const ADMIN_MENU = {
-  keyboard: [[{ text: 'Новые заявки' }], [{ text: 'Мои заявки' }], [{ text: 'Связаться с администратором' }]],
+  keyboard: [[{ text: MENU_TEXT.newBookings }], [{ text: MENU_TEXT.myBookings }], [{ text: MENU_TEXT.contactAdmin }]],
   resize_keyboard: true,
 };
 
 const STATUS_LABELS = {
-  pending: 'Ожидает подтверждения',
-  approved: 'Подтверждена',
-  rejected: 'Отклонена',
-  reschedule_requested: 'Нужно новое время',
+  pending: 'In attesa di conferma',
+  approved: 'Confermata',
+  rejected: 'Rifiutata',
+  reschedule_requested: 'Serve un nuovo orario',
 };
 
 const escapeHtml = (value) =>
@@ -79,27 +86,27 @@ const getConversationKey = (userId) => String(userId);
 const nowIso = () => new Date().toISOString();
 const isCalendarBookingEnabled = () => isGoogleCalendarConfigured(process.env);
 
-const DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+const DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('it-IT', {
   weekday: 'short',
   day: 'numeric',
   month: 'short',
   timeZone: 'UTC',
 });
 
-const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat('it-IT', {
   month: 'long',
   year: 'numeric',
   timeZone: 'UTC',
 });
 
-const FULL_DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+const FULL_DATE_LABEL_FORMATTER = new Intl.DateTimeFormat('it-IT', {
   weekday: 'long',
   day: 'numeric',
   month: 'long',
   timeZone: 'UTC',
 });
 
-const WEEKDAY_LABELS = ['\u041f\u043d', '\u0412\u0442', '\u0421\u0440', '\u0427\u0442', '\u041f\u0442', '\u0421\u0431', '\u0412\u0441'];
+const WEEKDAY_LABELS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
 
 const parseDateKeyLocal = (dateKey) => {
   const match = String(dateKey ?? '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -196,7 +203,7 @@ const buildDateKeyboard = (dateOptions, { visibleMonth, selectedDateKey } = {}) 
 
   if (!parsedMonth) {
     return {
-      inline_keyboard: [[{ text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' }]],
+      inline_keyboard: [[{ text: 'Annulla', callback_data: 'pick_cancel' }]],
     };
   }
 
@@ -254,7 +261,7 @@ const buildDateKeyboard = (dateOptions, { visibleMonth, selectedDateKey } = {}) 
       ],
       WEEKDAY_LABELS.map((label) => ({ text: label, callback_data: 'pick_noop' })),
       ...createRows(cells, 7),
-      [{ text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' }],
+      [{ text: 'Annulla', callback_data: 'pick_cancel' }],
     ],
   };
 };
@@ -271,8 +278,8 @@ function buildTimeKeyboard(dateKey, slots) {
         4,
       ),
       [
-        { text: '\u2039 \u041a \u0434\u0430\u0442\u0430\u043c', callback_data: 'pick_back:date' },
-        { text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' },
+        { text: '\u2039 Alle date', callback_data: 'pick_back:date' },
+        { text: 'Annulla', callback_data: 'pick_cancel' },
       ],
     ],
   };
@@ -282,8 +289,8 @@ function buildNoSlotsKeyboard() {
   return {
     inline_keyboard: [
       [
-        { text: '\u2039 \u041a \u0434\u0430\u0442\u0430\u043c', callback_data: 'pick_back:date' },
-        { text: '\u041e\u0442\u043c\u0435\u043d\u0430', callback_data: 'pick_cancel' },
+        { text: '\u2039 Alle date', callback_data: 'pick_back:date' },
+        { text: 'Annulla', callback_data: 'pick_cancel' },
       ],
     ],
   };
@@ -412,9 +419,9 @@ async function renderDatePicker({ chatId, conversation, messageId, promptText })
     selectedDateKey: conversation?.draft?.dateKey,
   });
   const text = [
-    '<b>\u0412\u044b\u0431\u043e\u0440 \u0434\u0430\u0442\u044b</b>',
-    conversation?.draft?.service ? `\u0423\u0441\u043b\u0443\u0433\u0430: ${escapeHtml(conversation.draft.service)}` : '',
-    promptText ?? '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0435\u043d\u044c \u0432 \u043a\u0430\u043b\u0435\u043d\u0434\u0430\u0440\u0435 \u043d\u0438\u0436\u0435.',
+    '<b>Scelta della data</b>',
+    conversation?.draft?.service ? `Servizio: ${escapeHtml(conversation.draft.service)}` : '',
+    promptText ?? 'Scegli un giorno nel calendario qui sotto.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -440,9 +447,9 @@ async function renderTimePicker({ chatId, messageId, dateKey }) {
 
   if (slots.length === 0) {
     const text = [
-      '<b>\u0421\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f</b>',
-      `\u041d\u0430 ${escapeHtml(formatFullDateLabel(dateKey))} \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u044b\u0445 \u0441\u043b\u043e\u0442\u043e\u0432 \u043d\u0435 \u043e\u0441\u0442\u0430\u043b\u043e\u0441\u044c.`,
-      '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043e\u0439 \u0434\u0435\u043d\u044c.',
+      '<b>Orari disponibili</b>',
+      `Per ${escapeHtml(formatFullDateLabel(dateKey))} non ci sono piu slot liberi.`,
+      'Scegli un altro giorno.',
     ].join('\n');
 
     await sendMessage(chatId, text, { reply_markup: buildNoSlotsKeyboard() });
@@ -451,9 +458,9 @@ async function renderTimePicker({ chatId, messageId, dateKey }) {
   }
 
   const text = [
-    '<b>\u0421\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f</b>',
-    `\u0414\u0430\u0442\u0430: ${escapeHtml(formatFullDateLabel(dateKey))}`,
-    '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u043d\u044b\u0439 \u0441\u043b\u043e\u0442.',
+    '<b>Orari disponibili</b>',
+    `Data: ${escapeHtml(formatFullDateLabel(dateKey))}`,
+    'Scegli uno slot comodo.',
   ].join('\n');
 
   await sendMessage(chatId, text, { reply_markup: buildTimeKeyboard(dateKey, slots) });
@@ -552,24 +559,24 @@ function buildAdminKeyboard(bookingId) {
   return {
     inline_keyboard: [
       [
-        { text: 'Подтвердить', callback_data: `booking:${bookingId}:approve` },
-        { text: 'Отклонить', callback_data: `booking:${bookingId}:reject` },
+        { text: 'Confermare', callback_data: `booking:${bookingId}:approve` },
+        { text: 'Rifiutare', callback_data: `booking:${bookingId}:reject` },
       ],
-      [{ text: 'Предложить другое время', callback_data: `booking:${bookingId}:reschedule` }],
+      [{ text: 'Proporre un altro orario', callback_data: `booking:${bookingId}:reschedule` }],
     ],
   };
 }
 
 function formatBookingSummary(booking) {
   const usernameLine = booking.username ? `\nUsername: @${escapeHtml(booking.username)}` : '';
-  const notesLine = booking.notes ? `\nКомментарий: ${escapeHtml(booking.notes)}` : '';
+  const notesLine = booking.notes ? `\nCommento: ${escapeHtml(booking.notes)}` : '';
 
   return [
-    `<b>Заявка #${booking.id}</b>`,
-    `Клиент: ${escapeHtml(booking.clientName)}`,
-    `Услуга: ${escapeHtml(booking.service)}`,
-    `Желаемое время: ${escapeHtml(booking.preferredDateTime)}`,
-    `Статус: ${escapeHtml(STATUS_LABELS[booking.status] ?? booking.status)}`,
+    `<b>Richiesta #${booking.id}</b>`,
+    `Cliente: ${escapeHtml(booking.clientName)}`,
+    `Servizio: ${escapeHtml(booking.service)}`,
+    `Orario richiesto: ${escapeHtml(booking.preferredDateTime)}`,
+    `Stato: ${escapeHtml(STATUS_LABELS[booking.status] ?? booking.status)}`,
     usernameLine,
     notesLine,
   ]
@@ -578,7 +585,7 @@ function formatBookingSummary(booking) {
 }
 
 async function notifyAdminsAboutBooking(booking) {
-  const result = await sendMessage(ADMIN_CHAT_ID, `${formatBookingSummary(booking)}\n\nВыберите действие ниже:`, {
+  const result = await sendMessage(ADMIN_CHAT_ID, `${formatBookingSummary(booking)}\n\nScegli un'azione qui sotto:`, {
     reply_markup: buildAdminKeyboard(booking.id),
   });
 
@@ -587,7 +594,7 @@ async function notifyAdminsAboutBooking(booking) {
   }));
 }
 
-async function showMainMenu(chatId, userId, introText = 'Выберите действие:') {
+async function showMainMenu(chatId, userId, introText = "Scegli un'azione:") {
   await sendMessage(chatId, introText, {
     reply_markup: getMenuForUser(userId),
   });
@@ -599,8 +606,8 @@ async function handleStart(message) {
     message.chat.id,
     message.from.id,
     isAdmin(message.from.id)
-      ? 'Меню администратора готово.'
-      : 'Добро пожаловать. Здесь можно оставить заявку на запись или связаться с администратором.',
+      ? 'Menu amministratore pronto.'
+      : 'Benvenuta. Qui puoi lasciare una richiesta di appuntamento o contattare l\'amministratore.',
   );
 }
 
@@ -608,7 +615,7 @@ async function handleBookingsList(message) {
   const bookings = await listBookingsByUser(message.from.id);
 
   if (bookings.length === 0) {
-    await sendMessage(message.chat.id, 'У вас пока нет заявок.', {
+    await sendMessage(message.chat.id, 'Non hai ancora richieste.', {
       reply_markup: getMenuForUser(message.from.id),
     });
     return;
@@ -618,25 +625,25 @@ async function handleBookingsList(message) {
     .slice(0, 10)
     .map(
       (booking) =>
-        `#${booking.id} • ${booking.service} • ${booking.preferredDateTime} • ${STATUS_LABELS[booking.status] ?? booking.status}`,
+        `#${booking.id} - ${booking.service} - ${booking.preferredDateTime} - ${STATUS_LABELS[booking.status] ?? booking.status}`,
     )
     .join('\n');
 
-  await sendMessage(message.chat.id, `<b>Ваши заявки</b>\n${escapeHtml(text)}`, {
+  await sendMessage(message.chat.id, `<b>Le tue richieste</b>\n${escapeHtml(text)}`, {
     reply_markup: getMenuForUser(message.from.id),
   });
 }
 
 async function handlePendingBookings(message) {
   if (!isAdmin(message.from.id)) {
-    await sendMessage(message.chat.id, 'Эта команда доступна только администраторам.');
+    await sendMessage(message.chat.id, 'Questo comando e disponibile solo per gli amministratori.');
     return;
   }
 
   const bookings = await listPendingBookings();
 
   if (bookings.length === 0) {
-    await sendMessage(message.chat.id, 'Сейчас нет новых заявок.', {
+    await sendMessage(message.chat.id, 'Al momento non ci sono nuove richieste.', {
       reply_markup: getMenuForUser(message.from.id),
     });
     return;
@@ -644,10 +651,10 @@ async function handlePendingBookings(message) {
 
   const text = bookings
     .slice(0, 10)
-    .map((booking) => `#${booking.id} • ${booking.clientName} • ${booking.service} • ${booking.preferredDateTime}`)
+    .map((booking) => `#${booking.id} - ${booking.clientName} - ${booking.service} - ${booking.preferredDateTime}`)
     .join('\n');
 
-  await sendMessage(message.chat.id, `<b>Новые заявки</b>\n${escapeHtml(text)}`, {
+  await sendMessage(message.chat.id, `<b>Nuove richieste</b>\n${escapeHtml(text)}`, {
     reply_markup: getMenuForUser(message.from.id),
   });
 }
@@ -665,12 +672,12 @@ async function beginBookingFlow(message) {
     await renderDatePicker({
       chatId: message.chat.id,
       conversation,
-      promptText: 'Выберите дату записи.',
+      promptText: 'Scegli la data dell\'appuntamento.',
     });
     return;
   }
 
-  await sendMessage(message.chat.id, 'Напишите, пожалуйста, услугу, которая вас интересует.', {
+  await sendMessage(message.chat.id, 'Scrivi, per favore, il servizio che ti interessa.', {
     reply_markup: getMenuForUser(message.from.id),
   });
 }
@@ -683,7 +690,7 @@ async function beginAdminContactFlow(message) {
 
   await sendMessage(
     message.chat.id,
-    'Напишите одно сообщение для администратора. Я сразу перешлю его в админскую группу.',
+    'Scrivi un messaggio per l\'amministratore. Lo inoltrero subito al gruppo admin.',
     { reply_markup: getMenuForUser(message.from.id) },
   );
 }
@@ -706,7 +713,7 @@ async function handleConversation(message, conversation) {
       await renderDatePicker({
         chatId: message.chat.id,
         conversation: { ...nextConversation, step: 'date' },
-        promptText: 'Отлично. Теперь выберите дату записи.',
+        promptText: 'Perfetto. Ora scegli la data dell\'appuntamento.',
       });
       return true;
     }
@@ -715,7 +722,7 @@ async function handleConversation(message, conversation) {
       ...nextConversation,
       step: 'preferredDateTimeText',
     });
-    await sendMessage(message.chat.id, 'Укажите желаемую дату и время в формате YYYY-MM-DD HH:mm. Например: 2026-03-25 14:30');
+    await sendMessage(message.chat.id, 'Indica la data e l\'ora desiderate nel formato YYYY-MM-DD HH:mm. Esempio: 2026-03-25 14:30');
     return true;
   }
 
@@ -729,7 +736,7 @@ async function handleConversation(message, conversation) {
       },
     });
 
-    await sendMessage(message.chat.id, 'Добавьте комментарий или отправьте "-" если комментария нет.');
+    await sendMessage(message.chat.id, 'Aggiungi un commento oppure invia "-" se non hai commenti.');
     return true;
   }
 
@@ -743,7 +750,7 @@ async function handleConversation(message, conversation) {
       },
     });
 
-    await sendMessage(message.chat.id, 'Добавьте комментарий или отправьте "-" если комментария нет.');
+    await sendMessage(message.chat.id, 'Aggiungi un commento oppure invia "-" se non hai commenti.');
     return true;
   }
 
@@ -771,7 +778,7 @@ async function handleConversation(message, conversation) {
     }
     await sendMessage(
       message.chat.id,
-      `Заявка #${booking.id} создана. Мы отправили её администраторам и сообщим вам после подтверждения.`,
+      `Richiesta #${booking.id} creata. L'abbiamo inviata agli amministratori e ti avviseremo dopo la conferma.`,
       { reply_markup: getMenuForUser(message.from.id) },
     );
     return true;
@@ -785,11 +792,11 @@ async function handleConversation(message, conversation) {
 
     await sendMessage(
       ADMIN_CHAT_ID,
-      `<b>Сообщение клиента</b>\nОт: ${escapeHtml(senderName)}\nTelegram ID: <code>${escapeHtml(message.from.id)}</code>\n\n${escapeHtml(message.text.trim())}`,
+      `<b>Messaggio del cliente</b>\nDa: ${escapeHtml(senderName)}\nTelegram ID: <code>${escapeHtml(message.from.id)}</code>\n\n${escapeHtml(message.text.trim())}`,
     );
 
     await clearConversation(message.from.id);
-    await sendMessage(message.chat.id, 'Сообщение отправлено администраторам. Вам ответят в этом боте.', {
+    await sendMessage(message.chat.id, 'Messaggio inviato agli amministratori. Ti risponderanno in questo bot.', {
       reply_markup: getMenuForUser(message.from.id),
     });
     return true;
@@ -811,9 +818,9 @@ async function handleConversation(message, conversation) {
     if (booking) {
       await sendMessage(
         booking.telegramUserId,
-        `По заявке #${booking.id} администратор предложил другое время.\n\nКомментарий: ${escapeHtml(message.text.trim())}`,
+        `Per la richiesta #${booking.id} l'amministratore ha proposto un altro orario.\n\nCommento: ${escapeHtml(message.text.trim())}`,
       );
-      await sendMessage(message.chat.id, `Клиент уведомлён по заявке #${booking.id}.`, {
+      await sendMessage(message.chat.id, `Cliente avvisato per la richiesta #${booking.id}.`, {
         reply_markup: getMenuForUser(message.from.id),
       });
     }
@@ -842,16 +849,16 @@ async function handleBookingPickerCallback(callbackQuery) {
 
   if (data === 'pick_cancel') {
     await clearConversation(actorId);
-    await answerCallbackQuery(callbackQuery.id, '\u0417\u0430\u043f\u0438\u0441\u044c \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u0430');
-    await showMainMenu(message.chat.id, actorId, '\u0417\u0430\u043f\u0438\u0441\u044c \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u0430. \u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435:');
+    await answerCallbackQuery(callbackQuery.id, 'Prenotazione annullata');
+    await showMainMenu(message.chat.id, actorId, 'Prenotazione annullata. Scegli un\'azione:');
     return true;
   }
 
   if (!conversation || conversation.type !== 'booking') {
-    await answerCallbackQuery(callbackQuery.id, '\u0421\u0435\u0441\u0441\u0438\u044f \u0437\u0430\u043f\u0438\u0441\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430');
+    await answerCallbackQuery(callbackQuery.id, 'Sessione di prenotazione non trovata');
     await sendMessage(
       message.chat.id,
-      '\u0421\u0435\u0441\u0441\u0438\u044f \u0437\u0430\u043f\u0438\u0441\u0438 \u0443\u0441\u0442\u0430\u0440\u0435\u043b\u0430. \u041d\u0430\u0436\u043c\u0438\u0442\u0435 «\u0417\u0430\u043f\u0438\u0441\u0430\u0442\u044c\u0441\u044f» \u0438 \u043d\u0430\u0447\u043d\u0438\u0442\u0435 \u0437\u0430\u043d\u043e\u0432\u043e.',
+      `La sessione di prenotazione e scaduta. Premi "${MENU_TEXT.book}" e ricomincia.`,
       { reply_markup: getMenuForUser(actorId) },
     );
     return true;
@@ -864,7 +871,7 @@ async function handleBookingPickerCallback(callbackQuery) {
       calendarMonth: nextMonth,
     };
     await setConversation(actorId, nextConversation);
-    await answerCallbackQuery(callbackQuery.id, '\u041c\u0435\u0441\u044f\u0446 \u043e\u0431\u043d\u043e\u0432\u043b\u0451\u043d');
+    await answerCallbackQuery(callbackQuery.id, 'Mese aggiornato');
     await renderDatePicker({
       chatId: message.chat.id,
       conversation: nextConversation,
@@ -879,12 +886,12 @@ async function handleBookingPickerCallback(callbackQuery) {
       step: 'date',
     };
     await setConversation(actorId, nextConversation);
-    await answerCallbackQuery(callbackQuery.id, '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043e\u0439 \u0434\u0435\u043d\u044c');
+    await answerCallbackQuery(callbackQuery.id, 'Scegli un altro giorno');
     await renderDatePicker({
       chatId: message.chat.id,
       conversation: nextConversation,
       messageId: message.message_id,
-      promptText: '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043d\u043e\u0432\u0443\u044e \u0434\u0430\u0442\u0443 \u0437\u0430\u043f\u0438\u0441\u0438.',
+      promptText: 'Scegli una nuova data per l\'appuntamento.',
     });
     return true;
   }
@@ -908,7 +915,7 @@ async function handleBookingPickerCallback(callbackQuery) {
     };
 
     await setConversation(actorId, nextConversation);
-    await answerCallbackQuery(callbackQuery.id, '\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044e \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f...');
+    await answerCallbackQuery(callbackQuery.id, 'Carico gli orari disponibili...');
 
     try {
       await renderTimePicker({
@@ -920,7 +927,7 @@ async function handleBookingPickerCallback(callbackQuery) {
       console.error('[telegram-bot] Failed to fetch Google Calendar slots', error);
       await sendMessage(
         message.chat.id,
-        '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u043e\u0435 \u0432\u0440\u0435\u043c\u044f \u0438\u0437 Google Calendar. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437 \u0447\u0443\u0442\u044c \u043f\u043e\u0437\u0436\u0435.',
+        'Non sono riuscito a caricare gli orari liberi da Google Calendar. Riprova tra poco.',
         { reply_markup: getMenuForUser(actorId) },
       );
     }
@@ -933,7 +940,7 @@ async function handleBookingPickerCallback(callbackQuery) {
     const timeKey = rawTime?.replace('.', ':');
 
     if (!dateKey || !timeKey) {
-      await answerCallbackQuery(callbackQuery.id, '\u041d\u0435\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 \u0441\u043b\u043e\u0442');
+      await answerCallbackQuery(callbackQuery.id, 'Slot non valido');
       return true;
     }
 
@@ -948,9 +955,9 @@ async function handleBookingPickerCallback(callbackQuery) {
       },
     });
 
-    await answerCallbackQuery(callbackQuery.id, '\u0412\u0440\u0435\u043c\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043e');
+    await answerCallbackQuery(callbackQuery.id, 'Orario selezionato');
     if (!conversation.draft?.service) {
-      await sendMessage(message.chat.id, 'Напишите, пожалуйста, услугу, которая вас интересует.', {
+      await sendMessage(message.chat.id, 'Scrivi, per favore, il servizio che ti interessa.', {
         reply_markup: getMenuForUser(actorId),
       });
       return true;
@@ -958,7 +965,7 @@ async function handleBookingPickerCallback(callbackQuery) {
 
     await sendMessage(
       message.chat.id,
-      `\u0412\u044b \u0432\u044b\u0431\u0440\u0430\u043b\u0438 ${escapeHtml(`${dateKey} ${timeKey}`)}. \u0414\u043e\u0431\u0430\u0432\u044c\u0442\u0435 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0438\u043b\u0438 \u043e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 "-" \u0435\u0441\u043b\u0438 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0435\u0442.`,
+      `Hai scelto ${escapeHtml(`${dateKey} ${timeKey}`)}. Aggiungi un commento oppure invia "-" se non hai commenti.`,
       { reply_markup: getMenuForUser(actorId) },
     );
     return true;
@@ -976,27 +983,27 @@ async function handleClientCommand(message) {
     return;
   }
 
-  if (text === 'Записаться') {
+  if (text === MENU_TEXT.book || text === 'Записаться') {
     await beginBookingFlow(message);
     return;
   }
 
-  if (text === 'Мои заявки') {
+  if (text === MENU_TEXT.myBookings || text === 'Мои заявки') {
     await handleBookingsList(message);
     return;
   }
 
-  if (text === 'Связаться с администратором') {
+  if (text === MENU_TEXT.contactAdmin || text === 'Связаться с администратором') {
     await beginAdminContactFlow(message);
     return;
   }
 
-  if (text === 'Новые заявки') {
+  if (text === MENU_TEXT.newBookings || text === 'Новые заявки') {
     await handlePendingBookings(message);
     return;
   }
 
-  await showMainMenu(message.chat.id, message.from.id, 'Не понял команду. Выберите действие из меню.');
+  await showMainMenu(message.chat.id, message.from.id, 'Non ho capito il comando. Scegli un\'azione dal menu.');
 }
 
 async function handleCallbackQuery(callbackQuery) {
@@ -1012,14 +1019,14 @@ async function handleCallbackQuery(callbackQuery) {
   const actorId = callbackQuery.from?.id;
 
   if (!actorId || !isAdmin(actorId)) {
-    await answerCallbackQuery(callbackQuery.id, 'Недостаточно прав');
+    await answerCallbackQuery(callbackQuery.id, 'Permessi insufficienti');
     return;
   }
 
   const [entity, rawBookingId, action] = data.split(':');
 
   if (entity !== 'booking' || !rawBookingId || !action) {
-    await answerCallbackQuery(callbackQuery.id, 'Неизвестное действие');
+    await answerCallbackQuery(callbackQuery.id, 'Azione sconosciuta');
     return;
   }
 
@@ -1027,16 +1034,16 @@ async function handleCallbackQuery(callbackQuery) {
   const booking = await getBooking(bookingId);
 
   if (!booking) {
-    await answerCallbackQuery(callbackQuery.id, 'Заявка не найдена');
+    await answerCallbackQuery(callbackQuery.id, 'Richiesta non trovata');
     return;
   }
 
   if (action === 'approve') {
     if (!isCalendarBookingEnabled()) {
-      await answerCallbackQuery(callbackQuery.id, 'Google Calendar не настроен');
+      await answerCallbackQuery(callbackQuery.id, 'Google Calendar non configurato');
       await sendMessage(
         callbackQuery.message.chat.id,
-        'Не удалось подтвердить заявку: заполните GOOGLE_CALENDAR_ID и GOOGLE_SERVICE_ACCOUNT_JSON в bot/.env.',
+        'Impossibile confermare la richiesta: compila GOOGLE_CALENDAR_ID e GOOGLE_SERVICE_ACCOUNT_JSON in bot/.env.',
         { reply_markup: getMenuForUser(actorId) },
       );
       return;
@@ -1045,10 +1052,10 @@ async function handleCallbackQuery(callbackQuery) {
     const startDate = parseBookingDateTime(booking.preferredDateTime, BOOKING_TIME_ZONE);
 
     if (!startDate) {
-      await answerCallbackQuery(callbackQuery.id, 'Неверный формат даты');
+      await answerCallbackQuery(callbackQuery.id, 'Formato data non valido');
       await sendMessage(
         callbackQuery.message.chat.id,
-        `Не удалось создать запись в Google Calendar для заявки #${booking.id}. Выбранное время имеет некорректный формат.`,
+        `Impossibile creare l'evento in Google Calendar per la richiesta #${booking.id}. L'orario scelto ha un formato non valido.`,
         { reply_markup: getMenuForUser(actorId) },
       );
       return;
@@ -1080,16 +1087,16 @@ async function handleCallbackQuery(callbackQuery) {
 
       await sendMessage(
         updatedBooking.telegramUserId,
-        `Ваша заявка #${updatedBooking.id} подтверждена.\nУслуга: ${escapeHtml(updatedBooking.service)}\nВремя: ${escapeHtml(updatedBooking.preferredDateTime)}`,
+        `La tua richiesta #${updatedBooking.id} e confermata.\nServizio: ${escapeHtml(updatedBooking.service)}\nOrario: ${escapeHtml(updatedBooking.preferredDateTime)}`,
       );
-      await answerCallbackQuery(callbackQuery.id, 'Календарь обновлён, клиент уведомлён');
+      await answerCallbackQuery(callbackQuery.id, 'Calendario aggiornato, cliente avvisato');
       return;
     } catch (error) {
       console.error('[telegram-bot] Failed to create Google Calendar event', error);
-      await answerCallbackQuery(callbackQuery.id, 'Не удалось создать событие');
+      await answerCallbackQuery(callbackQuery.id, 'Impossibile creare l\'evento');
       await sendMessage(
         callbackQuery.message.chat.id,
-        `Не удалось создать событие в Google Calendar для заявки #${booking.id}. ${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}`,
+        `Impossibile creare l'evento in Google Calendar per la richiesta #${booking.id}. ${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}`,
         { reply_markup: getMenuForUser(actorId) },
       );
       return;
@@ -1100,9 +1107,9 @@ async function handleCallbackQuery(callbackQuery) {
     const updatedBooking = await updateBooking(bookingId, () => ({ status: 'rejected' }));
     await sendMessage(
       updatedBooking.telegramUserId,
-      `Ваша заявка #${updatedBooking.id} пока не может быть подтверждена. Пожалуйста, выберите другое время или напишите нам снова.`,
+      `La tua richiesta #${updatedBooking.id} al momento non puo essere confermata. Scegli un altro orario oppure scrivici di nuovo.`,
     );
-    await answerCallbackQuery(callbackQuery.id, 'Заявка отклонена');
+    await answerCallbackQuery(callbackQuery.id, 'Richiesta rifiutata');
     return;
   }
 
@@ -1113,14 +1120,14 @@ async function handleCallbackQuery(callbackQuery) {
     });
     await sendMessage(
       callbackQuery.message.chat.id,
-      `Напишите сообщение для клиента по заявке #${bookingId}: предложите другое время или уточните детали.`,
+      `Scrivi un messaggio per il cliente della richiesta #${bookingId}: proponi un altro orario o chiarisci i dettagli.`,
       { reply_markup: getMenuForUser(actorId) },
     );
-    await answerCallbackQuery(callbackQuery.id, 'Ожидаю текст для клиента');
+    await answerCallbackQuery(callbackQuery.id, 'Attendo il testo per il cliente');
     return;
   }
 
-  await answerCallbackQuery(callbackQuery.id, 'Неизвестное действие');
+  await answerCallbackQuery(callbackQuery.id, 'Azione sconosciuta');
 }
 
 async function handleMessage(message) {
@@ -1132,6 +1139,10 @@ async function handleMessage(message) {
   const resetsConversation =
     text === '/start' ||
     text === '/menu' ||
+    text === MENU_TEXT.book ||
+    text === MENU_TEXT.myBookings ||
+    text === MENU_TEXT.contactAdmin ||
+    text === MENU_TEXT.newBookings ||
     text === 'Записаться' ||
     text === 'Мои заявки' ||
     text === 'Связаться с администратором' ||
