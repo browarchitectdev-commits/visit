@@ -259,7 +259,7 @@ export function HeroSection({
                     Fondatrice / Direttrice
                   </p>
                   <p className="mt-2 font-serif text-2xl font-semibold leading-none text-white">
-                    Brow & Lip
+                    Brow & Lip & Eyeliner
                   </p>
                   <p className="mt-2 text-xs leading-relaxed text-white/76">
                     Il volto dello studio, con una visione elegante e attenta per ogni cliente.
@@ -306,7 +306,7 @@ export function HeroSection({
                 Direzione artistica
               </p>
               <p className="mt-2 font-serif text-2xl font-semibold text-white">
-                Brow & Lip
+                Brow & Lip & Eyeliner
               </p>
               <p className="mt-2 text-xs leading-relaxed text-white/72">
                 Eleganza naturale, tono personalizzato, presenza impeccabile.

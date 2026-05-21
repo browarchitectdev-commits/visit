@@ -54,7 +54,7 @@ export function StatsSection({ stats }: StatsSectionProps) {
                     {stat.value}
                   </div>
                   <span className="rounded-full border border-primary/14 bg-[linear-gradient(135deg,rgba(193,95,100,0.1),rgba(243,208,140,0.18))] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
-                    Brow & Lip
+                    Brow & Lip & Eyeliner
                   </span>
                 </div>
                 <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">

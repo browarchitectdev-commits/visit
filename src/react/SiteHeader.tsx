@@ -58,7 +58,7 @@ export function SiteHeader({
             style={{ animation: 'floatMedium 7s ease-in-out infinite' }}
           >
             <img
-              src="/images/about.jpg"
+              src="/images/about-studio.jpeg"
               alt="Brow & Lip Studio"
               className="h-full w-full object-cover"
             />

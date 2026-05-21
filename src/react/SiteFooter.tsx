@@ -36,7 +36,7 @@ export function SiteFooter({ telegramUrl }: SiteFooterProps) {
           <div>
             <a href="/" className="inline-flex items-center gap-3">
               <div className="relative flex size-12 overflow-hidden rounded-full border border-white/15 shadow-[0_20px_34px_-20px_rgba(0,0,0,0.65)]">
-                <img src="/images/about.jpg" alt="Brow & Lip Studio" className="h-full w-full object-cover" />
+                <img src="/images/about-studio.jpeg" alt="Brow & Lip Studio" className="h-full w-full object-cover" />
                 <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,12,10,0.04),rgba(18,12,10,0.38))]" />
               </div>
               <div>

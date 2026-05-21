@@ -4,13 +4,10 @@ import { ProgressiveImage } from './ProgressiveImage';
 import { useInViewOnce } from './hooks/useInViewOnce';
 
 const features = [
-  {
-    title: 'Specialiste certificate',
-    description: 'Formazione continua, occhio estetico e attenzione piena alla naturalezza del risultato.',
-  },
+
   {
     title: 'Pigmenti selezionati',
-    description: 'Texture stabili e tonalità pensate per valorizzare incarnato, labbra e sopracciglia.',
+    description: 'Texture stabili e tonalità pensate per valorizzare incarnato, labbra, sopracciglia ed eyeliner.',
   },
   {
     title: 'Igiene rigorosa',
@@ -44,7 +41,7 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
               <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-muted">
                 <ProgressiveImage
                   src={image}
-                  alt="Studio Brow & Lip"
+                  alt="Studio Brow & Lip & Eyeliner"
                   className="cinematic-media h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(19,12,9,0.06)_0%,rgba(19,12,9,0.38)_100%)]" />
@@ -54,7 +51,7 @@ export function AboutSection({ image, title, description }: AboutSectionProps) {
 
             <div className="editorial-panel color-sweep absolute -bottom-5 right-0 max-w-[15rem] rounded-[1.6rem] px-4 py-4">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Approccio personalizzato</p>
-              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">8+ anni</p>
+              <p className="mt-2 font-serif text-2xl font-semibold text-card-foreground">6+ anni</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 di esperienza nel valorizzare lineamenti, forma e colore con delicatezza.
               </p>
