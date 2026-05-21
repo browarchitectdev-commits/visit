@@ -67,7 +67,7 @@ export function SiteHeader({
           </div>
           <div>
             <span className={`block font-serif text-xl font-semibold tracking-tight transition-colors duration-300 ${headerTextClass}`}>
-              Brow & Lip
+              Brow Architect
             </span>
             <span className={`block text-[10px] font-semibold uppercase tracking-[0.26em] transition-colors duration-300 ${headerTextClass}`}>
               Studio di bellezza permanente
