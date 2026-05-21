@@ -18,5 +18,7 @@ create table if not exists public.contact_inquiries (
   telegram_error text
 );
 
+alter table public.contact_inquiries enable row level security;
+
 create index if not exists contact_inquiries_created_at_idx on public.contact_inquiries (created_at desc);
 create index if not exists contact_inquiries_telegram_sent_idx on public.contact_inquiries (telegram_sent);

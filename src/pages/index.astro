@@ -5,17 +5,14 @@ import { HeroSection } from '@/react/HeroSection';
 import { StatsSection } from '@/react/StatsSection';
 import { AboutSection } from '@/react/AboutSection';
 import { ServicesList } from '@/react/ServicesList';
-import { MastersList } from '@/react/MastersList';
 import { GallerySection } from '@/react/GallerySection';
 import { SiteFooter } from '@/react/SiteFooter';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import type { Service } from '@/react/ServicesList';
-import type { Master } from '@/react/MastersList';
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const servicesCollection = await getCollection('services');
-const mastersCollection = await getCollection('masters');
 const galleryCollection = await getCollection('gallery');
 const socialCollection = await getCollection('social');
 const settingsCollection = await getCollection('settings');
@@ -33,23 +30,7 @@ const services: Service[] = servicesCollection.map((s: any) => ({
   },
 }));
 
-const masters: Master[] = mastersCollection.map((m: any) => ({
-  id: m.id,
-  data: {
-    name: m.data.name,
-    position: m.data.position,
-    experience: m.data.experience,
-    bio: m.data.bio,
-    photo: typeof m.data.photo === 'string' ? m.data.photo : m.data.photo.src,
-    instagram: m.data.instagram,
-    telegram: m.data.telegram,
-    order: m.data.order,
-    isActive: m.data.isActive,
-  },
-}));
-
 const sortedServices = services.sort((a: Service, b: Service) => (a.data.order || 0) - (b.data.order || 0));
-const sortedMasters = masters.sort((a: Master, b: Master) => (a.data.order || 0) - (b.data.order || 0));
 const sortedGallery = galleryCollection.sort((a: any, b: any) => (a.data.order || 0) - (b.data.order || 0));
 
 const galleryImages = sortedGallery.map((item: any) => ({
@@ -200,7 +181,7 @@ const contactLinks = getPublicContactLinks();
     </div>
   )}
 
-  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} showBookingCta={false} />
+  <SiteHeader client:load telegramUrl={contactLinks.telegramUrl} showBookingCta={false} />
 
   <HeroSection
     client:visible
@@ -208,7 +189,6 @@ const contactLinks = getPublicContactLinks();
     description={heroDescription}
     backgroundImage="/images/hero.jpg"
     ctaText="Prenota una consulenza"
-    bookingUrl={contactLinks.bookingUrl}
     telegramUrl={contactLinks.telegramUrl}
     secondaryCTA={{
       text: 'Scopri i servizi',
@@ -236,12 +216,6 @@ const contactLinks = getPublicContactLinks();
 
   <div class="pointer-events-none relative mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
     <div class="mx-auto h-full w-full bg-[radial-gradient(circle_at_center,rgba(224,188,145,0.16),transparent_60%)]"></div>
-  </div>
-
-  <MastersList client:visible masters={sortedMasters} />
-
-  <div class="pointer-events-none relative mx-auto h-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden="true">
-    <div class="h-px w-full bg-gradient-to-r from-transparent via-[#d09b72]/40 to-transparent"></div>
   </div>
 
   {galleryImages.length > 0 && <GallerySection client:visible images={galleryImages} />}
@@ -366,19 +340,9 @@ const contactLinks = getPublicContactLinks();
           Scegli come preferisci prenotare
         </h2>
         <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Se sai già quale servizio desideri, apri direttamente il calendario. Se preferisci scriverci prima, usa Telegram e scegliamo insieme la soluzione più adatta.
+          Scrivici su Telegram: scegliamo insieme servizio, tempi e soluzione più adatta prima della conferma.
         </p>
         <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-          {contactLinks.bookingUrl && (
-            <a
-              href={contactLinks.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-shimmer inline-flex items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all duration-300 hover:opacity-92"
-            >
-              Prenota dal calendario
-            </a>
-          )}
           {contactLinks.telegramUrl && (
             <a
               href={contactLinks.telegramUrl}
@@ -397,7 +361,7 @@ const contactLinks = getPublicContactLinks();
     </div>
   </section>
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} />
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} />
 
   <script>
     function initEmbedSkeletons() {

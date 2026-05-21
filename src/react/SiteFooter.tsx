@@ -6,7 +6,6 @@ const navigationLinks = [
   { label: 'Home', href: '/' },
   { label: 'Servizi', href: '/services' },
   { label: 'Portfolio', href: '/gallery' },
-  { label: 'Team', href: '/masters' },
   { label: 'Social', href: '/social' },
   { label: 'Contatti', href: '/contacts' },
 ];
@@ -19,13 +18,12 @@ const studioDetails = [
 
 interface SiteFooterProps {
   telegramUrl?: string;
-  bookingUrl?: string;
   homeNavigation?: boolean;
 }
 
-export function SiteFooter({ telegramUrl, bookingUrl }: SiteFooterProps) {
+export function SiteFooter({ telegramUrl }: SiteFooterProps) {
   const currentYear = new Date().getFullYear();
-  const ctaUrl = bookingUrl || telegramUrl || '/contacts';
+  const ctaUrl = telegramUrl || '/contacts';
 
   return (
     <footer className="relative overflow-hidden border-t border-border/80 bg-[#201713] pb-20 text-white sm:pb-0">
@@ -60,7 +58,7 @@ export function SiteFooter({ telegramUrl, bookingUrl }: SiteFooterProps) {
                 rel={ctaUrl.startsWith('http') || ctaUrl.startsWith('tg:') ? 'noopener noreferrer' : undefined}
                 className="btn-shimmer inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#201713] transition-transform hover:-translate-y-0.5"
               >
-                Prenota ora
+                Prenota su Telegram
               </a>
               {telegramUrl && (
                 <a

@@ -2,10 +2,8 @@
 import { getPublicContactLinks } from '@/lib/publicLinks';
 
 const contactLinks = getPublicContactLinks();
-const bookingUrl = contactLinks.bookingUrl;
 const telegramUrl = contactLinks.telegramUrl;
-const primaryUrl = bookingUrl || telegramUrl || '/contacts';
-const secondaryUrl = telegramUrl && telegramUrl !== primaryUrl ? telegramUrl : undefined;
+const primaryUrl = telegramUrl || '/contacts';
 ---
 
 <aside class="fixed inset-x-3 bottom-3 z-40 sm:inset-x-auto sm:bottom-6 sm:right-6" aria-label="Prenotazione rapida">
@@ -18,15 +16,5 @@ const secondaryUrl = telegramUrl && telegramUrl !== primaryUrl ? telegramUrl : u
     >
       Prenota ora
     </a>
-    {secondaryUrl && (
-      <a
-        href={secondaryUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hidden items-center justify-center rounded-full bg-[#229ED9] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1c8fc4] sm:inline-flex"
-      >
-        Telegram
-      </a>
-    )}
   </div>
 </aside>

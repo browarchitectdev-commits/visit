@@ -1,14 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { TelegramIcon } from './TelegramIcon';
 import { ProgressiveImage } from './ProgressiveImage';
 
 interface HeroSectionProps {
   title: string;
   description: string;
   ctaText?: string;
-  bookingUrl?: string;
   telegramUrl?: string;
   secondaryCTA?: {
     text: string;
@@ -33,7 +31,6 @@ export function HeroSection({
   title,
   description,
   ctaText = 'Prenota una consulenza',
-  bookingUrl,
   telegramUrl,
   secondaryCTA,
   backgroundImage = '/images/hero.jpg',
@@ -199,25 +196,14 @@ export function HeroSection({
               className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4"
               style={{ animation: 'fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.66s both' }}
             >
-              {bookingUrl && (
-                <a
-                  href={bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-shimmer chromatic-frame inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_20px_44px_-18px_rgba(193,95,100,0.72)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_54px_-22px_rgba(193,95,100,0.82)] sm:w-auto sm:px-8"
-                >
-                  {ctaText}
-                </a>
-              )}
               {telegramUrl && (
                 <a
                   href={telegramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/24 bg-[#229ED9] px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1c8fc4] sm:w-auto sm:px-8"
+                  className="btn-shimmer chromatic-frame inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_20px_44px_-18px_rgba(193,95,100,0.72)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_54px_-22px_rgba(193,95,100,0.82)] sm:w-auto sm:px-8"
                 >
-                  <TelegramIcon />
-                  Scrivici su Telegram
+                  {ctaText}
                 </a>
               )}
               {secondaryCTA && (

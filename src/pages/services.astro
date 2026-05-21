@@ -41,7 +41,7 @@ const serviceJsonLd = {
 ---
 
 <Layout title={pageTitle} description={pageDescription} jsonLd={serviceJsonLd} lang="it">
-  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <SiteHeader client:load telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
   <PageHero
     eyebrow="Servizi"
@@ -73,5 +73,5 @@ const serviceJsonLd = {
     secondaryText="Contatti"
   />
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} homeNavigation />
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
 </Layout>

@@ -1,4 +1,5 @@
 const TELEGRAM_API_BASE = 'https://api.telegram.org';
+type ServerEnv = Record<string, string | undefined>;
 
 export const escapeTelegramHtml = (value: string) =>
   value
@@ -6,7 +7,7 @@ export const escapeTelegramHtml = (value: string) =>
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;');
 
-const getTelegramConfig = (env: ImportMetaEnv) => {
+const getTelegramConfig = (env: ServerEnv) => {
   const botToken = env.TELEGRAM_BOT_TOKEN;
   const chatId = env.TELEGRAM_ADMIN_CHAT_ID ?? env.TELEGRAM_CHAT_ID;
 
@@ -16,7 +17,7 @@ const getTelegramConfig = (env: ImportMetaEnv) => {
   };
 };
 
-export const sendTelegramHtmlMessage = async (env: ImportMetaEnv, text: string) => {
+export const sendTelegramHtmlMessage = async (env: ServerEnv, text: string) => {
   const { botToken, chatId } = getTelegramConfig(env);
 
   if (!botToken || !chatId) {

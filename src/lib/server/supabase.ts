@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-const getRequiredEnv = (name: 'SUPABASE_URL' | 'SUPABASE_SERVICE_ROLE_KEY', env: ImportMetaEnv) => {
+type ServerEnv = Record<string, string | undefined>;
+
+const getRequiredEnv = (name: 'SUPABASE_URL' | 'SUPABASE_SERVICE_ROLE_KEY', env: ServerEnv) => {
   const value = env[name];
 
   if (!value) {
@@ -10,7 +12,7 @@ const getRequiredEnv = (name: 'SUPABASE_URL' | 'SUPABASE_SERVICE_ROLE_KEY', env:
   return value;
 };
 
-export const getSupabaseAdminClient = (env: ImportMetaEnv) => {
+export const getSupabaseAdminClient = (env: ServerEnv) => {
   const supabaseUrl = getRequiredEnv('SUPABASE_URL', env);
   const serviceRoleKey = getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY', env);
 
@@ -22,5 +24,5 @@ export const getSupabaseAdminClient = (env: ImportMetaEnv) => {
   });
 };
 
-export const getContactInquiriesTable = (env: ImportMetaEnv) =>
+export const getContactInquiriesTable = (env: ServerEnv) =>
   env.SUPABASE_CONTACT_INQUIRIES_TABLE?.trim() || 'contact_inquiries';

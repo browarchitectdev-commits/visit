@@ -4,11 +4,9 @@ import type { MediaUploadOptions, TinaCMS } from 'tinacms';
 // Configurazione TinaCMS
 // Tutte le collezioni sono sincronizzate con src/content/config.ts
 
-const argv = typeof process !== 'undefined' && Array.isArray(process.argv) ? process.argv : [];
-const isTinaDevCommand = argv.includes('dev');
-const isLocalOnly = process.env.TINA_LOCAL_ONLY === 'true' && isTinaDevCommand;
-const tinaClientId = isLocalOnly ? undefined : process.env.TINA_CLIENT_ID;
-const tinaToken = isLocalOnly ? undefined : process.env.TINA_TOKEN;
+const isTinaCloudEnabled = process.env.TINA_CLOUD_ENABLED === 'true';
+const tinaClientId = isTinaCloudEnabled ? process.env.TINA_CLIENT_ID : undefined;
+const tinaToken = isTinaCloudEnabled ? process.env.TINA_TOKEN : undefined;
 
 const sanitizeMediaBasename = (filename: string) => {
   const basename = filename.replace(/\.[^.]+$/, '');
@@ -153,123 +151,6 @@ export default defineConfig({
       },
 
       /**
-       * Collezione "Team"
-       * Sincronizzata con src/content/masters/
-       */
-      {
-        label: 'Team',
-        name: 'masters',
-        path: 'src/content/masters',
-        format: 'json',
-        fields: [
-          {
-            type: 'string',
-            label: 'Nome completo',
-            name: 'name',
-            required: true,
-            ui: {
-              validate: (value: any) => {
-                if (!value || value.length < 2) {
-                  return 'Il nome è troppo corto';
-                }
-                if (value.length > 100) {
-                  return 'Il nome è troppo lungo';
-                }
-              },
-            },
-          },
-          {
-            type: 'string',
-            label: 'Ruolo',
-            name: 'position',
-            description: 'Esempio: Specialista in trucco permanente',
-            required: true,
-            ui: {
-              validate: (value: any) => {
-                if (!value || value.length < 3) {
-                  return 'Indica il ruolo';
-                }
-                if (value.length > 150) {
-                  return 'Il ruolo è troppo lungo';
-                }
-              },
-            },
-          },
-          {
-            type: 'number',
-            label: 'Esperienza (anni)',
-            name: 'experience',
-            description: 'Numero di anni di esperienza',
-            required: true,
-          },
-          {
-            type: 'string',
-            label: 'Biografia',
-            name: 'bio',
-            description: 'Descrizione completa, risultati e certificazioni',
-            required: true,
-            ui: {
-              component: 'textarea',
-              validate: (value: any) => {
-                if (!value || value.length < 50) {
-                  return 'La biografia deve essere dettagliata (minimo 50 caratteri)';
-                }
-                if (value.length > 2000) {
-                  return 'La biografia è troppo lunga (massimo 2000 caratteri)';
-                }
-              },
-            },
-          },
-          {
-            type: 'image',
-            label: 'Fotografia',
-            name: 'photo',
-            description: 'Foto ritratto, minimo 300x300px',
-            required: true,
-          },
-          {
-            type: 'string',
-            label: 'Instagram',
-            name: 'instagram',
-            description: 'Link completo al profilo (opzionale)',
-            ui: {
-              validate: (value: any) => {
-                if (value && !value.startsWith('http')) {
-                  return 'Inserisci un link completo (https://...)';
-                }
-              },
-            },
-          },
-          {
-            type: 'string',
-            label: 'Telegram',
-            name: 'telegram',
-            description: 'Link completo al profilo (opzionale)',
-            ui: {
-              validate: (value: any) => {
-                if (value && !value.startsWith('http')) {
-                  return 'Inserisci un link completo (https://...)';
-                }
-              },
-            },
-          },
-          {
-            type: 'number',
-            label: 'Ordine di visualizzazione',
-            name: 'order',
-            description: 'I profili vengono ordinati in base a questo valore',
-          },
-          {
-            type: 'boolean',
-            label: 'Attivo',
-            name: 'isActive',
-            description: 'Mostrare questo profilo sul sito',
-            ui: { defaultValue: true },
-          },
-        ],
-      },
-
-      /**
        * Collezione "Portfolio"
        * Sincronizzata con src/content/gallery/
        */
@@ -324,12 +205,6 @@ export default defineConfig({
             name: 'imageAfter',
             description: 'Fotografia dopo la procedura',
             required: true,
-          },
-          {
-            type: 'string',
-            label: 'Nome specialista',
-            name: 'masterName',
-            description: 'Chi ha eseguito il lavoro (opzionale)',
           },
           {
             type: 'datetime',

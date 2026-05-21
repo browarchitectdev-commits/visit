@@ -86,7 +86,7 @@ const pageDescription = 'Segui Brow & Lip Studio su Instagram, TikTok e Facebook
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="it">
-  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <SiteHeader client:load telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
   <PageHero
     eyebrow="Social"
@@ -142,5 +142,5 @@ const pageDescription = 'Segui Brow & Lip Studio su Instagram, TikTok e Facebook
     secondaryText="Portfolio"
   />
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} homeNavigation />
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
 </Layout>

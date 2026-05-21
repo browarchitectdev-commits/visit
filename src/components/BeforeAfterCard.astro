@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { item } = Astro.props;
-const { title, category, description, imageBefore, imageAfter, masterName } = item.data;
+const { title, category, description, imageBefore, imageAfter } = item.data;
 
 const categoryNames: Record<string, string> = {
   brouws: 'Sopracciglia',
@@ -43,7 +43,6 @@ const afterWebp = typeof imageAfter === 'string' ? imageAfter.replace(/\.(jpe?g|
     <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{categoryNames[category] ?? 'Portfolio'}</span>
     <h3 class="mt-4 font-serif text-2xl font-semibold text-card-foreground">{title}</h3>
     <p class="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-3">{description}</p>
-    {masterName && <p class="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Specialista: {masterName}</p>}
   </div>
 </article>
 

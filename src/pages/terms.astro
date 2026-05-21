@@ -21,7 +21,7 @@ const terms = [
     title: '2. Servizi e prenotazioni',
     body: [
       'I trattamenti vengono eseguiti su appuntamento, previa valutazione individuale. Durata, prezzo e disponibilità possono variare in base al caso concreto e vengono confermati prima dell’esecuzione del servizio.',
-      'La prenotazione tramite modulo, calendario o messaggistica non è definitiva finché non viene confermata dallo studio.',
+      'La prenotazione tramite modulo o messaggistica non è definitiva finché non viene confermata dallo studio.',
     ],
   },
   {
@@ -62,7 +62,7 @@ const terms = [
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="it">
-  <SiteHeader client:load bookingUrl={contactLinks.bookingUrl} telegramUrl={contactLinks.telegramUrl} homeNavigation />
+  <SiteHeader client:load telegramUrl={contactLinks.telegramUrl} homeNavigation />
 
   <section class="section-shell relative overflow-hidden px-4 pb-12 pt-28 sm:px-6 lg:px-8">
     <div class="kinetic-lines opacity-30" aria-hidden="true"></div>
@@ -99,5 +99,5 @@ const terms = [
     </div>
   </section>
 
-  <SiteFooter telegramUrl={contactLinks.telegramUrl} bookingUrl={contactLinks.bookingUrl} homeNavigation />
+  <SiteFooter telegramUrl={contactLinks.telegramUrl} homeNavigation />
 </Layout>

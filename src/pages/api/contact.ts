@@ -5,6 +5,17 @@ import { escapeTelegramHtml, sendTelegramHtmlMessage } from '@/lib/server/telegr
 export const prerender = false;
 
 const CONTACT_REDIRECT_BASE = '/contacts';
+const MAX_BODY_BYTES = 16 * 1024;
+const FIELD_LIMITS = {
+  name: 120,
+  phone: 60,
+  email: 180,
+  message: 2000,
+  sourcePage: 300,
+  userAgent: 300,
+};
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_PATTERN = /^[+\d\s().-]{5,60}$/;
 
 const redirectToContacts = (status: 'success' | 'error' | 'validation') =>
   new Response(null, {
@@ -15,32 +26,67 @@ const redirectToContacts = (status: 'success' | 'error' | 'validation') =>
   });
 
 const getString = (value: FormDataEntryValue | null) => (typeof value === 'string' ? value.trim() : '');
+const truncate = (value: string, limit: number) => value.slice(0, limit);
+
+const getSafeSourcePage = (request: Request) => {
+  const referer = request.headers.get('referer');
+
+  if (!referer) {
+    return CONTACT_REDIRECT_BASE;
+  }
+
+  try {
+    const refererUrl = new URL(referer);
+    const requestUrl = new URL(request.url);
+
+    if (refererUrl.origin !== requestUrl.origin) {
+      return CONTACT_REDIRECT_BASE;
+    }
+
+    return truncate(`${refererUrl.pathname}${refererUrl.search}`, FIELD_LIMITS.sourcePage);
+  } catch {
+    return CONTACT_REDIRECT_BASE;
+  }
+};
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const contentLength = Number(request.headers.get('content-length') ?? 0);
+
+  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+    return redirectToContacts('validation');
+  }
+
   const formData = await request.formData();
 
   if (getString(formData.get('company'))) {
     return redirectToContacts('success');
   }
 
-  const name = getString(formData.get('name'));
-  const phone = getString(formData.get('phone'));
-  const email = getString(formData.get('email'));
-  const message = getString(formData.get('message'));
+  const name = truncate(getString(formData.get('name')), FIELD_LIMITS.name);
+  const phone = truncate(getString(formData.get('phone')), FIELD_LIMITS.phone);
+  const email = truncate(getString(formData.get('email')), FIELD_LIMITS.email);
+  const message = truncate(getString(formData.get('message')), FIELD_LIMITS.message);
   const consent = formData.get('consent') === 'on';
-  const sourcePage = request.headers.get('referer') || CONTACT_REDIRECT_BASE;
-  const userAgent = request.headers.get('user-agent') || undefined;
+  const sourcePage = getSafeSourcePage(request);
+  const userAgent = truncate(request.headers.get('user-agent') || '', FIELD_LIMITS.userAgent) || undefined;
   const ipAddress = clientAddress || undefined;
 
-  if (!name || !phone || !message || !consent) {
+  if (
+    !name ||
+    !phone ||
+    !message ||
+    !consent ||
+    !PHONE_PATTERN.test(phone) ||
+    (email && !EMAIL_PATTERN.test(email))
+  ) {
     return redirectToContacts('validation');
   }
 
   let inquiryId: string | null = null;
 
   try {
-    const supabase = getSupabaseAdminClient(import.meta.env);
-    const table = getContactInquiriesTable(import.meta.env);
+    const supabase = getSupabaseAdminClient(process.env);
+    const table = getContactInquiriesTable(process.env);
 
     const insertResult = await supabase
       .from(table)
@@ -80,7 +126,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       .join('\n');
 
     try {
-      const telegramResult = await sendTelegramHtmlMessage(import.meta.env, telegramMessage);
+      const telegramResult = await sendTelegramHtmlMessage(process.env, telegramMessage);
 
       await supabase
         .from(table)

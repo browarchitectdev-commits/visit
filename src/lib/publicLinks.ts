@@ -1,5 +1,4 @@
 export interface PublicContactLinks {
-  bookingUrl?: string;
   telegramUrl?: string;
 }
 
@@ -20,6 +19,5 @@ const normalizeExternalUrl = (value: string | undefined) => {
 };
 
 export const getPublicContactLinks = (): PublicContactLinks => ({
-  bookingUrl: normalizeExternalUrl(import.meta.env.PUBLIC_CAL_BOOKING_URL) ?? CONTACTS_FALLBACK_URL,
   telegramUrl: normalizeExternalUrl(import.meta.env.PUBLIC_TELEGRAM_BOT_URL) ?? CONTACTS_FALLBACK_URL,
 });

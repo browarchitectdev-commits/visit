@@ -11,6 +11,8 @@ const DEFAULT_DATA = {
 const cloneDefaultData = () => JSON.parse(JSON.stringify(DEFAULT_DATA));
 
 const normalizePrefix = (prefix) => String(prefix || 'bot_vercel').replace(/[^a-zA-Z0-9_]/g, '_');
+const formatPostgrestStringList = (values) =>
+  `(${values.map((value) => `"${String(value).replaceAll('"', '\\"')}"`).join(',')})`;
 
 export class SupabaseStorage {
   constructor({ supabaseUrl, serviceRoleKey, tablePrefix = 'bot_vercel' }) {
@@ -141,7 +143,7 @@ export class SupabaseStorage {
       const deleteConversationsQuery = supabase.from(this.conversationsTable).delete();
       const deleteConversationsResult =
         conversationIds.length > 0
-          ? await deleteConversationsQuery.not('user_id', 'in', `(${conversationIds.join(',')})`)
+          ? await deleteConversationsQuery.not('user_id', 'in', formatPostgrestStringList(conversationIds))
           : await deleteConversationsQuery.neq('user_id', '');
 
       if (deleteConversationsResult.error) {

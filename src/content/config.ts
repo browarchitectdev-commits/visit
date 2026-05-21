@@ -21,29 +21,6 @@ const servicesCollection = defineCollection({
   }),
 });
 
-const mastersCollection = defineCollection({
-  type: 'data',
-  schema: z.object({
-    name: z.string()
-      .min(2, 'Il nome è troppo corto')
-      .max(100, 'Il nome è troppo lungo'),
-    position: z.string()
-      .min(3, 'Indica il ruolo')
-      .max(150, 'Il ruolo è troppo lungo'),
-    experience: z.number()
-      .nonnegative('L esperienza non può essere negativa')
-      .int('L esperienza deve essere un numero intero'),
-    bio: z.string()
-      .min(50, 'La biografia deve essere più dettagliata')
-      .max(2000, 'La biografia è troppo lunga'),
-    photo: z.string().min(1, 'Inserisci una fotografia'),
-    instagram: z.string().url().optional(),
-    telegram: z.string().url().optional(),
-    order: z.number().int().optional(),
-    isActive: z.boolean().default(true),
-  }),
-});
-
 const galleryCollection = defineCollection({
   type: 'data',
   schema: z.object({
@@ -58,7 +35,6 @@ const galleryCollection = defineCollection({
       .max(500, 'La descrizione è troppo lunga'),
     imageBefore: z.string().min(1, 'Inserisci la foto prima'),
     imageAfter: z.string().min(1, 'Inserisci la foto dopo'),
-    masterName: z.string().optional(),
     date: z.date().optional(),
     order: z.number().int().optional(),
     isActive: z.boolean().default(true),
@@ -92,7 +68,6 @@ const settingsCollection = defineCollection({
 
 export const collections = {
   services: servicesCollection,
-  masters: mastersCollection,
   gallery: galleryCollection,
   social: socialCollection,
   settings: settingsCollection,

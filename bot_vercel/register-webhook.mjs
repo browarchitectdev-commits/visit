@@ -15,6 +15,10 @@ if (!publicUrl) {
   throw new Error('Missing BOT_WEBHOOK_URL. Example: https://example.com/api/telegram/webhook');
 }
 
+if (!secret) {
+  throw new Error('Missing BOT_WEBHOOK_SECRET. Generate a random value and set it in Telegram and Vercel env.');
+}
+
 const response = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook`, {
   method: 'POST',
   headers: {
@@ -22,7 +26,7 @@ const response = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook
   },
   body: JSON.stringify({
     url: publicUrl,
-    secret_token: secret || undefined,
+    secret_token: secret,
     allowed_updates: ['message', 'callback_query'],
     drop_pending_updates: true,
   }),

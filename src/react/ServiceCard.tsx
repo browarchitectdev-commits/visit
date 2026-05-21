@@ -14,7 +14,6 @@ interface ServiceCardProps {
   index?: number;
   featured?: boolean;
   meta?: string;
-  bookingUrl?: string;
   telegramUrl?: string;
 }
 

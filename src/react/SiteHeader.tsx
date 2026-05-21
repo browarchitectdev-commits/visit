@@ -7,19 +7,16 @@ const navLinks = [
   { label: 'Servizi', href: '#services' },
   { label: 'Studio', href: '#about' },
   { label: 'Portfolio', href: '#gallery' },
-  { label: 'Team', href: '#masters' },
   { label: 'Social', href: '#social' },
 ];
 
 interface SiteHeaderProps {
-  bookingUrl?: string;
   telegramUrl?: string;
   showBookingCta?: boolean;
   homeNavigation?: boolean;
 }
 
 export function SiteHeader({
-  bookingUrl,
   telegramUrl,
   showBookingCta = true,
   homeNavigation = false,
@@ -157,9 +154,9 @@ export function SiteHeader({
               {link.label}
             </a>
           ))}
-          {showBookingCta && bookingUrl && (
+          {showBookingCta && telegramUrl && (
             <a
-              href={bookingUrl}
+              href={telegramUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileOpen(false)}
