@@ -190,6 +190,14 @@ export default defineConfig({
             required: true,
             ui: {
               component: 'textarea',
+              validate: (value: any) => {
+                if (!value || value.length < 10) {
+                  return 'La descrizione deve essere informativa';
+                }
+                if (value.length > 1000) {
+                  return 'La descrizione è troppo lunga';
+                }
+              },
             },
           },
           {

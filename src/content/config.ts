@@ -32,10 +32,10 @@ const galleryCollection = defineCollection({
     }),
     description: z.string()
       .min(10, 'La descrizione deve essere informativa')
-      .max(500, 'La descrizione è troppo lunga'),
+      .max(1000, 'La descrizione è troppo lunga'),
     imageBefore: z.string().min(1, 'Inserisci la foto prima'),
     imageAfter: z.string().min(1, 'Inserisci la foto dopo'),
-    date: z.date().optional(),
+    date: z.coerce.date().optional(),
     order: z.number().int().optional(),
     isActive: z.boolean().default(true),
   }),
