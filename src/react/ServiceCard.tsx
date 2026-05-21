@@ -1,15 +1,9 @@
 import { ProgressiveImage } from './ProgressiveImage';
 
-interface ServiceItem {
-  name: string;
-  price: number;
-}
-
 interface ServiceCardProps {
   title: string;
   description: string;
   image: string;
-  items: ServiceItem[];
   badge?: string;
   index?: number;
   featured?: boolean;
@@ -21,12 +15,12 @@ export function ServiceCard({
   title,
   description,
   image,
-  items,
   badge,
+  index = 0,
   featured = false,
   meta,
 }: ServiceCardProps) {
-  const formatPrice = (price: number) => `EUR ${price.toLocaleString('it-IT')}`;
+  const serviceNumber = String(index + 1).padStart(2, '0');
 
   return (
     <article
@@ -74,17 +68,14 @@ export function ServiceCard({
             {meta && <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">{meta}</p>}
           </div>
           <span className="text-gradient font-serif text-3xl font-semibold">
-            {featured ? '01' : `0${items.length}`}
+            {serviceNumber}
           </span>
         </div>
 
         <div className="cinematic-panel color-sweep mt-auto rounded-[1.4rem] border border-border/70 bg-white/48 p-4">
-          {items.map((item) => (
-            <div key={item.name} className="flex items-center justify-between gap-4 py-1.5">
-              <span className="text-sm text-card-foreground">{item.name}</span>
-              <span className="text-gradient font-serif text-2xl font-semibold">{formatPrice(item.price)}</span>
-            </div>
-          ))}
+          <p className="text-sm leading-relaxed text-card-foreground">
+            Consulenza personalizzata prima di ogni trattamento, con scelta di forma, intensità e tempi in base al viso.
+          </p>
         </div>
 
         {featured && (

@@ -22,7 +22,6 @@ const services: Service[] = servicesCollection.map((s: any) => ({
   data: {
     name: s.data.name,
     description: s.data.description,
-    price: s.data.price,
     duration: s.data.duration,
     image: typeof s.data.image === 'string' ? s.data.image : s.data.image.src,
     order: s.data.order,

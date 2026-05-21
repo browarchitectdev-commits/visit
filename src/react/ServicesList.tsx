@@ -5,12 +5,11 @@ import { useInViewOnce } from './hooks/useInViewOnce';
 
 export interface Service {
   id: string;
-  data: {
-    name: string;
-    description: string;
-    price: number;
-    duration: number;
-    image: string;
+    data: {
+      name: string;
+      description: string;
+      duration: number;
+      image: string;
     order?: number;
     isActive: boolean;
   };
@@ -65,7 +64,6 @@ export function ServicesList({ services }: ServicesListProps) {
                 title={service.data.name}
                 description={service.data.description}
                 image={service.data.image}
-                items={[{ name: service.data.name, price: service.data.price }]}
                 badge={index === 0 ? 'Signature' : undefined}
                 index={index}
                 featured={index === 0}
