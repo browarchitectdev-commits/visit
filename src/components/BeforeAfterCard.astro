@@ -18,19 +18,22 @@ const categoryNames: Record<string, string> = {
   other: 'Altro',
 };
 
-const beforeWebp = typeof imageBefore === 'string' ? imageBefore.replace(/\.(jpe?g|png)$/i, '.webp') : imageBefore;
-const afterWebp = typeof imageAfter === 'string' ? imageAfter.replace(/\.(jpe?g|png)$/i, '.webp') : imageAfter;
+const getWebpSource = (image: string) =>
+  /\.(?:jpg|png)$/i.test(image) ? image.replace(/\.(?:jpg|png)$/i, '.webp') : null;
+
+const beforeWebp = typeof imageBefore === 'string' ? getWebpSource(imageBefore) : null;
+const afterWebp = typeof imageAfter === 'string' ? getWebpSource(imageAfter) : null;
 ---
 
 <article class="editorial-panel group overflow-hidden rounded-[1.8rem]" role="article" aria-label={`Lavoro: ${title}`}>
   <div class="relative aspect-square overflow-hidden bg-muted">
     <picture>
-      <source srcset={afterWebp} type="image/webp" />
+      {afterWebp && <source srcset={afterWebp} type="image/webp" />}
       <img src={imageAfter} alt={`${title} - dopo`} class="h-full w-full object-cover" loading="lazy" decoding="async" />
     </picture>
     <div class="gallery-before-layer absolute inset-0">
       <picture>
-        <source srcset={beforeWebp} type="image/webp" />
+        {beforeWebp && <source srcset={beforeWebp} type="image/webp" />}
         <img src={imageBefore} alt={`${title} - prima`} class="h-full w-full object-cover" loading="lazy" decoding="async" />
       </picture>
     </div>

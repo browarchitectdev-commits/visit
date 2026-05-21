@@ -27,8 +27,8 @@ export function ProgressiveImage({
 }: ProgressiveImageProps) {
   const [loaded, setLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
-  const webpSrc = /^\/(?:images|uploads)\/.+\.(?:jpe?g|png)$/i.test(src)
-    ? src.replace(/\.(?:jpe?g|png)$/i, '.webp')
+  const webpSrc = /^\/(?:images|uploads)\/.+\.(?:jpg|png)$/i.test(src)
+    ? src.replace(/\.(?:jpg|png)$/i, '.webp')
     : null;
 
   useEffect(() => {

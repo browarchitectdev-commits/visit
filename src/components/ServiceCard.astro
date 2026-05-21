@@ -20,7 +20,9 @@ const formatDuration = (minutes: number): string => {
   return `${hours} h ${mins} min`;
 };
 
-const webpImage = typeof image === 'string' ? image.replace(/\.(jpe?g|png)$/i, '.webp') : image;
+const webpImage = typeof image === 'string' && /\.(?:jpg|png)$/i.test(image)
+  ? image.replace(/\.(?:jpg|png)$/i, '.webp')
+  : null;
 ---
 
 <article
@@ -32,7 +34,7 @@ const webpImage = typeof image === 'string' ? image.replace(/\.(jpe?g|png)$/i, '
 >
   <div class="relative aspect-[4/3] overflow-hidden bg-muted">
     <picture>
-      <source srcset={webpImage} type="image/webp" />
+      {webpImage && <source srcset={webpImage} type="image/webp" />}
       <img
         src={image}
         alt={`Immagine del servizio: ${name}`}
