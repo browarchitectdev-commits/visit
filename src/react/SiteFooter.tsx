@@ -91,8 +91,8 @@ export function SiteFooter({ telegramUrl }: SiteFooterProps) {
               <a href="tel:+3513149394" className="transition-colors hover:text-white">
                 +35 1314 9394
               </a>
-              <a href="mailto:ciao@browlip.it" className="transition-colors hover:text-white">
-                ciao@browlip.it
+              <a href="mailto:browarchitect2025@gmail.com" className="transition-colors hover:text-white">
+                browarchitect2025@gmail.com
               </a>
               <a href="https://www.instagram.com/browarchitect.studio/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
                 Instagram

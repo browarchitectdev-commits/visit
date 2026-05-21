@@ -36,7 +36,7 @@ export function SiteHeader() {
             </svg>
           </div>
           <span className="font-serif text-xl font-semibold tracking-tight text-foreground">
-            Brow & Lip Studio
+            Brow Architect Studio
           </span>
         </a>
 

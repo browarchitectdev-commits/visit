@@ -4,6 +4,7 @@
  */
 import { ClientRouter } from 'astro:transitions';
 import StickyBookingCta from '@/components/StickyBookingCta.astro';
+import { getPublicContactLinks } from '@/lib/publicLinks';
 
 interface Props {
   title: string;
@@ -37,6 +38,12 @@ const normalizedCanonicalURL = canonicalURL ?? new URL(currentPath, siteURL).hre
 const ogImageURL = new URL(image, siteURL);
 const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
 const breadcrumbName = currentPath === '/' ? 'Home' : title;
+const contactLinks = getPublicContactLinks();
+const socialLinks = [
+  'https://www.instagram.com/browarchitect.studio/',
+  'https://www.tiktok.com/@browarchitect.stu',
+  ...(contactLinks.telegramUrl && contactLinks.telegramUrl !== '/contacts' ? [contactLinks.telegramUrl] : []),
+];
 const baseJsonLd = [
   {
     '@context': 'https://schema.org',
@@ -48,11 +55,7 @@ const baseJsonLd = [
     description,
     priceRange: '$$',
     areaServed: 'Italy',
-    sameAs: [
-      'https://www.instagram.com/browarchitect.studio/',
-      'https://www.tiktok.com/@browarchitect.stu',
-      'https://t.me/pilotix_bot',
-    ],
+    sameAs: socialLinks,
   },
   {
     '@context': 'https://schema.org',
