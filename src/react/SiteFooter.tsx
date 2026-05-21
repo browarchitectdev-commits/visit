@@ -12,8 +12,9 @@ const navigationLinks = [
 
 const studioDetails = [
   { label: 'Studio', value: 'Solo su appuntamento' },
-  { label: 'Lun - Ven', value: '10:00 - 21:00' },
-  { label: 'Sab - Dom', value: '11:00 - 20:00' },
+  { label: 'Lun - Ven', value: '10:00 - 19:00' },
+  { label: 'Sab', value: '10:00 - 18:00' },
+  { label: 'Dom', value: '-' },
 ];
 
 interface SiteFooterProps {
@@ -48,18 +49,11 @@ export function SiteFooter({ telegramUrl }: SiteFooterProps) {
             </a>
 
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/62">
-              Studio di trucco permanente per sopracciglia e labbra: consulenza attenta, atmosfera riservata e risultati naturali nel tempo.
+              Studio di trucco permanente per sopracciglia, labbra, eyeliner: consulenza personalizzata, atmosfera riservata e risultati naturali nel tempo.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5">
-              <a
-                href={ctaUrl}
-                target={ctaUrl.startsWith('http') || ctaUrl.startsWith('tg:') ? '_blank' : undefined}
-                rel={ctaUrl.startsWith('http') || ctaUrl.startsWith('tg:') ? 'noopener noreferrer' : undefined}
-                className="btn-shimmer inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#201713] transition-transform hover:-translate-y-0.5"
-              >
-                Prenota su Telegram
-              </a>
+               
               {telegramUrl && (
                 <a
                   href={telegramUrl}
